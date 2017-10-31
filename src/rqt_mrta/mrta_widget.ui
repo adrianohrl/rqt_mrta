@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MRTAWidget</class>
+ <widget class="QWidget" name="MRTAWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>826</width>
+    <height>662</height>
+   </rect>
+  </property>
+  <property name="focusPolicy">
+   <enum>Qt::NoFocus</enum>
+  </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::DefaultContextMenu</enum>
+  </property>
+  <property name="windowTitle">
+   <string>MRTA</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="configurationTabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="architectureTab">
+      <attribute name="title">
+       <string>Architecture</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="rqt_mrta::ArchitectureSelectionWidget" name="architectureSelectionWidget" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="robotsTab">
+      <attribute name="title">
+       <string>Robots</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tasksTab">
+      <attribute name="title">
+       <string>Tasks</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="allocationsTab">
+      <attribute name="title">
+       <string>Allocations</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="launchTab">
+      <attribute name="title">
+       <string>Launch</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout"/>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>rqt_mrta::ArchitectureSelectionWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">rqt_mrta/architecture_selection_widget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
