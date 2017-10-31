@@ -1,6 +1,6 @@
-#include "rqt_mrta/config.h"
+#include "utilities/config.h"
 
-namespace rqt_mrta
+namespace utilities
 {
 Config::Config(QObject* parent) :
   QObject(parent)

@@ -31,19 +31,28 @@ catkin_package(
     roscpp
     rqt_gui_cpp
     std_msgs
-#  DEPENDS system_lib
 )
 
 set (rqt_mrta_SRCS
+  src/mrta/architecture.cpp
+  src/mrta/architecture_config.cpp
+  src/mrta/taxonomy.cpp
   src/rqt_mrta/architecture_selection_widget.cpp
   src/rqt_mrta/mrta_plugin.cpp
   src/rqt_mrta/mrta_widget.cpp
+  src/utilities/config.cpp
+  src/utilities/xml_settings.cpp
 )
 
 set(rqt_mrta_HDRS
+  include/mrta/architecture.h
+  include/mrta/architecture_config.h
+  include/mrta/taxonomy.h
   include/rqt_mrta/architecture_selection_widget.h
   include/rqt_mrta/mrta_plugin.h
   include/rqt_mrta/mrta_widget.h
+  include/utilities/config.h
+  include/utilities/xml_settings.h
 )
 
 set(rqt_mrta_UIS

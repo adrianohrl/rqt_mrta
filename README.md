@@ -1,8 +1,7 @@
-rqt_alliance
+rqt_mrta
 =========
 
-This is a C++ Plugin for visualization of the motivation of each robot's behaviour sets in a running ALLIANCE architecture.
-
+This is a C++ Plugin for configuring and monitoring Multi Robot Task Allocation architectures.
 
 ## Overview
 
@@ -16,7 +15,7 @@ This is a C++ Plugin for visualization of the motivation of each robot's behavio
 
 ## Content
 
-This is a C++ Plugin for visualization of the motivation of each robot's behaviour sets in a running ALLIANCE architecture.
+This is a C++ Plugin for configuring and monitoring Multi Robot Task Allocation architectures.
 
 ## Installation
 ### Dependencies
@@ -25,18 +24,14 @@ This is a C++ Plugin for visualization of the motivation of each robot's behavio
 
     ```shell
     sudo apt-get install ros-indigo-rqt
-    ```
-
-    ```shell
-    sudo apt-get install libqwt-dev
-    ```
+    
 
 ## Usage
 
 To launch the standalone rqt plugin, run
 
 ```shell
-rosrun rqt_alliance rqt_alliance
+rosrun rqt_mrta rqt_mrta
 ```
 
 To launch the rqt GUI without a perspective, run

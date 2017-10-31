@@ -4,9 +4,9 @@
 #include <QStringList>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
-#include "rqt_mrta/xml_settings.h"
+#include "utilities/xml_settings.h"
 
-namespace rqt_mrta
+namespace utilities
 {
 const QSettings::Format XmlSettings::format =
     QSettings::registerFormat("xml", XmlSettings::read, XmlSettings::write);

@@ -1,12 +1,17 @@
 #ifndef _RQT_MRTA_ARCHITECTURE_SELECTION_WIDGET_H_
 #define _RQT_MRTA_ARCHITECTURE_SELECTION_WIDGET_H_
 
-#include <QMap>
+#include <QList>
 #include <QWidget>
 
 namespace Ui
 {
 class ArchitectureSelectionWidget;
+}
+
+namespace mrta
+{
+class Architecture;
 }
 
 namespace rqt_mrta
@@ -19,8 +24,10 @@ public:
   virtual ~ArchitectureSelectionWidget();
 
 private:
+  typedef QList<mrta::Architecture*>::iterator iterator;
+  typedef QList<mrta::Architecture*>::const_iterator const_iterator;
   Ui::ArchitectureSelectionWidget* ui_;
-  QMap<QString, QString> mrta_architectures_;
+  QList<mrta::Architecture*> mrta_architectures_;
   void loadMRTAArchitectures();
 
 private slots:

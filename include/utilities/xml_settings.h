@@ -1,10 +1,10 @@
-#ifndef _RQT_MRTA_XML_SETTINGS_H_
-#define _RQT_MRTA_XML_SETTINGS_H_
+#ifndef _UTILITIES_XML_SETTINGS_H_
+#define _UTILITIES_XML_SETTINGS_H_
 
 #include <QIODevice>
 #include <QSettings>
 
-namespace rqt_mrta
+namespace utilities
 {
 class XmlSettings {
 public:
@@ -14,4 +14,4 @@ public:
 };
 }
 
-#endif // _RQT_MRTA_XML_SETTINGS_H_
+#endif // _UTILITIES_XML_SETTINGS_H_

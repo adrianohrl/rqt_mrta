@@ -2,46 +2,31 @@
 #define _MRTA_ARCHITECTURE_H_
 
 #include <QObject>
+#include "mrta/taxonomy.h"
 
 namespace mrta
 {
-namespace types
-{
-enum AllocationType
-{
-  INSTANTANEOUS_ASSIGNMENT,
-  TIME_EXTENDED_ASSIGNMENT
-};
 
-enum RobotType
-{
-  SINGLE_TASK,
-  MULTI_TASK
-};
-
-enum TaskType
-{
-  SINGLE_ROBOT,
-  MULTI_ROBOT
-};
-}
-
-typedef types::AllocationType AllocationType;
-typedef types::RobotType RobotType;
-typedef types::TaskType TaskType;
+class ArchitectureConfig;
 
 class Architecture : public QObject
 {
-Q_OBJECT
+  Q_OBJECT
 public:
-  Architecture(const QString &configFilePath);
+  Architecture(QObject* parent, const QString& package,
+               const QString& configFilePath);
   virtual ~Architecture();
+  bool belongs(const Taxonomy::AllocationType& allocation_type,
+               const Taxonomy::RobotType& robot_type,
+               const Taxonomy::TaskType& task_type) const;
+  QString toString() const;
+  bool operator==(const QString& package) const;
+  bool operator==(const Architecture& architecture) const;
 
 private:
+  ArchitectureConfig* config_;
+  const QString package_;
   QString name_;
-  AllocationType allocation_type_;
-  RobotType robot_type_;
-  TaskType task_type_;
 };
 }
 
