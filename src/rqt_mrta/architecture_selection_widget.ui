@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>527</width>
-    <height>546</height>
+    <width>370</width>
+    <height>188</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -21,20 +21,20 @@
   </property>
   <layout class="QFormLayout" name="formLayout">
    <item row="0" column="0" colspan="2">
-    <widget class="QGroupBox" name="filterGroupBox">
+    <widget class="QGroupBox" name="filter_group_box">
      <property name="title">
       <string>Filters</string>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
       <item row="0" column="0">
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel" name="robot_type_label">
         <property name="text">
          <string>Robot Type:</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="robotsTypeComboBox">
+       <widget class="QComboBox" name="robots_type_combo_box">
         <item>
          <property name="text">
           <string/>
@@ -53,14 +53,14 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel" name="task_type_label">
         <property name="text">
          <string>Task Type:</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QComboBox" name="tasksTypeComboBox">
+       <widget class="QComboBox" name="tasks_type_combo_box">
         <item>
          <property name="text">
           <string/>
@@ -79,14 +79,14 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_7">
+       <widget class="QLabel" name="allocation_label">
         <property name="text">
          <string>Allocation Type:</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QComboBox" name="allocationsTypeComboBox">
+       <widget class="QComboBox" name="allocations_type_combo_box">
         <item>
          <property name="text">
           <string/>
@@ -108,14 +108,14 @@
     </widget>
    </item>
    <item row="4" column="0">
-    <widget class="QLabel" name="label_8">
+    <widget class="QLabel" name="architecture_label">
      <property name="text">
       <string>Architecture:</string>
      </property>
     </widget>
    </item>
    <item row="4" column="1">
-    <widget class="QComboBox" name="architecturesComboBox">
+    <widget class="QComboBox" name="architectures_combo_box">
      <property name="enabled">
       <bool>false</bool>
      </property>

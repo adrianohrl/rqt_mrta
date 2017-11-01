@@ -1,12 +1,12 @@
 #ifndef _MRTA_ARCHITECTURE_CONFIG_H_
 #define _MRTA_ARCHITECTURE_CONFIG_H_
 
-#include "utilities/config.h"
+#include "utilities/abstract_config.h"
 #include "mrta/taxonomy.h"
 
 namespace mrta
 {
-class ArchitectureConfig : public utilities::Config
+class ArchitectureConfig : public utilities::AbstractConfig
 {
   Q_OBJECT
 public:

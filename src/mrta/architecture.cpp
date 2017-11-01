@@ -8,15 +8,16 @@
 namespace mrta
 {
 Architecture::Architecture(QObject* parent, const QString& package,
-                           const QString& configFilePath)
-    : QObject(parent), config_(new ArchitectureConfig(this)), package_(package)
+                           const QString& config_file_path)
+    : QObject(parent), config_(new ArchitectureConfig(this)), package_(package),
+      config_file_path_(config_file_path)
 {
-  if (!configFilePath.isEmpty())
+  if (!config_file_path.isEmpty())
   {
-    QFileInfo fileInfo(configFilePath);
-    if (fileInfo.isReadable())
+    QFileInfo file_info(config_file_path);
+    if (file_info.isReadable())
     {
-      QSettings settings(configFilePath, utilities::XmlSettings::format);
+      QSettings settings(config_file_path, utilities::XmlSettings::format);
       if (settings.status() == QSettings::NoError)
       {
         settings.beginGroup("rqt_mrta");
@@ -28,6 +29,10 @@ Architecture::Architecture(QObject* parent, const QString& package,
 }
 
 Architecture::~Architecture() {}
+
+QString Architecture::getPackage() const { return package_; }
+
+QString Architecture::getConfigFilePath() const { return config_file_path_; }
 
 bool Architecture::belongs(const Taxonomy::AllocationType& allocation_type,
                            const Taxonomy::RobotType& robot_type,

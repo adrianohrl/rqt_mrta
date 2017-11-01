@@ -14,8 +14,10 @@ class Architecture : public QObject
   Q_OBJECT
 public:
   Architecture(QObject* parent, const QString& package,
-               const QString& configFilePath);
+               const QString& config_file_path);
   virtual ~Architecture();
+  QString getPackage() const;
+  QString getConfigFilePath() const;
   bool belongs(const Taxonomy::AllocationType& allocation_type,
                const Taxonomy::RobotType& robot_type,
                const Taxonomy::TaskType& task_type) const;
@@ -26,7 +28,7 @@ public:
 private:
   ArchitectureConfig* config_;
   const QString package_;
-  QString name_;
+  const QString config_file_path_;
 };
 }
 

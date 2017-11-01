@@ -3,7 +3,8 @@
 namespace mrta
 {
 ArchitectureConfig::ArchitectureConfig(QObject* parent)
-    : allocation_type_(Taxonomy::UNKNOWN_ALLOCATION_TYPE),
+    : AbstractConfig(parent),
+      allocation_type_(Taxonomy::UNKNOWN_ALLOCATION_TYPE),
       robot_type_(Taxonomy::UNKNOWN_ROBOT_TYPE),
       task_type_(Taxonomy::UNKNOWN_TASK_TYPE)
 {

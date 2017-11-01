@@ -5,22 +5,23 @@
 
 namespace Ui
 {
-  class MRTAWidget;
+class MRTAWidget;
 }
 
 namespace rqt_mrta
 {
-class ArchitectureSelectionWidget;
+class ArchitectureSelectionConfig;
 
 class MRTAWidget : public QWidget
 {
-Q_OBJECT
+  Q_OBJECT
 public:
   MRTAWidget(QWidget* parent = NULL);
   virtual ~MRTAWidget();
 
 private:
   Ui::MRTAWidget* ui_;
+  ArchitectureSelectionConfig* config_;
 };
 }
 
