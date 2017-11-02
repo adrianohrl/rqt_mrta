@@ -47,6 +47,7 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/mrta_widget.cpp
   src/rqt_mrta/topic_config.cpp
   src/utilities/abstract_config.cpp
+  src/utilities/topic_field_monitor.cpp
   src/utilities/xml_settings.cpp
 )
 
@@ -66,6 +67,7 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/mrta_widget.h
   include/rqt_mrta/topic_config.h
   include/utilities/abstract_config.h
+  include/utilities/topic_field_monitor.h
   include/utilities/xml_settings.h
 )
 

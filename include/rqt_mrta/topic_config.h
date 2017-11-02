@@ -1,8 +1,10 @@
 #ifndef _RQT_MRTA_TOPIC_CONFIG_H_
 #define _RQT_MRTA_TOPIC_CONFIG_H_
 
-#include "utilities/abstract_config.h"
 #include <ros/duration.h>
+#include <ros/node_handle.h>
+#include "utilities/abstract_config.h"
+#include "utilities/topic_field_monitor.h"
 
 namespace rqt_mrta
 {
@@ -42,6 +44,14 @@ private:
   QString field_;
   ros::Duration timeout_;
   ros::Duration horizon_;
+  ros::NodeHandlePtr nh_;
+  utilities::TopicFieldMonitor* monitor_;
+
+private slots:
+  void updateMonitor();
+  void monitorValidChanged(bool valid, const QString& error);
+  void receivedMessageField(const variant_topic_tools::BuiltinVariant& field_variant,
+                            const ros::Time& receipt_timestamp);
 };
 }
 

@@ -2,9 +2,20 @@
 
 namespace rqt_mrta
 {
-TopicConfig::TopicConfig(QObject* parent) : AbstractConfig(parent) {}
+TopicConfig::TopicConfig(QObject* parent)
+    : AbstractConfig(parent), nh_(new ros::NodeHandle("~")), monitor_(NULL)
+{
+  connect(this, SIGNAL(changed()), this, SLOT(updateMonitor()));
+}
 
-TopicConfig::~TopicConfig() {}
+TopicConfig::~TopicConfig()
+{
+  if (monitor_)
+  {
+    delete monitor_;
+    monitor_ = NULL;
+  }
+}
 
 QString TopicConfig::getName() const { return name_; }
 
@@ -126,5 +137,58 @@ TopicConfig& TopicConfig::operator=(const TopicConfig& config)
   setField(config.field_);
   setTimeout(config.timeout_);
   setHorizon(config.horizon_);
+}
+
+void TopicConfig::updateMonitor()
+{
+  ROS_INFO("[TopicConfig] updating monitor ...");
+  if (monitor_)
+  {
+    disconnect(monitor_, SIGNAL(validChanged(bool, const QString&)), this,
+               SLOT(monitorValidChanged(bool, const QString&)));
+    disconnect(
+        monitor_,
+        SIGNAL(receivedMessageField(const variant_topic_tools::BuiltinVariant&,
+                                    const ros::Time&)),
+        this,
+        SLOT(receivedMessageField(const variant_topic_tools::BuiltinVariant&,
+                                  const ros::Time&)));
+    delete monitor_;
+    monitor_ = NULL;
+  }
+  monitor_ =
+      new utilities::TopicFieldMonitor(this, nh_, name_, 10, type_, field_);
+  if (!monitor_->isValid())
+  {
+    ROS_ERROR_STREAM("[TopicFieldMonitor] invalid " << monitor_->getError().toStdString());
+    delete monitor_;
+    monitor_ = NULL;
+    return;
+  }
+  connect(monitor_, SIGNAL(validChanged(bool, const QString&)), this,
+          SLOT(monitorValidChanged(bool, const QString&)));
+  connect(monitor_,
+          SIGNAL(receivedMessageField(
+              const variant_topic_tools::BuiltinVariant&, const ros::Time&)),
+          this,
+          SLOT(receivedMessageField(const variant_topic_tools::BuiltinVariant&,
+                                    const ros::Time&)));
+}
+
+void TopicConfig::monitorValidChanged(bool valid, const QString& error)
+{
+  if (!valid)
+  {
+    ROS_ERROR_STREAM("[TopicFieldMonitor] " << error.toStdString());
+  }
+}
+
+void TopicConfig::receivedMessageField(
+    const variant_topic_tools::BuiltinVariant& field_variant,
+    const ros::Time& receipt_timestamp)
+{
+  ROS_INFO_STREAM("[TopicConfig] received: "
+                  << field_variant.getValue<std::string>() << " at "
+                  << receipt_timestamp);
 }
 }
