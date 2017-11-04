@@ -14,34 +14,29 @@ namespace rqt_mrta
 {
 SelectArchitectureWidget::SelectArchitectureWidget(QWidget* parent)
     : QWidget(parent), ui_(new Ui::SelectArchitectureWidget()),
-      architecture_config_(NULL), application_config_(NULL),
-      selected_architecture_(NULL)
+      architecture_config_(NULL), application_config_(NULL)
 {
-  loadArchitectures();
   ui_->setupUi(this);
-  connect(ui_->robots_type_combo_box, SIGNAL(currentIndexChanged(int)), this,
-          SLOT(filter()));
-  connect(ui_->tasks_type_combo_box, SIGNAL(currentIndexChanged(int)), this,
-          SLOT(filter()));
   connect(ui_->allocations_type_combo_box, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(filter()));
-  filter();
+          this, SLOT(setFilterAllocationType()));
+  connect(ui_->robots_type_combo_box, SIGNAL(currentIndexChanged(int)), this,
+          SLOT(setFilterRobotType()));
+  connect(ui_->tasks_type_combo_box, SIGNAL(currentIndexChanged(int)), this,
+          SLOT(setFilterTaskType()));
+  connect(ui_->architectures_combo_box, SIGNAL(unknownAchitecture()), this,
+          SLOT(unknownAchitecture()));
+  connect(ui_->architectures_combo_box, SIGNAL(currentArchitectureChanged(mrta::Architecture*)), this,
+          SLOT(currentArchitectureChanged(mrta::Architecture*)));
+  connect(ui_->name_line_edit, SIGNAL(textChanged(const QString&)), this,
+          SLOT(nameChanged(const QString&)));
+  connect(ui_->package_line_edit, SIGNAL(textChanged(const QString&)), this,
+          SLOT(packageChanged(const QString&)));
 }
 
 SelectArchitectureWidget::~SelectArchitectureWidget()
 {
   architecture_config_ = NULL;
   application_config_ = NULL;
-  selected_architecture_ = NULL;
-  for (QList<mrta::Architecture*>::iterator it(architectures_.begin());
-       it != architectures_.end(); it++)
-  {
-    if (*it)
-    {
-      delete *it;
-      *it = NULL;
-    }
-  }
   if (ui_)
   {
     delete ui_;
@@ -63,7 +58,6 @@ RqtMrtaApplicationConfig* SelectArchitectureWidget::getApplicationConfig() const
 void SelectArchitectureWidget::setArchitectureConfig(
     RqtMrtaArchitectureConfig* config)
 {
-  ROS_WARN_STREAM("[SelectArchitectureWidget] setting architecture ...");
   if (architecture_config_ != config)
   {
     if (architecture_config_)
@@ -72,8 +66,9 @@ void SelectArchitectureWidget::setArchitectureConfig(
                  SLOT(architectureConfigChanged()));
     }
     architecture_config_ = config;
-    if (config)
+    if (architecture_config_)
     {
+      ROS_ERROR("[SelectArchitectureWidget] setting architecture config");
       connect(config, SIGNAL(changed()), this,
               SLOT(architectureConfigChanged()));
     }
@@ -83,31 +78,37 @@ void SelectArchitectureWidget::setArchitectureConfig(
 void SelectArchitectureWidget::setApplicationConfig(
     RqtMrtaApplicationConfig* config)
 {
-  ROS_WARN_STREAM("[SelectArchitectureWidget] setting application ...");
   if (application_config_ != config)
   {
     if (application_config_)
     {
       disconnect(application_config_, SIGNAL(changed()), this,
                  SLOT(applicationConfigChanged()));
+      disconnect(application_config_->getApplication(), SIGNAL(nameChanged(const QString&)), this,
+                 SLOT(applicationConfigNameChanged(const QString&)));
       disconnect(application_config_, SIGNAL(packageChanged(const QString&)),
-                 this, SLOT(applicationPackageChanged(const QString&)));
+                 this, SLOT(applicationConfigPackageChanged(const QString&)));
     }
     application_config_ = config;
-    if (config)
+    if (application_config_)
     {
+      ROS_ERROR("[SelectArchitectureWidget] setting application config");
       connect(config, SIGNAL(changed()), this,
               SLOT(applicationConfigChanged()));
+      connect(application_config_->getApplication(), SIGNAL(nameChanged(const QString&)), this,
+                 SLOT(applicationConfigNameChanged(const QString&)));
       connect(application_config_, SIGNAL(packageChanged(const QString&)), this,
-              SLOT(applicationPackageChanged(const QString&)));
+              SLOT(applicationConfigPackageChanged(const QString&)));
+      applicationConfigPackageChanged(application_config_->getPackage());
     }
-    applicationPackageChanged(application_config_->getPackage());
   }
 }
 
 bool SelectArchitectureWidget::loadConfig()
 {
-  return loadConfig(selected_architecture_->getConfigFilePath());
+  mrta::Architecture* architecture =
+      ui_->architectures_combo_box->getCurrentArchitecture();
+  return architecture ? loadConfig(architecture->getConfigFilePath()) : false;
 }
 
 bool SelectArchitectureWidget::loadConfig(const QString& url)
@@ -138,7 +139,8 @@ bool SelectArchitectureWidget::saveCurrentConfig()
     return false;
   }
   ROS_WARN_STREAM("[SelectArchitectureWidget] pkg: " << package);
-  return saveConfig(QString::fromStdString(ros::package::getPath(package)) + "rqt_mrta.xml");
+  return saveConfig(QString::fromStdString(ros::package::getPath(package)) +
+                    "rqt_mrta.xml");
 }
 
 bool SelectArchitectureWidget::saveConfig(const QString& url)
@@ -172,106 +174,75 @@ void SelectArchitectureWidget::resetConfig()
   }
 }
 
-void SelectArchitectureWidget::loadArchitectures()
-{
-  std::vector<std::string> architectures;
-  rospack::Rospack rp;
-  rp.setQuiet(true);
-  std::vector<std::string> search_path;
-  rp.getSearchPathFromEnv(search_path);
-  rp.crawl(search_path, true);
-  architectures_.clear();
-  if (rp.plugins("rqt_mrta", "config", "", architectures))
-  {
-    for (std::vector<std::string>::iterator it(architectures.begin());
-         it != architectures.end(); it++)
-    {
-      std::size_t index(it->find(' '));
-      QString package(QString::fromStdString(it->substr(0, index)));
-      QString architecture_config_path(
-          QString::fromStdString(it->substr(index + 1)));
-      mrta::Architecture* mrta_architecture =
-          new mrta::Architecture(this, package, architecture_config_path);
-      architectures_.push_back(mrta_architecture);
-    }
-  }
-}
-
 void SelectArchitectureWidget::architectureConfigChanged()
 {
-
+  emit changed();
 }
 
 void SelectArchitectureWidget::applicationConfigChanged()
 {
-
+  emit changed();
 }
 
-void SelectArchitectureWidget::applicationPackageChanged(const QString& package)
+void SelectArchitectureWidget::applicationConfigNameChanged(const QString &name)
+{
+  ui_->name_line_edit->setText(name);
+}
+
+void SelectArchitectureWidget::applicationConfigPackageChanged(
+    const QString& package)
 {
   ui_->package_line_edit->setText(package);
 }
 
-void SelectArchitectureWidget::architectureChanged()
+void SelectArchitectureWidget::setFilterAllocationType()
 {
-  ui_->taxonomy_label->setText("");
-  QString package(ui_->architectures_combo_box->currentText());
-  for (const_iterator it(architectures_.begin()); it != architectures_.end();
-       it++)
-  {
-    if (**it == package)
-    {
-      selected_architecture_ = *it;
-      ui_->taxonomy_label->setText(
-          mrta::Taxonomy::toQString(*selected_architecture_));
-      break;
-    }
-  }
-}
-
-void SelectArchitectureWidget::filter()
-{
-  disconnect(ui_->architectures_combo_box, SIGNAL(currentIndexChanged(int)),
-             this, SLOT(architectureChanged()));
-  ui_->architectures_combo_box->setEnabled(false);
-  ui_->architectures_combo_box->clear();
-  ui_->architectures_combo_box->addItem("");
   mrta::Taxonomy::AllocationType allocation_type(
       mrta::Taxonomy::getAllocationType(
           ui_->allocations_type_combo_box->currentText()));
+  ui_->architectures_combo_box->setFilterAllocationType(allocation_type);
+}
+
+void SelectArchitectureWidget::setFilterRobotType()
+{
   mrta::Taxonomy::RobotType robot_type(
       mrta::Taxonomy::getRobotType(ui_->robots_type_combo_box->currentText()));
+  ui_->architectures_combo_box->setFilterRobotType(robot_type);
+}
+
+void SelectArchitectureWidget::setFilterTaskType()
+{
   mrta::Taxonomy::TaskType task_type(
       mrta::Taxonomy::getTaskType(ui_->tasks_type_combo_box->currentText()));
-  int counter(0), index(-1);
-  for (const_iterator it(architectures_.begin()); it != architectures_.end();
-       it++)
+  ui_->architectures_combo_box->setFilterTaskType(task_type);
+}
+
+void SelectArchitectureWidget::unknownAchitecture()
+{
+  ui_->taxonomy_label->setText("");
+}
+
+void SelectArchitectureWidget::currentArchitectureChanged(
+    mrta::Architecture* architecture)
+{
+  ui_->taxonomy_label->setText(
+      architecture ? mrta::Taxonomy::toQString(*architecture) : "");
+}
+
+void SelectArchitectureWidget::nameChanged(const QString& name)
+{
+  if (application_config_)
   {
-    mrta::Architecture* architecture = *it;
-    if (architecture->belongs(allocation_type, robot_type, task_type))
-    {
-      ui_->architectures_combo_box->addItem(architecture->getPackage());
-      counter++;
-      if (selected_architecture_ && *architecture == *selected_architecture_)
-      {
-        index = counter;
-      }
-    }
+    application_config_->getApplication()->setName(name);
   }
-  if (ui_->architectures_combo_box->count() > 0)
+}
+
+void SelectArchitectureWidget::packageChanged(const QString& package)
+{
+  if (application_config_)
   {
-    ui_->architectures_combo_box->setEnabled(true);
-    connect(ui_->architectures_combo_box, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(architectureChanged()));
+    application_config_->setPackage(package);
   }
-  if (index != -1)
-  {
-    ui_->architectures_combo_box->setCurrentIndex(index);
-  }
-  else
-  {
-    selected_architecture_ = NULL;
-    ui_->taxonomy_label->setText("");
-  }
+  ROS_ERROR("[SelectArchitectureWidget] change package status");
 }
 }

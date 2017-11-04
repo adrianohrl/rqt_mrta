@@ -1,4 +1,3 @@
-#include "rqt_mrta/config/architecture/allocated_tasks.h"
 #include "rqt_mrta/config/architecture/allocations.h"
 
 namespace rqt_mrta

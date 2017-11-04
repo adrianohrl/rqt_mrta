@@ -115,7 +115,10 @@ void Topic::load(QSettings& settings)
 
 void Topic::reset()
 {
+  setName("");
+  setType("");
   setQueueSize(10);
+  setField("");
   setTimeout(ros::Duration(2.0));
   setHorizon(ros::Duration(5.0));
 }

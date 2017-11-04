@@ -1,8 +1,4 @@
-#include "rqt_mrta/config/architecture/allocations.h"
 #include "rqt_mrta/config/architecture/architecture.h"
-#include "rqt_mrta/config/architecture/architecture_launch.h"
-#include "rqt_mrta/config/architecture/robots.h"
-#include "rqt_mrta/config/architecture/tasks.h"
 
 namespace rqt_mrta
 {

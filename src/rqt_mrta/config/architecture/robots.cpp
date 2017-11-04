@@ -1,7 +1,4 @@
-#include "rqt_mrta/config/architecture/busy_robots.h"
-#include "rqt_mrta/config/architecture/idle_robots.h"
 #include "rqt_mrta/config/architecture/robots.h"
-#include "rqt_mrta/config/architecture/robot_launch.h"
 
 namespace rqt_mrta
 {

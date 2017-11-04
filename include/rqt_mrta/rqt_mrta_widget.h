@@ -5,33 +5,33 @@
 
 namespace Ui
 {
-class MRTAWidget;
+class RqtMrtaWidget;
 }
 
 namespace rqt_mrta
 {
 namespace config
 {
-namespace architecture
-{
-class RqtMrtaArchitecture;
-}
-
 namespace application
 {
 class RqtMrtaApplication;
 }
+
+namespace architecture
+{
+class RqtMrtaArchitecture;
+}
 }
 
-typedef config::architecture::RqtMrtaArchitecture RqtMrtaArchitectureConfig;
 typedef config::application::RqtMrtaApplication RqtMrtaApplicationConfig;
+typedef config::architecture::RqtMrtaArchitecture RqtMrtaArchitectureConfig;
 
-class MRTAWidget : public QWidget
+class RqtMrtaWidget : public QWidget
 {
   Q_OBJECT
 public:
-  MRTAWidget(QWidget* parent = NULL);
-  virtual ~MRTAWidget();
+  RqtMrtaWidget(QWidget* parent = NULL);
+  virtual ~RqtMrtaWidget();
   bool loadConfig(const QString& url);
   void resetConfig();
   bool saveConfig();
@@ -39,7 +39,7 @@ public:
   bool createApplication();
 
 private:
-  Ui::MRTAWidget* ui_;
+  Ui::RqtMrtaWidget* ui_;
   RqtMrtaArchitectureConfig* architecture_config_;
   RqtMrtaApplicationConfig* application_config_;
 

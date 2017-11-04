@@ -2,6 +2,7 @@
 #define _RQT_MRTA_ARCHITECTURE_CONFIG_ALLOCATIONS_H_
 
 #include "utilities/abstract_config.h"
+#include "rqt_mrta/config/architecture/allocated_tasks.h"
 
 namespace rqt_mrta
 {
@@ -9,8 +10,6 @@ namespace config
 {
 namespace architecture
 {
-class AllocatedTasks;
-
 class Allocations : public utilities::AbstractConfig
 {
   Q_OBJECT

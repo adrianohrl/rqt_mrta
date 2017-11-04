@@ -1,5 +1,4 @@
 #include "rqt_mrta/config/architecture/busy_robots.h"
-#include "rqt_mrta/config/architecture/topic.h"
 
 namespace rqt_mrta
 {

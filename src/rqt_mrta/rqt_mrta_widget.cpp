@@ -1,8 +1,7 @@
 #include <QFileDialog>
-#include "rqt_mrta/select_architecture_config.h"
-#include "rqt_mrta/mrta_widget.h"
+#include "rqt_mrta/rqt_mrta_widget.h"
 #include "rqt_mrta/new_application_wizard.h"
-#include "rqt_mrta/ui_mrta_widget.h"
+#include "rqt_mrta/ui_rqt_mrta_widget.h"
 #include "utilities/xml_settings.h"
 #include <ros/package.h>
 #include <ros/console.h>
@@ -12,16 +11,14 @@
 
 namespace rqt_mrta
 {
-MRTAWidget::MRTAWidget(QWidget* parent)
-    : QWidget(parent), ui_(new Ui::MRTAWidget()),
+RqtMrtaWidget::RqtMrtaWidget(QWidget* parent)
+    : QWidget(parent), ui_(new Ui::RqtMrtaWidget()),
       architecture_config_(new RqtMrtaArchitectureConfig(this)),
       application_config_(new RqtMrtaApplicationConfig(this))
 {
   ui_->setupUi(this);
   ui_->configuration_tab_widget->setCurrentIndex(0);
   ui_->architecture_tab->activateWindow();
-  ui_->select_architecture_widget->setArchitectureConfig(architecture_config_);
-  ui_->select_architecture_widget->setApplicationConfig(application_config_);
   ui_->new_application_push_button->setIcon(QIcon(QString::fromStdString(
       ros::package::getPath("rqt_mrta").append("/resource/22x22/new.png"))));
   ui_->open_application_push_button->setIcon(QIcon(QString::fromStdString(
@@ -34,7 +31,7 @@ MRTAWidget::MRTAWidget(QWidget* parent)
           SLOT(openPushButtonClicked()));
 }
 
-MRTAWidget::~MRTAWidget()
+RqtMrtaWidget::~RqtMrtaWidget()
 {
   if (ui_)
   {
@@ -53,7 +50,7 @@ MRTAWidget::~MRTAWidget()
   }
 }
 
-bool MRTAWidget::loadConfig(const QString& url)
+bool RqtMrtaWidget::loadConfig(const QString& url)
 {
   if (architecture_config_ && !url.isEmpty())
   {
@@ -69,33 +66,38 @@ bool MRTAWidget::loadConfig(const QString& url)
   }
 }
 
-void MRTAWidget::resetConfig()
+void RqtMrtaWidget::resetConfig()
 {
   if (application_config_)
   {
     application_config_->reset();
   }
+  if (architecture_config_)
+  {
+    architecture_config_->reset();
+  }
 }
 
-bool MRTAWidget::saveConfig()
+bool RqtMrtaWidget::saveConfig()
 {
-  ROS_WARN_STREAM("[MRTAWidget] to aki");
-  if (application_config_->getPackage().isEmpty())
+  ROS_WARN_STREAM("[RqtMrtaWidget] to aki");
+  if (application_config_ && application_config_->getPackage().isEmpty())
   {
     return false;
   }
-  std::string url(ros::package::getPath(application_config_->getPackage().toStdString()));
-  ROS_WARN_STREAM("[MRTAWidget] pkg: " << url);
+  std::string url(
+      ros::package::getPath(application_config_->getPackage().toStdString()));
+  ROS_WARN_STREAM("[RqtMrtaWidget] pkg: " << url);
   if (url.empty())
   {
     return false;
   }
   url += "/rqt_mrta.xml";
-  ROS_WARN_STREAM("[MRTAWidget] pkg: " << url);
+  ROS_WARN_STREAM("[RqtMrtaWidget] pkg: " << url);
   return saveConfig(QString::fromStdString(url));
 }
 
-bool MRTAWidget::saveConfig(const QString& url)
+bool RqtMrtaWidget::saveConfig(const QString& url)
 {
   if (application_config_ && !url.isEmpty())
   {
@@ -114,18 +116,16 @@ bool MRTAWidget::saveConfig(const QString& url)
   }
 }
 
-bool MRTAWidget::createApplication()
-{
-  return true;
-}
+bool RqtMrtaWidget::createApplication() { return true; }
 
-void MRTAWidget::newPushButtonClicked()
+void RqtMrtaWidget::newPushButtonClicked()
 {
   NewApplicationWizard wizard;
-  wizard.setWindowTitle("New Application");
+  wizard.setConfig(application_config_, architecture_config_);
+  wizard.createPages();
   if (wizard.exec() == QWizard::Accepted)
   {
-    ROS_INFO_STREAM("[MRTAWidget] accepted!!!");
+    ROS_INFO_STREAM("[RqtMrtaWidget] accepted!!!");
     if (createApplication())
     {
       saveConfig();
@@ -133,7 +133,7 @@ void MRTAWidget::newPushButtonClicked()
   }
 }
 
-void MRTAWidget::openPushButtonClicked()
+void RqtMrtaWidget::openPushButtonClicked()
 {
   QFileDialog dialog(this, "Open Application Configuration", QDir::homePath(),
                      "MRTA configurations (*.xml)");
@@ -141,7 +141,7 @@ void MRTAWidget::openPushButtonClicked()
   dialog.setFileMode(QFileDialog::ExistingFile);
   if (dialog.exec() == QDialog::Accepted)
   {
-    ROS_INFO_STREAM("[MRTAWidget] openning: "
+    ROS_INFO_STREAM("[RqtMrtaWidget] openning: "
                     << dialog.selectedFiles().first().toStdString());
     loadConfig(dialog.selectedFiles().first());
   }

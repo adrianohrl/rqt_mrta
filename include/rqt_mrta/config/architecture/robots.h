@@ -2,6 +2,9 @@
 #define _RQT_MRTA_ARCHITECTURE_CONFIG_ROBOTS_H_
 
 #include "utilities/abstract_config.h"
+#include "rqt_mrta/config/architecture/busy_robots.h"
+#include "rqt_mrta/config/architecture/idle_robots.h"
+#include "rqt_mrta/config/architecture/robot_launch.h"
 
 namespace rqt_mrta
 {
@@ -9,10 +12,6 @@ namespace config
 {
 namespace architecture
 {
-class BusyRobots;
-class IdleRobots;
-class RobotLaunch;
-
 class Robots : public utilities::AbstractConfig
 {
   Q_OBJECT

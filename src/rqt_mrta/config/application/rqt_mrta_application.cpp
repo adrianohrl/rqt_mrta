@@ -1,4 +1,3 @@
-#include "rqt_mrta/config/application/application.h"
 #include "rqt_mrta/config/application/rqt_mrta_application.h"
 
 namespace rqt_mrta

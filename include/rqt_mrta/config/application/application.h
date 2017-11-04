@@ -2,6 +2,7 @@
 #define _RQT_MRTA_APPLICATION_CONFIG_APPLICATION_H_
 
 #include "utilities/abstract_config.h"
+#include "rqt_mrta/config/application/robots.h"
 
 namespace rqt_mrta
 {
@@ -9,8 +10,6 @@ namespace config
 {
 namespace application
 {
-class Robots;
-
 class Application : public utilities::AbstractConfig
 {
   Q_OBJECT

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MRTAWidget</class>
- <widget class="QWidget" name="MRTAWidget">
+ <class>RqtMrtaWidget</class>
+ <widget class="QWidget" name="RqtMrtaWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -23,7 +23,7 @@
    <item row="5" column="1">
     <widget class="QTabWidget" name="configuration_tab_widget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="architecture_tab">
       <attribute name="title">
@@ -31,7 +31,7 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
-        <widget class="rqt_mrta::SelectArchitectureWidget" name="select_architecture_widget" native="true"/>
+        <widget class="QWidget" name="widget" native="true"/>
        </item>
       </layout>
      </widget>
@@ -41,10 +41,10 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
        <item row="0" column="0">
-        <widget class="rqt_mrta::AbstractTopicMonitorWidget" name="busy_robots_widget" native="true"/>
+        <widget class="QWidget" name="busy_robots_widget" native="true"/>
        </item>
        <item row="0" column="1">
-        <widget class="rqt_mrta::AbstractTopicMonitorWidget" name="idle_robots_widget" native="true"/>
+        <widget class="QWidget" name="idle_robots_widget" native="true"/>
        </item>
       </layout>
      </widget>
@@ -54,10 +54,10 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
-        <widget class="rqt_mrta::AbstractTopicMonitorWidget" name="incoming_tasks_widget" native="true"/>
+        <widget class="QWidget" name="incoming_tasks_widget" native="true"/>
        </item>
        <item row="0" column="1">
-        <widget class="rqt_mrta::AbstractTopicMonitorWidget" name="allocated_tasks_widget" native="true"/>
+        <widget class="QWidget" name="allocated_tasks_widget" native="true"/>
        </item>
       </layout>
      </widget>
@@ -283,20 +283,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>rqt_mrta::AbstractTopicMonitorWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">rqt_mrta/abstract_topic_monitor_widget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>rqt_mrta::SelectArchitectureWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">rqt_mrta/select_architecture_widget.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>configuration_tab_widget</tabstop>
  </tabstops>

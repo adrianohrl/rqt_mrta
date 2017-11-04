@@ -2,6 +2,8 @@
 #define _RQT_MRTA_ARCHITECTURE_CONFIG_H_
 
 #include "utilities/abstract_config.h"
+#include "rqt_mrta/config/architecture/architecture.h"
+#include "rqt_mrta/config/architecture/widgets.h"
 
 namespace rqt_mrta
 {
@@ -9,8 +11,6 @@ namespace config
 {
 namespace architecture
 {
-class Architecture;
-
 class RqtMrtaArchitecture : public utilities::AbstractConfig
 {
   Q_OBJECT
@@ -18,6 +18,7 @@ public:
   RqtMrtaArchitecture(QObject* parent = NULL);
   virtual ~RqtMrtaArchitecture();
   Architecture* getArchitecture() const;
+  Widgets* getWidgets() const;
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
@@ -27,14 +28,14 @@ public:
 
 private:
   Architecture* architecture_;
+  Widgets* widgets_;
 
 private slots:
   void architectureChanged();
+  void widgetsChanged();
 };
 }
 }
-
-typedef config::architecture::RqtMrtaArchitecture RqtMrtaArchitectureConfig;
 }
 
 #endif // _RQT_MRTA_ARCHITECTURE_CONFIG_H_

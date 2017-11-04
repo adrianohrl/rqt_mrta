@@ -1,5 +1,4 @@
 #include <QStringList>
-#include "rqt_mrta/config/application/robot.h"
 #include "rqt_mrta/config/application/robots.h"
 
 namespace rqt_mrta
@@ -46,6 +45,24 @@ Robot* Robots::addRobot()
   emit robotAdded(robots_.count() - 1);
   emit changed();
   return robot;
+}
+
+void Robots::clearRobots()
+{
+  if (!robots_.isEmpty())
+  {
+    for (size_t i(0); i < robots_.count(); ++i)
+    {
+      if (robots_[i])
+      {
+        delete robots_[i];
+        robots_[i] = NULL;
+      }
+    }
+    robots_.clear();
+    emit robotsCleared();
+    emit changed();
+  }
 }
 
 void Robots::save(QSettings &settings) const

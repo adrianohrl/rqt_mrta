@@ -53,18 +53,13 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/config/architecture/rqt_mrta_architecture.cpp
   src/rqt_mrta/config/architecture/tasks.cpp
   src/rqt_mrta/config/architecture/topic.cpp
-  src/rqt_mrta/abstract_topic_monitor_config.cpp
-  src/rqt_mrta/abstract_topic_monitor_widget.cpp
-  src/rqt_mrta/allocated_tasks_config.cpp
-  src/rqt_mrta/busy_robots_config.cpp
-  src/rqt_mrta/idle_robots_config.cpp
-  src/rqt_mrta/incoming_tasks_config.cpp
-  src/rqt_mrta/mrta_plugin.cpp
-  src/rqt_mrta/mrta_widget.cpp
+  src/rqt_mrta/config/architecture/widget.cpp
+  src/rqt_mrta/config/architecture/widgets.cpp
+  src/rqt_mrta/architecture_combo_box.cpp
+  src/rqt_mrta/rqt_mrta_plugin.cpp
+  src/rqt_mrta/rqt_mrta_widget.cpp
   src/rqt_mrta/new_application_wizard.cpp
-  src/rqt_mrta/select_architecture_config.cpp
   src/rqt_mrta/select_architecture_widget.cpp
-  src/rqt_mrta/topic_config.cpp
   src/utilities/abstract_config.cpp
   src/utilities/exception.cpp
   src/utilities/topic_field_monitor.cpp
@@ -93,18 +88,13 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/config/architecture/rqt_mrta_architecture.h
   include/rqt_mrta/config/architecture/tasks.h
   include/rqt_mrta/config/architecture/topic.h
-  include/rqt_mrta/abstract_topic_monitor_config.h
-  include/rqt_mrta/abstract_topic_monitor_widget.h
-  include/rqt_mrta/allocated_tasks_config.h
-  include/rqt_mrta/busy_robots_config.h
-  include/rqt_mrta/idle_robots_config.h
-  include/rqt_mrta/incoming_tasks_config.h
-  include/rqt_mrta/mrta_plugin.h
-  include/rqt_mrta/mrta_widget.h
+  include/rqt_mrta/config/architecture/widget.h
+  include/rqt_mrta/config/architecture/widgets.h
+  include/rqt_mrta/architecture_combo_box.h
+  include/rqt_mrta/rqt_mrta_plugin.h
+  include/rqt_mrta/rqt_mrta_widget.h
   include/rqt_mrta/new_application_wizard.h
-  include/rqt_mrta/select_architecture_config.h
   include/rqt_mrta/select_architecture_widget.h
-  include/rqt_mrta/topic_config.h
   include/utilities/abstract_config.h
   include/utilities/exception.h
   include/utilities/topic_field_monitor.h
@@ -112,9 +102,8 @@ set(rqt_mrta_HDRS
 )
 
 set(rqt_mrta_UIS
-  src/rqt_mrta/abstract_topic_monitor_widget.ui
-  src/rqt_mrta/mrta_widget.ui
-  src/rqt_mrta/select_architecture_widget.ui
+  src/rqt_mrta/Ui/rqt_mrta_widget.ui
+  src/rqt_mrta/Ui/select_architecture_widget.ui
 )
 
 if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")

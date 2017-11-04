@@ -3,6 +3,7 @@
 
 #include <QVector>
 #include "utilities/abstract_config.h"
+#include "rqt_mrta/config/application/task.h"
 
 namespace rqt_mrta
 {
@@ -10,8 +11,6 @@ namespace config
 {
 namespace application
 {
-class Task;
-
 class Tasks : public utilities::AbstractConfig
 {
   Q_OBJECT

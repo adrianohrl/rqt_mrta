@@ -1,5 +1,4 @@
 #include <QStringList>
-#include "rqt_mrta/config/application/task.h"
 #include "rqt_mrta/config/application/tasks.h"
 
 namespace rqt_mrta
@@ -46,6 +45,24 @@ Task* Tasks::addTask()
   emit taskAdded(tasks_.count() - 1);
   emit changed();
   return task;
+}
+
+void Tasks::clearTasks()
+{
+  if (!tasks_.isEmpty())
+  {
+    for (size_t i(0); i < tasks_.count(); ++i)
+    {
+      if (tasks_[i])
+      {
+        delete tasks_[i];
+        tasks_[i] = NULL;
+      }
+    }
+    tasks_.clear();
+    emit tasksCleared();
+    emit changed();
+  }
 }
 
 void Tasks::save(QSettings &settings) const

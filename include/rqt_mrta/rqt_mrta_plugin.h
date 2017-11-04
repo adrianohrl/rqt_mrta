@@ -6,15 +6,15 @@
 
 namespace rqt_mrta
 {
-class MRTAWidget;
+class RqtMrtaWidget;
 
-class MRTAPlugin
+class RqtMrtaPlugin
   : public rqt_gui_cpp::Plugin
 {
 Q_OBJECT
 public:
-  MRTAPlugin();
-  virtual ~MRTAPlugin();
+  RqtMrtaPlugin();
+  virtual ~RqtMrtaPlugin();
   virtual void initPlugin(qt_gui_cpp::PluginContext& context);
 
 private:

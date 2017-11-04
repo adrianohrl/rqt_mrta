@@ -17,19 +17,19 @@ namespace rqt_mrta
 {
 namespace config
 {
-namespace architecture
-{
-class RqtMrtaArchitecture;
-}
-
 namespace application
 {
 class RqtMrtaApplication;
 }
+
+namespace architecture
+{
+class RqtMrtaArchitecture;
+}
 }
 
-typedef config::architecture::RqtMrtaArchitecture RqtMrtaArchitectureConfig;
 typedef config::application::RqtMrtaApplication RqtMrtaApplicationConfig;
+typedef config::architecture::RqtMrtaArchitecture RqtMrtaArchitectureConfig;
 
 class SelectArchitectureWidget : public QWidget
 {
@@ -47,22 +47,27 @@ public:
   bool saveConfig(const QString& url);
   void resetConfig();
 
+signals:
+  void changed();
+
 private:
-  typedef QList<mrta::Architecture*>::iterator iterator;
-  typedef QList<mrta::Architecture*>::const_iterator const_iterator;
   Ui::SelectArchitectureWidget* ui_;
   RqtMrtaArchitectureConfig* architecture_config_;
   RqtMrtaApplicationConfig* application_config_;
-  QList<mrta::Architecture*> architectures_;
-  mrta::Architecture* selected_architecture_;
-  void loadArchitectures();
 
 private slots:
   void architectureConfigChanged();
   void applicationConfigChanged();
-  void applicationPackageChanged(const QString& package);
+  void applicationConfigNameChanged(const QString& name);
+  void applicationConfigPackageChanged(const QString& package);
   void architectureChanged();
-  void filter();
+  void setFilterAllocationType();
+  void setFilterRobotType();
+  void setFilterTaskType();
+  void unknownAchitecture();
+  void currentArchitectureChanged(mrta::Architecture* architecture);
+  void nameChanged(const QString& name);
+  void packageChanged(const QString& package);
 };
 }
 

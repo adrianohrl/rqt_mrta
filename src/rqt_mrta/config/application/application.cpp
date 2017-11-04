@@ -1,5 +1,4 @@
 #include "rqt_mrta/config/application/application.h"
-#include "rqt_mrta/config/application/robots.h"
 
 namespace rqt_mrta
 {

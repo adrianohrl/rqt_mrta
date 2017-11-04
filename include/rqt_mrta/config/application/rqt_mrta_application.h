@@ -2,6 +2,7 @@
 #define _RQT_MRTA_APPLICATION_CONFIG_H_
 
 #include "utilities/abstract_config.h"
+#include "rqt_mrta/config/application/application.h"
 
 namespace rqt_mrta
 {
@@ -9,8 +10,6 @@ namespace config
 {
 namespace application
 {
-class Application;
-
 class RqtMrtaApplication : public utilities::AbstractConfig
 {
   Q_OBJECT

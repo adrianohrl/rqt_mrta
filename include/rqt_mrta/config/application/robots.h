@@ -3,6 +3,7 @@
 
 #include <QVector>
 #include "utilities/abstract_config.h"
+#include "rqt_mrta/config/application/robot.h"
 
 namespace rqt_mrta
 {

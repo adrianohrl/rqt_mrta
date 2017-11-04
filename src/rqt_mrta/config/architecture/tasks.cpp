@@ -1,4 +1,3 @@
-#include "rqt_mrta/config/architecture/incoming_tasks.h"
 #include "rqt_mrta/config/architecture/tasks.h"
 
 namespace rqt_mrta
