@@ -1,12 +1,12 @@
 #include "rqt_mrta/allocated_tasks_config.h"
-#include "rqt_mrta/architecture_selection_config.h"
+#include "rqt_mrta/select_architecture_config.h"
 #include "rqt_mrta/busy_robots_config.h"
 #include "rqt_mrta/idle_robots_config.h"
 #include "rqt_mrta/incoming_tasks_config.h"
 
 namespace rqt_mrta
 {
-ArchitectureSelectionConfig::ArchitectureSelectionConfig(QObject* parent)
+SelectArchitectureConfig::SelectArchitectureConfig(QObject* parent)
     : AbstractConfig(parent),
       allocated_tasks_config_(new AllocatedTasksConfig(this)),
       busy_robots_config_(new BusyRobotsConfig(this)),
@@ -20,7 +20,7 @@ ArchitectureSelectionConfig::ArchitectureSelectionConfig(QObject* parent)
   connect(incoming_tasks_config_, SIGNAL(changed()), this, SLOT(incomingTasksConfigChanged()));
 }
 
-ArchitectureSelectionConfig::~ArchitectureSelectionConfig()
+SelectArchitectureConfig::~SelectArchitectureConfig()
 {
   if (allocated_tasks_config_)
   {
@@ -45,28 +45,29 @@ ArchitectureSelectionConfig::~ArchitectureSelectionConfig()
 }
 
 AbstractTopicMonitorConfig*
-ArchitectureSelectionConfig::getAllocatedTasksConfig() const
+SelectArchitectureConfig::getAllocatedTasksConfig() const
 {
   return allocated_tasks_config_;
 }
 
-AbstractTopicMonitorConfig* ArchitectureSelectionConfig::getBusyRobotsConfig() const
+AbstractTopicMonitorConfig* SelectArchitectureConfig::getBusyRobotsConfig() const
 {
   return busy_robots_config_;
 }
 
-AbstractTopicMonitorConfig* ArchitectureSelectionConfig::getIdleRobotsConfig() const
+AbstractTopicMonitorConfig* SelectArchitectureConfig::getIdleRobotsConfig() const
 {
   return idle_robots_config_;
 }
 
-AbstractTopicMonitorConfig* ArchitectureSelectionConfig::getIncomingTasksConfig() const
+AbstractTopicMonitorConfig* SelectArchitectureConfig::getIncomingTasksConfig() const
 {
   return incoming_tasks_config_;
 }
 
-void ArchitectureSelectionConfig::save(QSettings& settings) const
+void SelectArchitectureConfig::save(QSettings& settings) const
 {
+  settings.beginGroup("architecture");
   settings.beginGroup("robots");
   settings.beginGroup("idle_robots");
   idle_robots_config_->save(settings);
@@ -85,9 +86,10 @@ void ArchitectureSelectionConfig::save(QSettings& settings) const
   allocated_tasks_config_->save(settings);
   settings.endGroup();
   settings.endGroup();
+  settings.endGroup();
 }
 
-void ArchitectureSelectionConfig::load(QSettings& settings)
+void SelectArchitectureConfig::load(QSettings& settings)
 {
   settings.beginGroup("robots");
   idle_robots_config_->load(settings);
@@ -101,7 +103,7 @@ void ArchitectureSelectionConfig::load(QSettings& settings)
   settings.endGroup();
 }
 
-void ArchitectureSelectionConfig::reset()
+void SelectArchitectureConfig::reset()
 {
   allocated_tasks_config_->reset();
   busy_robots_config_->reset();
@@ -109,7 +111,7 @@ void ArchitectureSelectionConfig::reset()
   incoming_tasks_config_->reset();
 }
 
-void ArchitectureSelectionConfig::write(QDataStream& stream) const
+void SelectArchitectureConfig::write(QDataStream& stream) const
 {
   allocated_tasks_config_->write(stream);
   busy_robots_config_->write(stream);
@@ -117,7 +119,7 @@ void ArchitectureSelectionConfig::write(QDataStream& stream) const
   incoming_tasks_config_->write(stream);
 }
 
-void ArchitectureSelectionConfig::read(QDataStream& stream)
+void SelectArchitectureConfig::read(QDataStream& stream)
 {
   allocated_tasks_config_->read(stream);
   busy_robots_config_->read(stream);
@@ -125,8 +127,8 @@ void ArchitectureSelectionConfig::read(QDataStream& stream)
   incoming_tasks_config_->read(stream);
 }
 
-ArchitectureSelectionConfig& ArchitectureSelectionConfig::
-operator=(const ArchitectureSelectionConfig& config)
+SelectArchitectureConfig& SelectArchitectureConfig::
+operator=(const SelectArchitectureConfig& config)
 {
   *allocated_tasks_config_ = *config.allocated_tasks_config_;
   *busy_robots_config_ = *config.busy_robots_config_;
@@ -135,16 +137,16 @@ operator=(const ArchitectureSelectionConfig& config)
   return *this;
 }
 
-void ArchitectureSelectionConfig::allocatedTasksConfigChanged()
+void SelectArchitectureConfig::allocatedTasksConfigChanged()
 {
   emit changed();
 }
 
-void ArchitectureSelectionConfig::busyRobotsConfigChanged() { emit changed(); }
+void SelectArchitectureConfig::busyRobotsConfigChanged() { emit changed(); }
 
-void ArchitectureSelectionConfig::idleRobotsConfigChanged() { emit changed(); }
+void SelectArchitectureConfig::idleRobotsConfigChanged() { emit changed(); }
 
-void ArchitectureSelectionConfig::incomingTasksConfigChanged()
+void SelectArchitectureConfig::incomingTasksConfigChanged()
 {
   emit changed();
 }

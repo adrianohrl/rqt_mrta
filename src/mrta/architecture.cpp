@@ -1,17 +1,16 @@
 #include "mrta/architecture.h"
-#include "mrta/architecture_config.h"
 #include <QFileInfo>
-#include <QSettings>
-#include <ros/console.h>
+#include "mrta/architecture_config.h"
 #include "utilities/xml_settings.h"
 
 namespace mrta
 {
 Architecture::Architecture(QObject* parent, const QString& package,
                            const QString& config_file_path)
-    : QObject(parent), config_(new ArchitectureConfig(this)), package_(package),
-      config_file_path_(config_file_path)
+    : QObject(parent), package_(package), config_file_path_(config_file_path)
 {
+  ArchitectureConfig config;
+  config.setArchitecture(this);
   if (!config_file_path.isEmpty())
   {
     QFileInfo file_info(config_file_path);
@@ -21,7 +20,7 @@ Architecture::Architecture(QObject* parent, const QString& package,
       if (settings.status() == QSettings::NoError)
       {
         settings.beginGroup("rqt_mrta");
-        config_->load(settings);
+        config.load(settings);
         settings.endGroup();
       }
     }
@@ -34,11 +33,46 @@ QString Architecture::getPackage() const { return package_; }
 
 QString Architecture::getConfigFilePath() const { return config_file_path_; }
 
+QString Architecture::getName() const { return name_; }
+
+Taxonomy::AllocationType Architecture::getAllocationType() const
+{
+  return allocation_type_;
+}
+
+Taxonomy::RobotType Architecture::getRobotType() const { return robot_type_; }
+
+Taxonomy::TaskType Architecture::getTaskType() const { return task_type_; }
+
+void Architecture::setName(const QString& name)
+{
+  name_ = name;
+}
+
+void Architecture::setAllocationType(const Taxonomy::AllocationType& type)
+{
+  allocation_type_ = type;
+}
+
+void Architecture::setRobotType(const Taxonomy::RobotType& type)
+{
+  robot_type_ = type;
+}
+
+void Architecture::setTaskType(const Taxonomy::TaskType& type)
+{
+  task_type_ = type;
+}
+
 bool Architecture::belongs(const Taxonomy::AllocationType& allocation_type,
                            const Taxonomy::RobotType& robot_type,
                            const Taxonomy::TaskType& task_type) const
 {
-  return config_->belongs(allocation_type, robot_type, task_type);
+  return (allocation_type_ == allocation_type ||
+          allocation_type == Taxonomy::UNKNOWN_ALLOCATION_TYPE) &&
+         (robot_type_ == robot_type ||
+          robot_type == Taxonomy::UNKNOWN_ROBOT_TYPE) &&
+         (task_type_ == task_type || task_type == Taxonomy::UNKNOWN_TASK_TYPE);
 }
 
 QString Architecture::toString() const { return package_; }

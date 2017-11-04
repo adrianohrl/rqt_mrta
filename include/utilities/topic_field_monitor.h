@@ -31,7 +31,7 @@ signals:
   receivedMessageField(const variant_topic_tools::BuiltinVariant& field_variant,
                        const ros::Time& receipt_timestamp);
 
-private:  
+private:
   bool valid_field_;
   bool valid_;
   QString name_;

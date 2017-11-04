@@ -156,11 +156,16 @@ void TopicConfig::updateMonitor()
     delete monitor_;
     monitor_ = NULL;
   }
+  if (name_.isEmpty() || type_.isEmpty() || field_.isEmpty())
+  {
+    return;
+  }
   monitor_ =
       new utilities::TopicFieldMonitor(this, nh_, name_, 10, type_, field_);
   if (!monitor_->isValid())
   {
-    ROS_ERROR_STREAM("[TopicFieldMonitor] invalid " << monitor_->getError().toStdString());
+    ROS_ERROR_STREAM("[TopicConfig] invalid "
+                     << monitor_->getError().toStdString());
     delete monitor_;
     monitor_ = NULL;
     return;

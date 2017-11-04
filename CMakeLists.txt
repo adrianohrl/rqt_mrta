@@ -35,18 +35,38 @@ set (rqt_mrta_SRCS
   src/mrta/architecture.cpp
   src/mrta/architecture_config.cpp
   src/mrta/taxonomy.cpp
+  src/rqt_mrta/config/application/application.cpp
+  src/rqt_mrta/config/application/robot.cpp
+  src/rqt_mrta/config/application/robots.cpp
+  src/rqt_mrta/config/application/rqt_mrta_application.cpp
+  src/rqt_mrta/config/application/task.cpp
+  src/rqt_mrta/config/application/tasks.cpp
+  src/rqt_mrta/config/architecture/allocated_tasks.cpp
+  src/rqt_mrta/config/architecture/allocations.cpp
+  src/rqt_mrta/config/architecture/architecture.cpp
+  src/rqt_mrta/config/architecture/architecture_launch.cpp
+  src/rqt_mrta/config/architecture/busy_robots.cpp
+  src/rqt_mrta/config/architecture/idle_robots.cpp
+  src/rqt_mrta/config/architecture/incoming_tasks.cpp
+  src/rqt_mrta/config/architecture/robot_launch.cpp
+  src/rqt_mrta/config/architecture/robots.cpp
+  src/rqt_mrta/config/architecture/rqt_mrta_architecture.cpp
+  src/rqt_mrta/config/architecture/tasks.cpp
+  src/rqt_mrta/config/architecture/topic.cpp
   src/rqt_mrta/abstract_topic_monitor_config.cpp
   src/rqt_mrta/abstract_topic_monitor_widget.cpp
   src/rqt_mrta/allocated_tasks_config.cpp
-  src/rqt_mrta/architecture_selection_config.cpp
-  src/rqt_mrta/architecture_selection_widget.cpp
   src/rqt_mrta/busy_robots_config.cpp
   src/rqt_mrta/idle_robots_config.cpp
   src/rqt_mrta/incoming_tasks_config.cpp
   src/rqt_mrta/mrta_plugin.cpp
   src/rqt_mrta/mrta_widget.cpp
+  src/rqt_mrta/new_application_wizard.cpp
+  src/rqt_mrta/select_architecture_config.cpp
+  src/rqt_mrta/select_architecture_widget.cpp
   src/rqt_mrta/topic_config.cpp
   src/utilities/abstract_config.cpp
+  src/utilities/exception.cpp
   src/utilities/topic_field_monitor.cpp
   src/utilities/xml_settings.cpp
 )
@@ -55,26 +75,46 @@ set(rqt_mrta_HDRS
   include/mrta/architecture.h
   include/mrta/architecture_config.h
   include/mrta/taxonomy.h
+  include/rqt_mrta/config/application/application.h
+  include/rqt_mrta/config/application/robot.h
+  include/rqt_mrta/config/application/robots.h
+  include/rqt_mrta/config/application/rqt_mrta_application.h
+  include/rqt_mrta/config/application/task.h
+  include/rqt_mrta/config/application/tasks.h
+  include/rqt_mrta/config/architecture/allocated_tasks.h
+  include/rqt_mrta/config/architecture/allocations.h
+  include/rqt_mrta/config/architecture/architecture.h
+  include/rqt_mrta/config/architecture/architecture_launch.h
+  include/rqt_mrta/config/architecture/busy_robots.h
+  include/rqt_mrta/config/architecture/idle_robots.h
+  include/rqt_mrta/config/architecture/incoming_tasks.h
+  include/rqt_mrta/config/architecture/robot_launch.h
+  include/rqt_mrta/config/architecture/robots.h
+  include/rqt_mrta/config/architecture/rqt_mrta_architecture.h
+  include/rqt_mrta/config/architecture/tasks.h
+  include/rqt_mrta/config/architecture/topic.h
   include/rqt_mrta/abstract_topic_monitor_config.h
   include/rqt_mrta/abstract_topic_monitor_widget.h
   include/rqt_mrta/allocated_tasks_config.h
-  include/rqt_mrta/architecture_selection_config.h
-  include/rqt_mrta/architecture_selection_widget.h
   include/rqt_mrta/busy_robots_config.h
   include/rqt_mrta/idle_robots_config.h
   include/rqt_mrta/incoming_tasks_config.h
   include/rqt_mrta/mrta_plugin.h
   include/rqt_mrta/mrta_widget.h
+  include/rqt_mrta/new_application_wizard.h
+  include/rqt_mrta/select_architecture_config.h
+  include/rqt_mrta/select_architecture_widget.h
   include/rqt_mrta/topic_config.h
   include/utilities/abstract_config.h
+  include/utilities/exception.h
   include/utilities/topic_field_monitor.h
   include/utilities/xml_settings.h
 )
 
 set(rqt_mrta_UIS
   src/rqt_mrta/abstract_topic_monitor_widget.ui
-  src/rqt_mrta/architecture_selection_widget.ui
   src/rqt_mrta/mrta_widget.ui
+  src/rqt_mrta/select_architecture_widget.ui
 )
 
 if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
@@ -115,6 +155,13 @@ endif()
 
 install(FILES plugin.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+install(
+  DIRECTORY resource
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  FILES_MATCHING
+  PATTERN "*.png"
 )
 
 install(TARGETS ${PROJECT_NAME}

@@ -10,7 +10,21 @@ class MRTAWidget;
 
 namespace rqt_mrta
 {
-class ArchitectureSelectionConfig;
+namespace config
+{
+namespace architecture
+{
+class RqtMrtaArchitecture;
+}
+
+namespace application
+{
+class RqtMrtaApplication;
+}
+}
+
+typedef config::architecture::RqtMrtaArchitecture RqtMrtaArchitectureConfig;
+typedef config::application::RqtMrtaApplication RqtMrtaApplicationConfig;
 
 class MRTAWidget : public QWidget
 {
@@ -18,10 +32,20 @@ class MRTAWidget : public QWidget
 public:
   MRTAWidget(QWidget* parent = NULL);
   virtual ~MRTAWidget();
+  bool loadConfig(const QString& url);
+  void resetConfig();
+  bool saveConfig();
+  bool saveConfig(const QString& url);
+  bool createApplication();
 
 private:
   Ui::MRTAWidget* ui_;
-  ArchitectureSelectionConfig* config_;
+  RqtMrtaArchitectureConfig* architecture_config_;
+  RqtMrtaApplicationConfig* application_config_;
+
+private slots:
+  void newPushButtonClicked();
+  void openPushButtonClicked();
 };
 }
 

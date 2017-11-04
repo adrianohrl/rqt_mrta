@@ -1,0 +1,71 @@
+#include "rqt_mrta/config/architecture/idle_robots.h"
+#include "rqt_mrta/config/architecture/topic.h"
+
+namespace rqt_mrta
+{
+namespace config
+{
+namespace architecture
+{
+IdleRobots::IdleRobots(QObject* parent)
+    : AbstractConfig(parent), topic_(new Topic(this))
+{
+  connect(topic_, SIGNAL(changed()), this,
+          SLOT(topicChanged()));
+}
+
+IdleRobots::~IdleRobots()
+{
+  if (topic_)
+  {
+    delete topic_;
+    topic_ = NULL;
+  }
+}
+
+Topic* IdleRobots::getTopic() const
+{
+  return topic_;
+}
+
+void IdleRobots::save(QSettings& settings) const
+{
+  settings.beginGroup("idle_robots");
+  topic_->save(settings);
+  settings.endGroup();
+}
+
+void IdleRobots::load(QSettings& settings)
+{
+  settings.beginGroup("idle_robots");
+  topic_->load(settings);
+  settings.endGroup();
+}
+
+void IdleRobots::reset()
+{
+  topic_->reset();
+  topic_->setName("/idle_robots");
+  topic_->setType("mrta_msgs/Robot");
+  topic_->setField("robot_id");
+}
+
+void IdleRobots::write(QDataStream& stream) const
+{
+  topic_->write(stream);
+}
+
+void IdleRobots::read(QDataStream& stream)
+{
+  topic_->read(stream);
+}
+
+IdleRobots& IdleRobots::operator=(const IdleRobots& config)
+{
+  *topic_ = *config.topic_;
+}
+
+void IdleRobots::topicChanged() { emit changed(); }
+}
+}
+}

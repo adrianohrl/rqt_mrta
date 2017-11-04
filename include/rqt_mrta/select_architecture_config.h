@@ -11,13 +11,13 @@ class BusyRobotsConfig;
 class IdleRobotsConfig;
 class IncomingTasksConfig;
 
-class ArchitectureSelectionConfig : public utilities::AbstractConfig
+class SelectArchitectureConfig : public utilities::AbstractConfig
 {
   Q_OBJECT
 public:
-  ArchitectureSelectionConfig(QObject* parent);
-  virtual ~ArchitectureSelectionConfig();
-  AbstractTopicMonitorConfig *getAllocatedTasksConfig() const;
+  SelectArchitectureConfig(QObject* parent);
+  virtual ~SelectArchitectureConfig();
+  AbstractTopicMonitorConfig* getAllocatedTasksConfig() const;
   AbstractTopicMonitorConfig* getBusyRobotsConfig() const;
   AbstractTopicMonitorConfig* getIdleRobotsConfig() const;
   AbstractTopicMonitorConfig* getIncomingTasksConfig() const;
@@ -26,8 +26,8 @@ public:
   void reset();
   void write(QDataStream& stream) const;
   void read(QDataStream& stream);
-  ArchitectureSelectionConfig&
-  operator=(const ArchitectureSelectionConfig& config);
+  SelectArchitectureConfig&
+  operator=(const SelectArchitectureConfig& config);
 
 private:
   AllocatedTasksConfig* allocated_tasks_config_;

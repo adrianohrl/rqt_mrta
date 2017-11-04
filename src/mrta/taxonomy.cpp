@@ -1,4 +1,5 @@
 #include "mrta/taxonomy.h"
+#include "mrta/architecture.h"
 
 namespace mrta
 {
@@ -77,6 +78,13 @@ QString Taxonomy::toQString(const Taxonomy::TaskType& type)
                                                      : "";
 }
 
+QString Taxonomy::toQString(const Architecture &architecture)
+{
+  return Taxonomy::toQString(architecture.getRobotType()) + "-"
+      + Taxonomy::toQString(architecture.getTaskType()) + "-"
+      + Taxonomy::toQString(architecture.getAllocationType());
+}
+
 std::string Taxonomy::toString(const Taxonomy::AllocationType& type)
 {
   return Taxonomy::toQString(type).toStdString();
@@ -92,6 +100,11 @@ std::string Taxonomy::toString(const Taxonomy::TaskType& type)
   return Taxonomy::toQString(type).toStdString();
 }
 
+std::string Taxonomy::toString(const Architecture &architecture)
+{
+  return Taxonomy::toQString(architecture).toStdString();
+}
+
 const char* Taxonomy::toCString(const Taxonomy::AllocationType& type)
 {
   return Taxonomy::toString(type).c_str();
@@ -105,5 +118,10 @@ const char* Taxonomy::toCString(const Taxonomy::RobotType& type)
 const char* Taxonomy::toCString(const Taxonomy::TaskType& type)
 {
   return Taxonomy::toString(type).c_str();
+}
+
+const char *Taxonomy::toCString(const Architecture &architecture)
+{
+  return Taxonomy::toString(architecture).c_str();
 }
 }

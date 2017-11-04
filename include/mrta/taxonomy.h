@@ -5,6 +5,8 @@
 
 namespace mrta
 {
+class Architecture;
+
 class Taxonomy
 {
 public:
@@ -32,12 +34,15 @@ public:
   static QString toQString(const AllocationType& type);
   static QString toQString(const RobotType& type);
   static QString toQString(const TaskType& type);
+  static QString toQString(const Architecture& architecture);
   static std::string toString(const AllocationType& type);
   static std::string toString(const RobotType& type);
   static std::string toString(const TaskType& type);
+  static std::string toString(const Architecture& architecture);
   static const char* toCString(const AllocationType& type);
   static const char* toCString(const RobotType& type);
   static const char* toCString(const TaskType& type);
+  static const char* toCString(const Architecture& architecture);
 };
 }
 

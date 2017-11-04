@@ -6,15 +6,16 @@
 
 namespace mrta
 {
+class Architecture;
+
 class ArchitectureConfig : public utilities::AbstractConfig
 {
   Q_OBJECT
 public:
   ArchitectureConfig(QObject* parent = NULL);
   virtual ~ArchitectureConfig();
-  bool belongs(const Taxonomy::AllocationType& allocation_type,
-               const Taxonomy::RobotType& robot_type,
-               const Taxonomy::TaskType& task_type) const;
+  Architecture* getArchitecture() const;
+  void setArchitecture(Architecture* architecture);
   virtual void save(QSettings& settings) const;
   virtual void load(QSettings& settings);
   virtual void reset();
@@ -22,10 +23,7 @@ public:
   virtual void read(QDataStream& stream);
 
 private:
-  QString name_;
-  Taxonomy::AllocationType allocation_type_;
-  Taxonomy::RobotType robot_type_;
-  Taxonomy::TaskType task_type_;
+  Architecture* architecture_;
 };
 }
 

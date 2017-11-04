@@ -2,8 +2,13 @@
 
 namespace utilities
 {
-TopicFieldMonitor::TopicFieldMonitor(QObject *parent, const ros::NodeHandlePtr &nh, const QString &name, const size_t &queue_size, const QString &type, const QString &field)
-  : QObject(parent), nh_(nh), name_(name), type_(type), field_(field), valid_(true), valid_field_(true)
+TopicFieldMonitor::TopicFieldMonitor(QObject* parent,
+                                     const ros::NodeHandlePtr& nh,
+                                     const QString& name,
+                                     const size_t& queue_size,
+                                     const QString& type, const QString& field)
+    : QObject(parent), nh_(nh), name_(name), type_(type), field_(field),
+      valid_(true), valid_field_(true)
 {
   try
   {
@@ -21,6 +26,10 @@ TopicFieldMonitor::TopicFieldMonitor(QObject *parent, const ros::NodeHandlePtr &
     valid_field_ = false;
     setValid(false, "The given message does not have the " + field + " field.");
   }
+  if (!valid_)
+  {
+    return;
+  }
   if (!isTopicRegistered() || matchTypes())
   {
     subscribe();
@@ -37,17 +46,12 @@ TopicFieldMonitor::~TopicFieldMonitor()
   registry_.clear();
 }
 
-QString TopicFieldMonitor::getError() const
-{
-  return error_;
-}
+QString TopicFieldMonitor::getError() const { return error_; }
 
-bool TopicFieldMonitor::isValid() const
-{
-  return valid_;
-}
+bool TopicFieldMonitor::isValid() const { return valid_; }
 
-variant_topic_tools::BuiltinVariant TopicFieldMonitor::getCurrentFieldVariant() const
+variant_topic_tools::BuiltinVariant
+TopicFieldMonitor::getCurrentFieldVariant() const
 {
   return field_variant_;
 }
@@ -78,12 +82,9 @@ bool TopicFieldMonitor::isValidMessageType() const
   return !msg_type_.getDataType().empty();
 }
 
-bool TopicFieldMonitor::isValidField() const
-{
-  return valid_field_;
-}
+bool TopicFieldMonitor::isValidField() const { return valid_field_; }
 
-void TopicFieldMonitor::setValid(bool valid, const QString &error)
+void TopicFieldMonitor::setValid(bool valid, const QString& error)
 {
   if (valid != valid_)
   {
@@ -102,10 +103,12 @@ bool TopicFieldMonitor::matchTypes() const
 void TopicFieldMonitor::subscribe()
 {
   variant_topic_tools::MessageType type;
-  subscriber_ = type.subscribe(*nh_, name_.toStdString(), queue_size_,
-    boost::bind(&TopicFieldMonitor::callback, this, _1, _2));
+  subscriber_ =
+      type.subscribe(*nh_, name_.toStdString(), queue_size_,
+                     boost::bind(&TopicFieldMonitor::callback, this, _1, _2));
   if (subscriber_)
   {
+    ROS_ERROR_STREAM("[TopicFieldMonitor] subscribed: (" << name_.toStdString() << ", " << type_.toStdString() << ", " << field_.toStdString() << ")");
     emit subscribed(name_);
   }
 }
@@ -114,13 +117,17 @@ void TopicFieldMonitor::unsubscribe()
 {
   if (subscriber_)
   {
+    ROS_ERROR_STREAM("[TopicFieldMonitor] unsubscribed: (" << name_.toStdString() << ", " << type_.toStdString() << ", " << field_.toStdString() << ")");
     subscriber_.shutdown();
     emit unsubscribed(name_);
   }
 }
 
-void TopicFieldMonitor::callback(const variant_topic_tools::MessageVariant &msg_variant, const ros::Time &receipt_timestamp)
+void TopicFieldMonitor::callback(
+    const variant_topic_tools::MessageVariant& msg_variant,
+    const ros::Time& receipt_timestamp)
 {
+  ROS_WARN_STREAM("[TopicFieldMonitor] callback ");
   if (msg_variant.getType().getTypeInfo().name() != type_.toStdString().c_str())
   {
     setValid(false, "The topic and message types do not match.");
@@ -129,6 +136,7 @@ void TopicFieldMonitor::callback(const variant_topic_tools::MessageVariant &msg_
   }
   receipt_timestamp_ = receipt_timestamp;
   field_variant_ = msg_variant.getMember(field_.toStdString());
+  ROS_WARN_STREAM("[TopicFieldMonitor] callback: " << field_variant_.getValue<std::string>());
   emit receivedMessageField(field_variant_, receipt_timestamp_);
 }
 }
