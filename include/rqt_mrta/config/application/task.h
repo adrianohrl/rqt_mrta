@@ -29,6 +29,9 @@ signals:
 
 private:
   QString id_;
+
+private slots:
+  void tasksChanged();
 };
 }
 }

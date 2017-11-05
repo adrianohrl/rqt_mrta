@@ -5,48 +5,26 @@
 
 namespace rqt_mrta
 {
-DefineArchitectureWizardPage::DefineArchitectureWizardPage(NewApplicationWizard* parent)
-    : QWizardPage(parent), id_(-1),
-      application_config_(parent->getApplicationConfig()),
-      architecture_config_(parent->getArchitectureConfig()),
-      widget_(new DefineArchitectureWidget(this, application_config_,
-                                           architecture_config_))
+DefineArchitectureWizardPage::DefineArchitectureWizardPage(
+    NewApplicationWizard* parent)
+    : NewApplicationWizardPage(parent, "Define the Application Architecture")
 {
-  setTitle("Define the Application Architecture");
-  QVBoxLayout* layout = new QVBoxLayout();
-  layout->addWidget(widget_);
-  setLayout(layout);
-  registerField("name*", widget_->ui_->name_line_edit);
-  registerField("package*", widget_->ui_->package_line_edit);
-  registerField("architecture*", widget_->ui_->architectures_combo_box);
-  connect(widget_->ui_->name_line_edit, SIGNAL(textChanged(const QString&)), this,
+  DefineArchitectureWidget* widget = new DefineArchitectureWidget(
+        this, parent->getApplicationConfig(),
+        parent->getArchitectureConfig());
+  registerField("name*", widget->ui_->name_line_edit);
+  registerField("package*", widget->ui_->package_line_edit);
+  registerField("architecture*", widget->ui_->architectures_combo_box);
+  connect(widget->ui_->name_line_edit, SIGNAL(textChanged(const QString&)),
+          this, SLOT(updateComplete()));
+  connect(widget->ui_->package_line_edit, SIGNAL(textChanged(const QString&)),
+          this, SLOT(updateComplete()));
+  connect(widget->ui_->architectures_combo_box, SIGNAL(changed()), this,
           SLOT(updateComplete()));
-  connect(widget_->ui_->package_line_edit, SIGNAL(textChanged(const QString&)), this,
-          SLOT(updateComplete()));
-  connect(widget_->ui_->architectures_combo_box, SIGNAL(changed()), this,
-          SLOT(updateComplete()));
+  setWidget(widget);
 }
 
-DefineArchitectureWizardPage::~DefineArchitectureWizardPage()
-{
-  architecture_config_ = NULL;
-  application_config_ = NULL;
-  if (widget_)
-  {
-    delete widget_;
-    widget_ = NULL;
-  }
-}
-
-int DefineArchitectureWizardPage::getId() const { return id_; }
-
-void DefineArchitectureWizardPage::setId(int id)
-{
-  if (id != id_)
-  {
-    id_ = id;
-  }
-}
+DefineArchitectureWizardPage::~DefineArchitectureWizardPage() {}
 
 void DefineArchitectureWizardPage::initializePage()
 {
@@ -56,7 +34,7 @@ void DefineArchitectureWizardPage::initializePage()
 
 bool DefineArchitectureWizardPage::validatePage()
 {
-  widget_->loadConfig();
+  static_cast<DefineArchitectureWidget*>(widget_)->loadConfig();
 }
 
 bool DefineArchitectureWizardPage::isComplete() const
@@ -67,6 +45,4 @@ bool DefineArchitectureWizardPage::isComplete() const
          !application_config_->getApplication()->getName().isEmpty() &&
          !application_config_->getApplication()->getUrl().isEmpty();
 }
-
-void DefineArchitectureWizardPage::updateComplete() { emit completeChanged(); }
 }

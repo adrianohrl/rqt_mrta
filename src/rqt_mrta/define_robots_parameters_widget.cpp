@@ -1,28 +1,23 @@
 #include <QSettings>
 #include <ros/console.h>
-#include <ros/package.h>
 #include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
 #include "rqt_mrta/config/application/rqt_mrta_application.h"
-#include "rqt_mrta/define_robots_widget.h"
-#include "rqt_mrta/ui_define_robots_widget.h"
+#include "rqt_mrta/define_robots_parameters_widget.h"
+#include "rqt_mrta/ui_define_robots_parameters_widget.h"
 
 namespace rqt_mrta
 {
-DefineRobotsWidget::DefineRobotsWidget(
+DefineRobotsParametersWidget::DefineRobotsParametersWidget(
     QWidget* parent, RqtMrtaApplicationConfig* application_config,
     RqtMrtaArchitectureConfig* architecture_config)
-    : QWidget(parent), ui_(new Ui::DefineRobotsWidget()),
+    : QWidget(parent), ui_(new Ui::DefineRobotsParametersWidget()),
       application_config_(application_config),
       architecture_config_(architecture_config)
 {
   ui_->setupUi(this);
-  QIcon new_icon(QString::fromStdString(
-      ros::package::getPath("rqt_mrta").append("/resource/22x22/new.png")));
-  ui_->new_robot_command_link_button->setIcon(new_icon);
-  ui_->new_task_command_link_button->setIcon(new_icon);
 }
 
-DefineRobotsWidget::~DefineRobotsWidget()
+DefineRobotsParametersWidget::~DefineRobotsParametersWidget()
 {
   architecture_config_ = NULL;
   application_config_ = NULL;
@@ -33,17 +28,18 @@ DefineRobotsWidget::~DefineRobotsWidget()
   }
 }
 
-RqtMrtaArchitectureConfig* DefineRobotsWidget::getArchitectureConfig() const
+RqtMrtaArchitectureConfig*
+DefineRobotsParametersWidget::getArchitectureConfig() const
 {
   return architecture_config_;
 }
 
-RqtMrtaApplicationConfig* DefineRobotsWidget::getApplicationConfig() const
+RqtMrtaApplicationConfig* DefineRobotsParametersWidget::getApplicationConfig() const
 {
   return application_config_;
 }
 
-void DefineRobotsWidget::setArchitectureConfig(
+void DefineRobotsParametersWidget::setArchitectureConfig(
     RqtMrtaArchitectureConfig* config)
 {
   if (architecture_config_ != config)
@@ -62,7 +58,8 @@ void DefineRobotsWidget::setArchitectureConfig(
   }
 }
 
-void DefineRobotsWidget::setApplicationConfig(RqtMrtaApplicationConfig* config)
+void DefineRobotsParametersWidget::setApplicationConfig(
+    RqtMrtaApplicationConfig* config)
 {
   if (application_config_ != config)
   {
@@ -80,7 +77,7 @@ void DefineRobotsWidget::setApplicationConfig(RqtMrtaApplicationConfig* config)
   }
 }
 
-void DefineRobotsWidget::architectureConfigChanged() { emit changed(); }
+void DefineRobotsParametersWidget::architectureConfigChanged() { emit changed(); }
 
-void DefineRobotsWidget::applicationConfigChanged() { emit changed(); }
+void DefineRobotsParametersWidget::applicationConfigChanged() { emit changed(); }
 }

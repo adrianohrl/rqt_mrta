@@ -15,13 +15,16 @@ namespace rqt_mrta
 typedef config::application::RqtMrtaApplication RqtMrtaApplicationConfig;
 typedef config::architecture::RqtMrtaArchitecture RqtMrtaArchitectureConfig;
 
-class DefineArchitectureWizardPage;
-class DefineRobotsWizardPage;
-
 class NewApplicationWizard : public QWizard
 {
   Q_OBJECT
 public:
+  enum Page
+  {
+    DEFINE_ARCHITECTURE,
+    DEFINE_ROBOTS,
+    DEFINE_ROBOTS_PARAMETERS
+  };
   NewApplicationWizard(QWidget* parent,
                        RqtMrtaApplicationConfig* application_config,
                        RqtMrtaArchitectureConfig* architecture_config,
@@ -34,8 +37,6 @@ private:
   int past_id_;
   RqtMrtaApplicationConfig* application_config_;
   RqtMrtaArchitectureConfig* architecture_config_;
-  DefineArchitectureWizardPage* define_architecture_;
-  DefineRobotsWizardPage* define_robots_;
 
 private slots:
   void idChanged(int id);

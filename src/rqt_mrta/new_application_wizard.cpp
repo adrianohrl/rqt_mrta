@@ -3,6 +3,8 @@
 #include "rqt_mrta/new_application_wizard.h"
 #include "rqt_mrta/define_architecture_wizard_page.h"
 #include "rqt_mrta/define_robots_wizard_page.h"
+#include "rqt_mrta/define_robots_parameters_wizard_page.h"
+#include "rqt_mrta/new_application_wizard_page.h"
 #include <ros/console.h>
 #include "utilities/exception.h"
 
@@ -12,7 +14,7 @@ NewApplicationWizard::NewApplicationWizard(
     QWidget* parent, RqtMrtaApplicationConfig* application_config,
     RqtMrtaArchitectureConfig* architecture_config, Qt::WindowFlags flags)
     : QWizard(parent, flags), application_config_(application_config),
-      architecture_config_(architecture_config), define_architecture_(NULL), past_id_(-1)
+      architecture_config_(architecture_config), past_id_(-1)
 {
   if (!application_config_)
   {
@@ -22,10 +24,9 @@ NewApplicationWizard::NewApplicationWizard(
   {
     throw utilities::Exception("The architecture configuration must not be null.");
   }
-  define_architecture_ = new DefineArchitectureWizardPage(this);
-  define_robots_ = new DefineRobotsWizardPage(this);
-  define_architecture_->setId(addPage(define_architecture_));
-  define_robots_->setId(addPage(define_robots_));
+  setPage(DEFINE_ARCHITECTURE, new DefineArchitectureWizardPage(this));
+  setPage(DEFINE_ROBOTS, new DefineRobotsWizardPage(this));
+  setPage(DEFINE_ROBOTS_PARAMETERS, new DefineRobotsParametersWizardPage(this));
   setWindowTitle("New Application");
   connect(this, SIGNAL(accepted()), this, SLOT(generatePackage()));
   connect(this, SIGNAL(rejected()), this, SLOT(resetConfig()));
@@ -36,11 +37,6 @@ NewApplicationWizard::~NewApplicationWizard()
 {
   application_config_ = NULL;
   architecture_config_ = NULL;
-  if (define_architecture_)
-  {
-    delete define_architecture_;
-    define_architecture_ = NULL;
-  }
 }
 
 RqtMrtaApplicationConfig* NewApplicationWizard::getApplicationConfig() const

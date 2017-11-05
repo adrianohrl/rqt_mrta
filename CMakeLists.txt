@@ -34,6 +34,8 @@ catkin_package(
 set (rqt_mrta_SRCS
   src/mrta/architecture.cpp
   src/mrta/architecture_config.cpp
+  src/mrta/robot.cpp
+  src/mrta/task.cpp
   src/mrta/taxonomy.cpp
   src/rqt_mrta/architecture_combo_box.cpp
   src/rqt_mrta/config/application/application.cpp
@@ -60,9 +62,13 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/define_architecture_wizard_page.cpp
   src/rqt_mrta/define_robots_widget.cpp
   src/rqt_mrta/define_robots_wizard_page.cpp
+  src/rqt_mrta/define_robots_parameters_widget.cpp
+  src/rqt_mrta/define_robots_parameters_wizard_page.cpp
   src/rqt_mrta/rqt_mrta_plugin.cpp
   src/rqt_mrta/rqt_mrta_widget.cpp
+  src/rqt_mrta/robot_tree_widget.cpp
   src/rqt_mrta/new_application_wizard.cpp
+  src/rqt_mrta/new_application_wizard_page.cpp
   src/utilities/abstract_config.cpp
   src/utilities/exception.cpp
   src/utilities/message.cpp
@@ -78,6 +84,8 @@ set (rqt_mrta_SRCS
 set(rqt_mrta_HDRS
   include/mrta/architecture.h
   include/mrta/architecture_config.h
+  include/mrta/robot.h
+  include/mrta/task.h
   include/mrta/taxonomy.h
   include/rqt_mrta/architecture_combo_box.h
   include/rqt_mrta/config/application/application.h
@@ -104,9 +112,13 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/define_architecture_wizard_page.h
   include/rqt_mrta/define_robots_widget.h
   include/rqt_mrta/define_robots_wizard_page.h
+  include/rqt_mrta/define_robots_parameters_widget.h
+  include/rqt_mrta/define_robots_parameters_wizard_page.h
   include/rqt_mrta/rqt_mrta_plugin.h
   include/rqt_mrta/rqt_mrta_widget.h
+  include/rqt_mrta/robot_tree_widget.h
   include/rqt_mrta/new_application_wizard.h
+  include/rqt_mrta/new_application_wizard_page.h
   include/utilities/abstract_config.h
   include/utilities/exception.h
   include/utilities/message.h
@@ -122,6 +134,7 @@ set(rqt_mrta_HDRS
 set(rqt_mrta_UIS
   src/Ui/define_architecture_widget.ui
   src/Ui/define_robots_widget.ui
+  src/Ui/define_robots_parameters_widget.ui
   src/Ui/rqt_mrta_widget.ui
 )
 
