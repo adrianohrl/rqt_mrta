@@ -1,3 +1,4 @@
+#include <rospack/rospack.h>
 #include "rqt_mrta/config/application/rqt_mrta_application.h"
 
 namespace rqt_mrta
@@ -9,6 +10,10 @@ namespace application
 RqtMrtaApplication::RqtMrtaApplication(QObject *parent)
   : AbstractConfig(parent), application_(new Application(this))
 {
+  rp_.setQuiet(true);
+  std::vector<std::string> search_path;
+  rp_.getSearchPathFromEnv(search_path);
+  rp_.crawl(search_path, true);
   connect(application_, SIGNAL(changed()), this, SLOT(applicationChanged()));
 }
 
@@ -26,6 +31,11 @@ QString RqtMrtaApplication::getPackage() const
   return package_;
 }
 
+QString RqtMrtaApplication::getPackageUrl() const
+{
+  return package_url_;
+}
+
 Application *RqtMrtaApplication::getApplication() const
 {
   return application_;
@@ -36,6 +46,9 @@ void RqtMrtaApplication::setPackage(const QString &package)
   if (package != package_)
   {
     package_ = package;
+    std::string url;
+    rp_.find(package.toStdString(), url);
+    package_url_ = QString::fromStdString(url);
     emit packageChanged(package);
     emit changed();
   }

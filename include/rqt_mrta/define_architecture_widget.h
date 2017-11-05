@@ -1,11 +1,11 @@
-#ifndef _RQT_MRTA_ARCHITECTURE_SELECTION_WIDGET_H_
-#define _RQT_MRTA_ARCHITECTURE_SELECTION_WIDGET_H_
+#ifndef _RQT_MRTA_DEFINE_ARCHITECTURE_WIDGET_H_
+#define _RQT_MRTA_DEFINE_ARCHITECTURE_WIDGET_H_
 
 #include <QWidget>
 
 namespace Ui
 {
-class SelectArchitectureWidget;
+class DefineArchitectureWidget;
 }
 
 namespace mrta
@@ -31,16 +31,19 @@ class RqtMrtaArchitecture;
 typedef config::application::RqtMrtaApplication RqtMrtaApplicationConfig;
 typedef config::architecture::RqtMrtaArchitecture RqtMrtaArchitectureConfig;
 
-class SelectArchitectureWidget : public QWidget
+class DefineArchitectureWidget : public QWidget
 {
+  friend class DefineArchitectureWizardPage;
   Q_OBJECT
 public:
-  SelectArchitectureWidget(QWidget* parent);
-  virtual ~SelectArchitectureWidget();
-  RqtMrtaArchitectureConfig* getArchitectureConfig() const;
+  DefineArchitectureWidget(
+      QWidget* parent, RqtMrtaApplicationConfig* application_config = NULL,
+      RqtMrtaArchitectureConfig* architecture_config = NULL);
+  virtual ~DefineArchitectureWidget();
   RqtMrtaApplicationConfig* getApplicationConfig() const;
-  void setArchitectureConfig(RqtMrtaArchitectureConfig* config);
+  RqtMrtaArchitectureConfig* getArchitectureConfig() const;
   void setApplicationConfig(RqtMrtaApplicationConfig* config);
+  void setArchitectureConfig(RqtMrtaArchitectureConfig* config);
   bool loadConfig();
   bool loadConfig(const QString& url);
   bool saveCurrentConfig();
@@ -51,9 +54,9 @@ signals:
   void changed();
 
 private:
-  Ui::SelectArchitectureWidget* ui_;
-  RqtMrtaArchitectureConfig* architecture_config_;
+  Ui::DefineArchitectureWidget* ui_;
   RqtMrtaApplicationConfig* application_config_;
+  RqtMrtaArchitectureConfig* architecture_config_;
 
 private slots:
   void architectureConfigChanged();
@@ -71,4 +74,4 @@ private slots:
 };
 }
 
-#endif // _RQT_MRTA_ARCHITECTURE_SELECTION_WIDGET_H_
+#endif // _RQT_MRTA_DEFINE_ARCHITECTURE_WIDGET_H_

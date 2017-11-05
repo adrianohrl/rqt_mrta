@@ -61,6 +61,7 @@ void Application::save(QSettings &settings) const
   settings.beginGroup("application");
   settings.setValue("name", name_);
   settings.setValue("url", url_);
+  robots_->save(settings);
   settings.endGroup();
 }
 
@@ -69,6 +70,7 @@ void Application::load(QSettings &settings)
   settings.beginGroup("application");
   setName(settings.value("name").toString());
   setUrl(settings.value("url").toString());
+  robots_->load(settings);
   settings.endGroup();
 }
 
@@ -76,12 +78,14 @@ void Application::reset()
 {
   setName("");
   setUrl("");
+  robots_->reset();
 }
 
 void Application::write(QDataStream &stream) const
 {
   stream << name_;
   stream << url_;
+  robots_->write(stream);
 }
 
 void Application::read(QDataStream &stream)
@@ -91,6 +95,7 @@ void Application::read(QDataStream &stream)
   setName(name);
   stream >> url;
   setUrl(url);
+  robots_->read(stream);
 }
 
 Application &Application::operator=(const Application &config)

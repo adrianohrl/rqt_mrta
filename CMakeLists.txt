@@ -35,6 +35,7 @@ set (rqt_mrta_SRCS
   src/mrta/architecture.cpp
   src/mrta/architecture_config.cpp
   src/mrta/taxonomy.cpp
+  src/rqt_mrta/architecture_combo_box.cpp
   src/rqt_mrta/config/application/application.cpp
   src/rqt_mrta/config/application/robot.cpp
   src/rqt_mrta/config/application/robots.cpp
@@ -55,13 +56,21 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/config/architecture/topic.cpp
   src/rqt_mrta/config/architecture/widget.cpp
   src/rqt_mrta/config/architecture/widgets.cpp
-  src/rqt_mrta/architecture_combo_box.cpp
+  src/rqt_mrta/define_architecture_widget.cpp
+  src/rqt_mrta/define_architecture_wizard_page.cpp
+  src/rqt_mrta/define_robots_widget.cpp
+  src/rqt_mrta/define_robots_wizard_page.cpp
   src/rqt_mrta/rqt_mrta_plugin.cpp
   src/rqt_mrta/rqt_mrta_widget.cpp
   src/rqt_mrta/new_application_wizard.cpp
-  src/rqt_mrta/select_architecture_widget.cpp
   src/utilities/abstract_config.cpp
   src/utilities/exception.cpp
+  src/utilities/message.cpp
+  src/utilities/message_broker.cpp
+  src/utilities/message_event.cpp
+  src/utilities/message_field.cpp
+  src/utilities/message_subscriber.cpp
+  src/utilities/message_subscriber_registry.cpp
   src/utilities/topic_field_monitor.cpp
   src/utilities/xml_settings.cpp
 )
@@ -70,6 +79,7 @@ set(rqt_mrta_HDRS
   include/mrta/architecture.h
   include/mrta/architecture_config.h
   include/mrta/taxonomy.h
+  include/rqt_mrta/architecture_combo_box.h
   include/rqt_mrta/config/application/application.h
   include/rqt_mrta/config/application/robot.h
   include/rqt_mrta/config/application/robots.h
@@ -90,20 +100,29 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/config/architecture/topic.h
   include/rqt_mrta/config/architecture/widget.h
   include/rqt_mrta/config/architecture/widgets.h
-  include/rqt_mrta/architecture_combo_box.h
+  include/rqt_mrta/define_architecture_widget.h
+  include/rqt_mrta/define_architecture_wizard_page.h
+  include/rqt_mrta/define_robots_widget.h
+  include/rqt_mrta/define_robots_wizard_page.h
   include/rqt_mrta/rqt_mrta_plugin.h
   include/rqt_mrta/rqt_mrta_widget.h
   include/rqt_mrta/new_application_wizard.h
-  include/rqt_mrta/select_architecture_widget.h
   include/utilities/abstract_config.h
   include/utilities/exception.h
+  include/utilities/message.h
+  include/utilities/message_broker.h
+  include/utilities/message_event.h
+  include/utilities/message_field.h
+  include/utilities/message_subscriber.h
+  include/utilities/message_subscriber_registry.h
   include/utilities/topic_field_monitor.h
   include/utilities/xml_settings.h
 )
 
 set(rqt_mrta_UIS
-  src/rqt_mrta/Ui/rqt_mrta_widget.ui
-  src/rqt_mrta/Ui/select_architecture_widget.ui
+  src/Ui/define_architecture_widget.ui
+  src/Ui/define_robots_widget.ui
+  src/Ui/rqt_mrta_widget.ui
 )
 
 if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")

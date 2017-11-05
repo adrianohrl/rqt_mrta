@@ -4,15 +4,16 @@
 
 namespace rqt_mrta
 {
-ArchitectureComboBox::ArchitectureComboBox(QWidget *parent)
-  : QComboBox(parent), current_architecture_(NULL),
-    allocation_type_(mrta::Taxonomy::UNKNOWN_ALLOCATION_TYPE),
-    robot_type_(mrta::Taxonomy::UNKNOWN_ROBOT_TYPE),
-    task_type_(mrta::Taxonomy::UNKNOWN_TASK_TYPE)
+ArchitectureComboBox::ArchitectureComboBox(QWidget* parent)
+    : QComboBox(parent), current_architecture_(NULL),
+      allocation_type_(mrta::Taxonomy::UNKNOWN_ALLOCATION_TYPE),
+      robot_type_(mrta::Taxonomy::UNKNOWN_ROBOT_TYPE),
+      task_type_(mrta::Taxonomy::UNKNOWN_TASK_TYPE)
 {
   load();
   filter();
-  connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(currentArchitectureChanged(int)));
+  connect(this, SIGNAL(currentIndexChanged(int)), this,
+          SLOT(currentArchitectureChanged(int)));
 }
 
 ArchitectureComboBox::~ArchitectureComboBox()
@@ -28,12 +29,13 @@ ArchitectureComboBox::~ArchitectureComboBox()
   }
 }
 
-mrta::Architecture *ArchitectureComboBox::getCurrentArchitecture() const
+mrta::Architecture* ArchitectureComboBox::getCurrentArchitecture() const
 {
   return current_architecture_;
 }
 
-void ArchitectureComboBox::setFilterAllocationType(const mrta::Taxonomy::AllocationType &allocation_type)
+void ArchitectureComboBox::setFilterAllocationType(
+    const mrta::Taxonomy::AllocationType& allocation_type)
 {
   if (allocation_type != allocation_type_)
   {
@@ -44,7 +46,8 @@ void ArchitectureComboBox::setFilterAllocationType(const mrta::Taxonomy::Allocat
   }
 }
 
-void ArchitectureComboBox::setFilterRobotType(const mrta::Taxonomy::RobotType &robot_type)
+void ArchitectureComboBox::setFilterRobotType(
+    const mrta::Taxonomy::RobotType& robot_type)
 {
   if (robot_type != robot_type_)
   {
@@ -55,7 +58,8 @@ void ArchitectureComboBox::setFilterRobotType(const mrta::Taxonomy::RobotType &r
   }
 }
 
-void ArchitectureComboBox::setFilterTaskType(const mrta::Taxonomy::TaskType &task_type)
+void ArchitectureComboBox::setFilterTaskType(
+    const mrta::Taxonomy::TaskType& task_type)
 {
   if (task_type != task_type_)
   {
@@ -86,7 +90,7 @@ void ArchitectureComboBox::filter()
       }
     }
   }
-  if (count() > 0)
+  if (count() > 1)
   {
     setEnabled(true);
   }
@@ -112,7 +116,7 @@ void ArchitectureComboBox::load()
   rp.getSearchPathFromEnv(search_path);
   rp.crawl(search_path, true);
   architectures_.clear();
-  if (rp.plugins("rqt_mrta", "config", "", architectures))
+  if (rp.plugins("rqt_mrta", "architecture", "", architectures))
   {
     for (std::vector<std::string>::iterator it(architectures.begin());
          it != architectures.end(); it++)

@@ -1,20 +1,21 @@
 #include <QFileDialog>
-#include "rqt_mrta/rqt_mrta_widget.h"
-#include "rqt_mrta/new_application_wizard.h"
-#include "rqt_mrta/ui_rqt_mrta_widget.h"
-#include "utilities/xml_settings.h"
 #include <ros/package.h>
 #include <ros/console.h>
-#include "rqt_mrta/new_application_wizard.h"
 #include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
 #include "rqt_mrta/config/application/rqt_mrta_application.h"
+#include "rqt_mrta/new_application_wizard.h"
+#include "rqt_mrta/rqt_mrta_widget.h"
+#include "rqt_mrta/ui_rqt_mrta_widget.h"
+#include "utilities/message_subscriber_registry.h"
+#include "utilities/xml_settings.h"
 
 namespace rqt_mrta
 {
 RqtMrtaWidget::RqtMrtaWidget(QWidget* parent)
     : QWidget(parent), ui_(new Ui::RqtMrtaWidget()),
       architecture_config_(new RqtMrtaArchitectureConfig(this)),
-      application_config_(new RqtMrtaApplicationConfig(this))
+      application_config_(new RqtMrtaApplicationConfig(this)),
+      registry_(new utilities::MessageSubscriberRegistry(this))
 {
   ui_->setupUi(this);
   ui_->configuration_tab_widget->setCurrentIndex(0);
@@ -48,10 +49,16 @@ RqtMrtaWidget::~RqtMrtaWidget()
     delete application_config_;
     application_config_ = NULL;
   }
+  if (registry_)
+  {
+    delete registry_;
+    registry_ = NULL;
+  }
 }
 
 bool RqtMrtaWidget::loadConfig(const QString& url)
 {
+  ROS_INFO("[RqtMrtaWidget] loadConfig(url)");
   if (architecture_config_ && !url.isEmpty())
   {
     QFileInfo file_info(url);
@@ -80,7 +87,6 @@ void RqtMrtaWidget::resetConfig()
 
 bool RqtMrtaWidget::saveConfig()
 {
-  ROS_WARN_STREAM("[RqtMrtaWidget] to aki");
   if (application_config_ && application_config_->getPackage().isEmpty())
   {
     return false;
@@ -120,9 +126,7 @@ bool RqtMrtaWidget::createApplication() { return true; }
 
 void RqtMrtaWidget::newPushButtonClicked()
 {
-  NewApplicationWizard wizard;
-  wizard.setConfig(application_config_, architecture_config_);
-  wizard.createPages();
+  NewApplicationWizard wizard(this, application_config_, architecture_config_);
   if (wizard.exec() == QWizard::Accepted)
   {
     ROS_INFO_STREAM("[RqtMrtaWidget] accepted!!!");

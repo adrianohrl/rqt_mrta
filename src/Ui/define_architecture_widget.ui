@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SelectArchitectureWidget</class>
- <widget class="QWidget" name="SelectArchitectureWidget">
+ <class>DefineArchitectureWidget</class>
+ <widget class="QWidget" name="DefineArchitectureWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -221,13 +221,8 @@
       <item row="8" column="1">
        <widget class="rqt_mrta::ArchitectureComboBox" name="architectures_combo_box">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
-        <item>
-         <property name="text">
-          <string/>
-         </property>
-        </item>
        </widget>
       </item>
       <item row="9" column="0">

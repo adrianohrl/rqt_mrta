@@ -6,14 +6,15 @@ namespace config
 {
 namespace architecture
 {
-Topic::Topic(QObject* parent) : AbstractConfig(parent), monitor_(NULL) {}
+Topic::Topic(QObject* parent) : AbstractConfig(parent), subscriber_(NULL), registry_(NULL) {}
 
 Topic::~Topic()
 {
-  if (monitor_)
+  registry_ = NULL;
+  if (subscriber_)
   {
-    delete monitor_;
-    monitor_ = NULL;
+    delete subscriber_;
+    subscriber_ = NULL;
   }
 }
 
@@ -89,12 +90,25 @@ void Topic::setHorizon(const ros::Duration& horizon)
   }
 }
 
+void Topic::setRegistry(utilities::MessageSubscriberRegistry *registry)
+{
+  if (registry != registry_)
+  {
+    registry_ = registry;
+    if (subscriber_)
+    {
+      subscriber_->setRegistry(registry);
+      ROS_WARN_STREAM("[Topic] setRegistry both!!");
+    }
+  }
+}
+
 void Topic::save(QSettings& settings) const
 {
   settings.beginGroup("topic");
   settings.setValue("name", name_);
   settings.setValue("type", type_);
-  settings.setValue("queue_size", (quint64) queue_size_);
+  settings.setValue("queue_size", (quint64)queue_size_);
   settings.setValue("field", field_);
   settings.setValue("timeout", timeout_.toSec());
   settings.setValue("horizon", horizon_.toSec());
@@ -162,60 +176,52 @@ Topic& Topic::operator=(const Topic& config)
   setHorizon(config.horizon_);
 }
 
-void Topic::updateMonitor()
+void Topic::updateSubscriber()
 {
-  ROS_INFO("[Topic] updating monitor ...");
-  if (monitor_)
+  ROS_INFO_STREAM("[Topic] updating subscriber: (" << name_.toStdString()
+                  << ", " << type_.toStdString() << ", " << field_.toStdString() << ")");
+  if (subscriber_)
   {
-    disconnect(monitor_, SIGNAL(validChanged(bool, const QString&)), this,
-               SLOT(monitorValidChanged(bool, const QString&)));
     disconnect(
-        monitor_,
-        SIGNAL(receivedMessageField(const variant_topic_tools::BuiltinVariant&,
-                                    const ros::Time&)),
+        subscriber_,
+        SIGNAL(received(const variant_topic_tools::BuiltinVariant&)),
         this,
-        SLOT(receivedMessageField(const variant_topic_tools::BuiltinVariant&,
-                                  const ros::Time&)));
-    delete monitor_;
-    monitor_ = NULL;
+        SLOT(subscriberReceived(const variant_topic_tools::BuiltinVariant&)));
+    if (subscriber_->isSubscribed())
+    {
+      subscriber_->unsubscribe();
+    }
+    delete subscriber_;
+    subscriber_ = NULL;
   }
   if (name_.isEmpty() || type_.isEmpty() || field_.isEmpty())
   {
     return;
   }
-  monitor_ =
-      new utilities::TopicFieldMonitor(this, nh_, name_, 10, type_, field_);
-  if (!monitor_->isValid())
+  if (registry_)
   {
-    ROS_ERROR_STREAM("[Topic] invalid " << monitor_->getError().toStdString());
-    delete monitor_;
-    monitor_ = NULL;
-    return;
-  }
-  connect(monitor_, SIGNAL(validChanged(bool, const QString&)), this,
-          SLOT(monitorValidChanged(bool, const QString&)));
-  connect(monitor_,
-          SIGNAL(receivedMessageField(
-              const variant_topic_tools::BuiltinVariant&, const ros::Time&)),
+    subscriber_ =
+        new utilities::MessageFieldSubscriber(this, type_, field_, registry_);
+    subscriber_->subscribe(name_, queue_size_);
+    if (subscriber_->isSubscribed())
+    {
+      connect(
+          subscriber_,
+          SIGNAL(received(const variant_topic_tools::BuiltinVariant&)),
           this,
-          SLOT(receivedMessageField(const variant_topic_tools::BuiltinVariant&,
-                                    const ros::Time&)));
-}
-
-void Topic::monitorValidChanged(bool valid, const QString& error)
-{
-  if (!valid)
-  {
-    ROS_ERROR_STREAM("[TopicFieldMonitor] " << error.toStdString());
+          SLOT(subscriberReceived(const variant_topic_tools::BuiltinVariant&)));
+    }
+    else
+    {
+      delete subscriber_;
+      subscriber_ = NULL;
+    }
   }
 }
 
-void Topic::receivedMessageField(
-    const variant_topic_tools::BuiltinVariant& field_variant,
-    const ros::Time& receipt_timestamp)
+void Topic::subscriberReceived(variant_topic_tools::BuiltinVariant field_value)
 {
-  ROS_INFO_STREAM("[Topic] received: " << field_variant.getValue<std::string>()
-                                       << " at " << receipt_timestamp);
+  ROS_INFO_STREAM("[Topic] received: " << field_value.getValue<std::string>());
 }
 }
 }

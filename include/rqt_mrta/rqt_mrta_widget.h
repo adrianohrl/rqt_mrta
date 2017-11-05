@@ -3,6 +3,11 @@
 
 #include <QWidget>
 
+namespace utilities
+{
+class MessageSubscriberRegistry;
+}
+
 namespace Ui
 {
 class RqtMrtaWidget;
@@ -42,6 +47,7 @@ private:
   Ui::RqtMrtaWidget* ui_;
   RqtMrtaArchitectureConfig* architecture_config_;
   RqtMrtaApplicationConfig* application_config_;
+  utilities::MessageSubscriberRegistry* registry_;
 
 private slots:
   void newPushButtonClicked();

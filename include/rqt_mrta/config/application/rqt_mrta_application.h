@@ -2,6 +2,7 @@
 #define _RQT_MRTA_APPLICATION_CONFIG_H_
 
 #include "utilities/abstract_config.h"
+#include <rospack/rospack.h>
 #include "rqt_mrta/config/application/application.h"
 
 namespace rqt_mrta
@@ -17,6 +18,7 @@ public:
   RqtMrtaApplication(QObject* parent = NULL);
   virtual ~RqtMrtaApplication();
   QString getPackage() const;
+  QString getPackageUrl() const;
   Application* getApplication() const;
   void setPackage(const QString& package);
   void save(QSettings& settings) const;
@@ -31,7 +33,9 @@ signals:
 
 private:
   QString package_;
+  QString package_url_;
   Application* application_;
+  rospack::Rospack rp_;
 
 private slots:
   void applicationChanged();

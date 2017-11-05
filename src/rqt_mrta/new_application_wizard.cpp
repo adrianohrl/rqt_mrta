@@ -1,61 +1,73 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include "rqt_mrta/new_application_wizard.h"
-#include "rqt_mrta/select_architecture_widget.h"
-#include "rqt_mrta/config/application/rqt_mrta_application.h"
-#include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
+#include "rqt_mrta/define_architecture_wizard_page.h"
+#include "rqt_mrta/define_robots_wizard_page.h"
 #include <ros/console.h>
+#include "utilities/exception.h"
 
 namespace rqt_mrta
 {
-NewApplicationWizard::NewApplicationWizard(QWidget* parent,
-                                           Qt::WindowFlags flags)
-    : QWizard(parent, flags),
-      architecture_widget_(new SelectArchitectureWidget(this))
+NewApplicationWizard::NewApplicationWizard(
+    QWidget* parent, RqtMrtaApplicationConfig* application_config,
+    RqtMrtaArchitectureConfig* architecture_config, Qt::WindowFlags flags)
+    : QWizard(parent, flags), application_config_(application_config),
+      architecture_config_(architecture_config), define_architecture_(NULL), past_id_(-1)
 {
+  if (!application_config_)
+  {
+    throw utilities::Exception("The application configuration must not be null.");
+  }
+  if (!architecture_config_)
+  {
+    throw utilities::Exception("The architecture configuration must not be null.");
+  }
+  define_architecture_ = new DefineArchitectureWizardPage(this);
+  define_robots_ = new DefineRobotsWizardPage(this);
+  define_architecture_->setId(addPage(define_architecture_));
+  define_robots_->setId(addPage(define_robots_));
   setWindowTitle("New Application");
   connect(this, SIGNAL(accepted()), this, SLOT(generatePackage()));
   connect(this, SIGNAL(rejected()), this, SLOT(resetConfig()));
+  connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(idChanged(int)));
 }
 
 NewApplicationWizard::~NewApplicationWizard()
 {
-  architecture_widget_->setApplicationConfig(NULL);
-  architecture_widget_->setArchitectureConfig(NULL);
-  if (architecture_widget_)
+  application_config_ = NULL;
+  architecture_config_ = NULL;
+  if (define_architecture_)
   {
-    delete architecture_widget_;
-    architecture_widget_ = NULL;
+    delete define_architecture_;
+    define_architecture_ = NULL;
   }
 }
 
-void NewApplicationWizard::setConfig(
-    RqtMrtaApplicationConfig* application_config,
-    RqtMrtaArchitectureConfig* architecture_config)
+RqtMrtaApplicationConfig* NewApplicationWizard::getApplicationConfig() const
 {
-  ROS_INFO("[NewApplicationWizard] ro aki");
-  architecture_widget_->setApplicationConfig(application_config);
-  architecture_widget_->setArchitectureConfig(architecture_config);
+  return application_config_;
 }
 
-void NewApplicationWizard::createPages()
+RqtMrtaArchitectureConfig* NewApplicationWizard::getArchitectureConfig() const
 {
-  addPage(createArchitecturePage());
+  return architecture_config_;
 }
 
-QWizardPage* NewApplicationWizard::createArchitecturePage() const
+void NewApplicationWizard::idChanged(int id)
 {
-  if (!architecture_widget_->getApplicationConfig() ||
-      !architecture_widget_->getArchitectureConfig())
+  bool moved_foward(id - past_id_ > 0);
+  /*if (id == define_architecture_->getId())
   {
-    return NULL;
+    architecture_config_->reset();
   }
-  QWizardPage* page = new QWizardPage();
-  page->setTitle("Select an Architecture");
-  QVBoxLayout* layout = new QVBoxLayout();
-  layout->addWidget(architecture_widget_);
-  page->setLayout(layout);
-  return page;
+  if (moved_foward)
+  {
+    if (id == define_architecture_->getId() + 1)
+    {
+      define_architecture_->loadArchitectureConfig();
+    }
+  }*/
+  past_id_ = id;
 }
 
 void NewApplicationWizard::generatePackage()
@@ -65,13 +77,13 @@ void NewApplicationWizard::generatePackage()
 
 void NewApplicationWizard::resetConfig()
 {
-  if (architecture_widget_->getApplicationConfig())
+  if (application_config_)
   {
-    architecture_widget_->getApplicationConfig()->reset();
+    application_config_->reset();
   }
-  if (architecture_widget_->getArchitectureConfig())
+  if (architecture_config_)
   {
-    architecture_widget_->getArchitectureConfig()->reset();
+    architecture_config_->reset();
   }
 }
 }
