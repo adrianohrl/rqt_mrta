@@ -24,7 +24,6 @@ public:
   void save() const;
   void save(const QString& filename) const;
   void load(const QString& filename);
-
   void reset();
   void write(QDataStream& stream) const;
   void read(QDataStream& stream);

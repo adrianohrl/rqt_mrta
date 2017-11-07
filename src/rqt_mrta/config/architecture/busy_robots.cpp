@@ -62,6 +62,7 @@ void BusyRobots::read(QDataStream& stream)
 BusyRobots& BusyRobots::operator=(const BusyRobots& config)
 {
   *topic_ = *config.topic_;
+  return *this;
 }
 
 void BusyRobots::topicChanged() { emit changed(); }

@@ -63,6 +63,7 @@ void Widget::read(QDataStream &stream)
 Widget &Widget::operator=(const Widget &config)
 {
   setId(config.id_);
+  return *this;
 }
 }
 }

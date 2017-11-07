@@ -84,6 +84,7 @@ Robots& Robots::operator=(const Robots& config)
   *busy_robots_ = *config.busy_robots_;
   *idle_robots_ = *config.idle_robots_;
   *launch_ = *config.launch_;
+  return *this;
 }
 
 void Robots::busyRobotsChanged() { emit changed(); }

@@ -111,6 +111,7 @@ Architecture &Architecture::operator=(const Architecture &config)
   *launch_ = *config.launch_;
   *robots_ = *config.robots_;
   *tasks_ = *config.tasks_;
+  return *this;
 }
 
 void Architecture::allocationsChanged()

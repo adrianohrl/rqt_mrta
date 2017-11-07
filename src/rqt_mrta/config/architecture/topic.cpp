@@ -174,6 +174,7 @@ Topic& Topic::operator=(const Topic& config)
   setField(config.field_);
   setTimeout(config.timeout_);
   setHorizon(config.horizon_);
+  return *this;
 }
 
 void Topic::updateSubscriber()

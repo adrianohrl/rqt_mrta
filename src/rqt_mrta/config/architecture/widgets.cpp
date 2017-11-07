@@ -132,6 +132,7 @@ Widgets &Widgets::operator=(const Widgets &config)
   {
     *widgets_[index] = *config.widgets_[index];
   }
+  return *this;
 }
 
 void Widgets::widgetChanged()

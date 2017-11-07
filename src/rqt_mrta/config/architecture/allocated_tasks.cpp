@@ -62,6 +62,7 @@ void AllocatedTasks::read(QDataStream& stream)
 AllocatedTasks& AllocatedTasks::operator=(const AllocatedTasks& config)
 {
   *topic_ = *config.topic_;
+  return *this;
 }
 
 void AllocatedTasks::topicChanged() { emit changed(); }

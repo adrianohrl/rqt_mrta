@@ -7,6 +7,8 @@
 
 namespace utilities
 {
+class Export;
+
 class RosPackage : public utilities::AbstractConfig
 {
   Q_OBJECT
@@ -26,7 +28,7 @@ public:
   QString getBuildtoolDepend() const;
   QStringList getBuildDepends() const;
   QStringList getRunDepends() const;
-  QStringList getExports() const;
+  Export* getExport() const;
   void setWorkspaceUrl(const QString& url);
   void setName(const QString& name);
   void setUrl(const QString& url);
@@ -38,24 +40,20 @@ public:
   void setMaintainerEmail(const QString& email);
   void setLicense(const QString& license);
   void setBuildtoolDepend(const QString& depend);
+  void setBuildDepends(const QString& depends);
   void setBuildDepends(const QStringList& depends);
+  void setRunDepends(const QString& depends);
   void setRunDepends(const QStringList& depends);
-  void setExports(const QStringList& exports);
   size_t countBuildDepends() const;
   size_t countRunDepends() const;
-  size_t countExports() const;
   QString getBuildDepend(size_t index) const;
   QString getRunDepend(size_t index) const;
-  QString getExport(size_t index) const;
   void addBuildDepend(const QString& depend);
   void addRunDepend(const QString& depend);
-  void addExport(const QString& exporrt);
   void removeBuildDepend(const QString& depend);
   void removeRunDepend(const QString& depend);
-  void removeExport(const QString& exporrt);
   void clearBuildDepends();
   void clearRunDepends();
-  void clearExports();
   QString validate() const;
   bool isValid() const;
   bool isValidPackageName() const;
@@ -63,13 +61,13 @@ public:
   bool createManifest();
   virtual bool createCMakeLists();
   bool updateManifest();
-  QString getManifestUrl();
-  QString getCMakeListsUrl();
+  QString getManifestUrl() const;
+  QString getCMakeListsUrl() const;
   bool catkinMake() const;
   bool workspaceExists() const;
   bool catkinInitWorkspace() const;
-  void save(QSettings& settings) const;
-  void load(QSettings& settings);
+  void save() const;
+  void load(const QString& url);
   virtual void reset();
   void write(QDataStream& stream) const;
   void read(QDataStream& stream);
@@ -89,19 +87,22 @@ signals:
   void buildtoolDependChanged(const QString& depend);
   void buildDependsChanged(const QStringList& depends);
   void runDependsChanged(const QStringList& depends);
-  void exportsChanged(const QStringList& exports);
+  void exportChanged(const QStringList& all_names,
+                     const QStringList& all_values);
   void buildDependAdded(const QString& depend);
   void runDependAdded(const QString& depend);
-  void exportAdded(const QString& exporrt);
+  void exportAdded(const QString& name, const QString& value);
   void buildDependRemoved(const QString& depend);
   void runDependRemoved(const QString& depend);
-  void exportRemoved(const QString& exporrt);
+  void exportRemoved(const QString& name, const QString& value);
   void buildDependsCleared();
   void runDependsCleared();
-  void exportsCleared();
+  void exportCleared();
 
 protected:
   rospack::Rospack rp_;
+  void save(QSettings& settings) const;
+  void load(QSettings& settings);
 
 protected:
   QString workspace_url_;
@@ -117,10 +118,44 @@ protected:
   QString buildtool_depend_;
   QStringList build_depends_;
   QStringList run_depends_;
-  QStringList exports_;
+  Export* export_;
 
 private slots:
   void setUrl();
+};
+
+class Export : public AbstractConfig
+{
+  Q_OBJECT
+public:
+  Export(RosPackage* parent);
+  virtual ~Export();
+  QString getName(size_t index) const;
+  QString getValue(const QString &name) const;
+  QStringList getAllNames() const;
+  QStringList getAllValues() const;
+  void setAll(const QStringList& all_names, const QStringList& all_values);
+  size_t count() const;
+  void add(const QString& name, const QString& value);
+  void remove(const QString& name);
+  void clear();
+  void save(QSettings& settings) const;
+  void load(QSettings& settings);
+  virtual void reset();
+  void write(QDataStream& stream) const;
+  void read(QDataStream& stream);
+  Export& operator=(const Export& config);
+
+signals:
+  void allChanged(const QStringList& all_names,
+                  const QStringList& all_values);
+  void added(const QString& name, const QString& value);
+  void removed(const QString& name, const QString& value);
+  void cleared();
+
+private:
+  QStringList all_names_;
+  QStringList all_values_;
 };
 
 class RosMetapackage : public RosPackage

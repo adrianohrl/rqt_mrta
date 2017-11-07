@@ -43,6 +43,7 @@ void ArchitectureLaunch::read(QDataStream &stream)
 
 ArchitectureLaunch &ArchitectureLaunch::operator=(const ArchitectureLaunch &config)
 {
+  return *this;
 }
 }
 }

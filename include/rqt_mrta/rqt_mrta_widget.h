@@ -49,8 +49,8 @@ private:
   utilities::MessageSubscriberRegistry* registry_;
 
 private slots:
-  void newPushButtonClicked();
-  void openPushButtonClicked();
+  void newApplicationPushButtonClicked();
+  void openApplicationPushButtonClicked();
 };
 }
 

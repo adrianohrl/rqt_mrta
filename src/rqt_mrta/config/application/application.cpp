@@ -102,6 +102,7 @@ Application &Application::operator=(const Application &config)
 {
   setName(config.name_);
   setUrl(config.url_);
+  return *this;
 }
 
 void Application::robotsChanged()

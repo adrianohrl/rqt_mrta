@@ -41,6 +41,7 @@ void RobotLaunch::read(QDataStream &stream)
 
 RobotLaunch &RobotLaunch::operator=(const RobotLaunch &config)
 {
+  return *this;
 }
 }
 }

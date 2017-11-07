@@ -53,6 +53,7 @@ void Allocations::read(QDataStream& stream) { allocated_tasks_->read(stream); }
 Allocations& Allocations::operator=(const Allocations& config)
 {
   *allocated_tasks_ = *config.allocated_tasks_;
+  return *this;
 }
 
 void Allocations::allocatedTasksChanged() { emit changed(); }

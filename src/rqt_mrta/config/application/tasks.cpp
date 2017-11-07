@@ -132,6 +132,7 @@ Tasks &Tasks::operator=(const Tasks &config)
   {
     *tasks_[index] = *config.tasks_[index];
   }
+  return *this;
 }
 
 void Tasks::taskChanged()

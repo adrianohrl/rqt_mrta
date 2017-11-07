@@ -76,6 +76,7 @@ Robot &Robot::operator=(const Robot &config)
 {
   setId(config.id_);
   *tasks_ = *config.tasks_;
+  return *this;
 }
 
 void Robot::tasksChanged()

@@ -62,6 +62,7 @@ void IdleRobots::read(QDataStream& stream)
 IdleRobots& IdleRobots::operator=(const IdleRobots& config)
 {
   *topic_ = *config.topic_;
+  return *this;
 }
 
 void IdleRobots::topicChanged() { emit changed(); }

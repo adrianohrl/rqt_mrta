@@ -6,32 +6,78 @@
 #include <QXmlStreamWriter>
 #include "utilities/xml_settings.h"
 
+#include <ros/console.h>
+
 namespace utilities
 {
 const QSettings::Format XmlSettings::format =
     QSettings::registerFormat("xml", XmlSettings::read, XmlSettings::write);
+const QString XmlSettings::GROUP_SEPARATOR = "/";
+const QString XmlSettings::ATTRIBUTE_SEPARATOR = "@";
 
 bool XmlSettings::read(QIODevice& device, QSettings::SettingsMap& map)
 {
-  QXmlStreamReader xmlReader(&device);
+  QXmlStreamReader xml_reader(&device);
   QStringList groups;
-  while (!xmlReader.atEnd())
+  bool multiple_elements(false);
+  while (!xml_reader.atEnd())
   {
-    xmlReader.readNext();
-    if (xmlReader.isStartElement())
+    xml_reader.readNext();
+    if (xml_reader.isStartElement())
     {
-      groups.append(xmlReader.name().toString());
+      groups.append(xml_reader.name().toString());
+      multiple_elements = map.contains(groups.join(GROUP_SEPARATOR));
+      QXmlStreamAttributes attributes(xml_reader.attributes());
+      for (size_t i(0); i < attributes.count(); i++)
+      {
+        QString name(groups.join(GROUP_SEPARATOR) + ATTRIBUTE_SEPARATOR +
+                     attributes[i].name().toString());
+        if (!multiple_elements)
+        {
+          map[name] = attributes[i].value().toString();
+        }
+        else
+        {
+          QString values;
+          if (!map.contains(name))
+          {
+            for (size_t j(0); j < i; j++)
+            {
+              values += ",";
+            }
+            values = "[" + values + "]";
+          }
+          values = map[name].toString();
+          int count(values.count());
+          QStringRef values_ref(&values, values[0] == '[' ? 1 : 0,
+                                count - (values[count - 1] == ']' ? 2 : 0));
+          map[name] = "[" + values_ref.toString() + "," +
+                      xml_reader.text().toString() + "]";
+        }
+      }
     }
-    else if (xmlReader.isCharacters() && !xmlReader.isWhitespace())
+    else if (xml_reader.isCharacters() && !xml_reader.isWhitespace())
     {
-      map[groups.join("/")] = xmlReader.text().toString();
+      if (!multiple_elements)
+      {
+        map[groups.join(GROUP_SEPARATOR)] = xml_reader.text().toString();
+      }
+      else
+      {
+        QString values(map[groups.join(GROUP_SEPARATOR)].toString());
+        int count(values.count());
+        QStringRef values_ref(&values, values[0] == '[' ? 1 : 0,
+                              count - (values[count - 1] == ']' ? 2 : 0));
+        map[groups.join(GROUP_SEPARATOR)] = "[" + values_ref.toString() + "," +
+                                            xml_reader.text().toString() + "]";
+      }
     }
-    else if (xmlReader.isEndElement())
+    else if (xml_reader.isEndElement())
     {
       groups.removeLast();
     }
   }
-  return !xmlReader.hasError();
+  return !xml_reader.hasError();
 }
 
 bool XmlSettings::write(QIODevice& device, const QSettings::SettingsMap& map)
@@ -41,66 +87,73 @@ bool XmlSettings::write(QIODevice& device, const QSettings::SettingsMap& map)
   struct NestedMap : QMap<QString, NestedQSharedPointer>
   {
   };
-  NestedQSharedPointer nestedMap(new NestedMap());
+  NestedQSharedPointer nested_map(new NestedMap());
   for (QSettings::SettingsMap::const_iterator it(map.begin()); it != map.end();
        ++it)
   {
-    NestedQSharedPointer currentMap(nestedMap);
-    QStringList groups(it.key().split("/"));
+    NestedQSharedPointer current_map(nested_map);
+    QStringList groups(it.key().split(GROUP_SEPARATOR));
     for (QStringList::const_iterator jt(groups.begin()); jt != groups.end();
          ++jt)
     {
-      NestedMap::iterator kt(currentMap->find(*jt));
-      if (kt == currentMap->end())
+      NestedMap::iterator kt(current_map->find(*jt));
+      if (kt == current_map->end())
       {
-        kt = currentMap->insert(*jt, NestedQSharedPointer(new NestedMap()));
-        currentMap = kt.value();
+        kt = current_map->insert(*jt, NestedQSharedPointer(new NestedMap()));
+        current_map = kt.value();
       }
       else
       {
-        currentMap = kt.value();
+        current_map = kt.value();
       }
     }
   }
-  QXmlStreamWriter xmlWriter(&device);
-  xmlWriter.setAutoFormatting(true);
-  xmlWriter.writeStartDocument();
+  QXmlStreamWriter xml_writer(&device);
+  xml_writer.setAutoFormatting(true);
+  xml_writer.writeStartDocument();
   QStringList groups;
-  QList<NestedQSharedPointer> nestedMaps;
-  QList<NestedMap::iterator> nestedMapIterators;
-  nestedMaps.append(nestedMap);
-  nestedMapIterators.append(nestedMap->begin());
-  while (!nestedMaps.isEmpty())
+  QList<NestedQSharedPointer> nested_maps;
+  QList<NestedMap::iterator> nested_map_iterators;
+  nested_maps.append(nested_map);
+  nested_map_iterators.append(nested_map->begin());
+  while (!nested_maps.isEmpty())
   {
-    NestedQSharedPointer currentMap(nestedMaps.last());
-    NestedMap::iterator it(nestedMapIterators.last());
-    if (it != currentMap->end())
+    NestedQSharedPointer current_map(nested_maps.last());
+    NestedMap::iterator it(nested_map_iterators.last());
+    if (it != current_map->end())
     {
-      xmlWriter.writeStartElement(it.key());
-      groups.append(it.key());
-      nestedMaps.append(it.value());
-      nestedMapIterators.append(it.value()->begin());
+      QStringList start_element(it.key().split('@'));
+      xml_writer.writeStartElement(start_element[0]);
+      if (start_element.count() > 1)
+      {
+        ROS_ERROR_STREAM("[XmlSettings::write] start_element.count() > 1 : "
+                         << start_element.count()
+                         << ", att[1]: " << start_element[1].toStdString());
+      }
+      groups.append(start_element[0]);
+      nested_maps.append(it.value());
+      nested_map_iterators.append(it.value()->begin());
     }
     else
     {
-      if (currentMap->isEmpty())
+      if (current_map->isEmpty())
       {
-        xmlWriter.writeCharacters(map[groups.join("/")].toString());
+        xml_writer.writeCharacters(map[groups.join("/")].toString());
       }
-      xmlWriter.writeEndElement();
+      xml_writer.writeEndElement();
       if (!groups.isEmpty())
       {
         groups.removeLast();
       }
-      nestedMaps.removeLast();
-      nestedMapIterators.removeLast();
-      if (!nestedMaps.isEmpty())
+      nested_maps.removeLast();
+      nested_map_iterators.removeLast();
+      if (!nested_maps.isEmpty())
       {
-        ++nestedMapIterators.last();
+        ++nested_map_iterators.last();
       }
     }
   }
-  xmlWriter.writeEndDocument();
+  xml_writer.writeEndDocument();
   return true;
 }
 }

@@ -56,6 +56,7 @@ void Tasks::read(QDataStream& stream)
 Tasks& Tasks::operator=(const Tasks& config)
 {
   *incoming_tasks_ = *config.incoming_tasks_;
+  return *this;
 }
 
 void Tasks::incomingTasksChanged() { emit changed(); }

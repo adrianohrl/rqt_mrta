@@ -3,16 +3,25 @@
 #include <QTextStream>
 #include <ros/console.h>
 #include "utilities/ros_package.h"
+#include "utilities/exception.h"
 #include "utilities/xml_settings.h"
 
 namespace utilities
 {
-RosPackage::RosPackage(QObject* parent) : AbstractConfig(parent)
+RosPackage::RosPackage(QObject* parent)
+    : AbstractConfig(parent), export_(new Export(this))
 {
+  reset();
   rp_.setQuiet(true);
   std::vector<std::string> search_path;
   rp_.getSearchPathFromEnv(search_path);
   rp_.crawl(search_path, true);
+  connect(export_, SIGNAL(changed()), this, SLOT(exportChanged()));
+  connect(export_, SIGNAL(added(const QString&, const QString&)), this,
+          SLOT(exportAdded(const QString&, const QString&)));
+  connect(export_, SIGNAL(removed(const QString&, const QString&)), this,
+          SLOT(exportRemoved(const QString&, const QString&)));
+  connect(export_, SIGNAL(cleared()), this, SLOT(exportCleared()));
 }
 
 RosPackage::~RosPackage() {}
@@ -43,7 +52,7 @@ QStringList RosPackage::getBuildDepends() const { return build_depends_; }
 
 QStringList RosPackage::getRunDepends() const { return run_depends_; }
 
-QStringList RosPackage::getExports() const { return exports_; }
+Export* RosPackage::getExport() const { return export_; }
 
 void RosPackage::setWorkspaceUrl(const QString& url)
 {
@@ -163,6 +172,14 @@ void RosPackage::setBuildtoolDepend(const QString& depend)
   }
 }
 
+void RosPackage::setBuildDepends(const QString& depends)
+{
+  int count(depends.count());
+  QStringRef depends_ref(&depends, depends[0] == '[' ? 1 : 0,
+                         count - (depends[count - 1] == ']' ? 2 : 0));
+  setBuildDepends(depends_ref.toString().split(','));
+}
+
 void RosPackage::setBuildDepends(const QStringList& depends)
 {
   if (depends != build_depends_)
@@ -171,6 +188,14 @@ void RosPackage::setBuildDepends(const QStringList& depends)
     emit buildDependsChanged(depends);
     emit changed();
   }
+}
+
+void RosPackage::setRunDepends(const QString& depends)
+{
+  int count(depends.count());
+  QStringRef depends_ref(&depends, depends[0] == '[' ? 1 : 0,
+                         count - (depends[count - 1] == ']' ? 2 : 0));
+  setBuildDepends(depends_ref.toString().split(','));
 }
 
 void RosPackage::setRunDepends(const QStringList& depends)
@@ -183,21 +208,9 @@ void RosPackage::setRunDepends(const QStringList& depends)
   }
 }
 
-void RosPackage::setExports(const QStringList& exports)
-{
-  if (exports != exports_)
-  {
-    exports_ = exports;
-    emit exportsChanged(exports);
-    emit changed();
-  }
-}
-
 size_t RosPackage::countBuildDepends() const { return build_depends_.count(); }
 
 size_t RosPackage::countRunDepends() const { return run_depends_.count(); }
-
-size_t RosPackage::countExports() const { return exports_.count(); }
 
 QString RosPackage::getBuildDepend(size_t index) const
 {
@@ -208,8 +221,6 @@ QString RosPackage::getRunDepend(size_t index) const
 {
   return run_depends_[index];
 }
-
-QString RosPackage::getExport(size_t index) const { return exports_[index]; }
 
 void RosPackage::addBuildDepend(const QString& depend)
 {
@@ -231,23 +242,7 @@ void RosPackage::addRunDepend(const QString& depend)
   if (!run_depends_.contains(depend) && !package_path.empty())
   {
     run_depends_.append(depend);
-    std::stringstream ss;
-    for (int i(0); i < run_depends_.count(); i++)
-    {
-      ss << "(" << i << ", " << run_depends_[i].toStdString() << ")";
-    }
-    ROS_INFO_STREAM("[RosPackage] rundeps: " << ss.str());
     emit runDependAdded(depend);
-    emit changed();
-  }
-}
-
-void RosPackage::addExport(const QString& exporrt)
-{
-  if (!exports_.contains(exporrt))
-  {
-    exports_.append(exporrt);
-    emit exportAdded(exporrt);
     emit changed();
   }
 }
@@ -272,16 +267,6 @@ void RosPackage::removeRunDepend(const QString& depend)
   }
 }
 
-void RosPackage::removeExport(const QString& exporrt)
-{
-  if (exports_.contains(exporrt))
-  {
-    exports_.removeAll(exporrt);
-    emit exportRemoved(exporrt);
-    emit changed();
-  }
-}
-
 void RosPackage::clearBuildDepends()
 {
   if (!build_depends_.isEmpty())
@@ -298,16 +283,6 @@ void RosPackage::clearRunDepends()
   {
     run_depends_.clear();
     emit runDependsCleared();
-    emit changed();
-  }
-}
-
-void RosPackage::clearExports()
-{
-  if (!exports_.isEmpty())
-  {
-    exports_.clear();
-    emit exportsCleared();
     emit changed();
   }
 }
@@ -437,12 +412,12 @@ bool RosPackage::updateManifest()
   return false;
 }
 
-QString RosPackage::getManifestUrl()
+QString RosPackage::getManifestUrl() const
 {
   return !getUrl().isEmpty() ? getUrl() + "/package.xml" : "";
 }
 
-QString RosPackage::getCMakeListsUrl()
+QString RosPackage::getCMakeListsUrl() const
 {
   return !getUrl().isEmpty() ? getUrl() + "/CMakeLists.txt" : "";
 }
@@ -550,76 +525,109 @@ bool RosPackage::catkinInitWorkspace() const
   bashrc_file.close();
 }
 
+void RosPackage::save() const
+{
+  QString url(getManifestUrl());
+  if (url.isEmpty())
+  {
+    throw Exception(
+        "The package url must be setted before saving its manifest file.");
+  }
+  QSettings settings(url, utilities::XmlSettings::format);
+  if (!settings.isWritable())
+  {
+    throw Exception("The package manifest url must be writable.");
+  }
+  settings.clear();
+  save(settings);
+  settings.sync();
+  if (settings.status() == QSettings::NoError)
+  {
+    ROS_INFO_STREAM("Saved application configuration file ["
+                    << url.toStdString() << "].");
+  }
+}
+
 void RosPackage::save(QSettings& settings) const
 {
   if (!isValid())
   {
-    return;
+    throw Exception("All mandatory parameters of the package manifest must be "
+                    "given before saving it.");
   }
+  settings.setValue("package@type", "application");
   settings.beginGroup("package");
   settings.setValue("name", name_);
   settings.setValue("version", version_);
   settings.setValue("description", description_);
   settings.setValue("author", author_);
-  // settings.setValue("author", author_email_);
+  settings.setValue("author@email", author_email_);
   settings.setValue("maintainer", maintainer_);
-  // settings.setValue("maintainer", maintainer_email_);
+  settings.setValue("maintainer@email", maintainer_email_);
   settings.setValue("license", license_);
   settings.setValue("buildtool_depend", buildtool_depend_);
-  for (size_t i(0); i < build_depends_.count(); i++)
+  if (!build_depends_.isEmpty())
   {
-    settings.setValue("build_depend", build_depends_[i]);
-  }
-  for (size_t i(0); i < run_depends_.count(); i++)
-  {
-    settings.setValue("run_depend", run_depends_[i]);
-  }
-  if (!exports_.isEmpty())
-  {
-    QString exports;
-    for (size_t i(0); i < exports_.count(); i++)
+    QString depends(build_depends_[0]);
+    for (size_t i(1); i < build_depends_.count(); i++)
     {
-      exports += "\n\t\t" + exports_[i];
+      depends += "," + build_depends_[i];
     }
-    exports += "\n\t";
-    settings.setValue("export", exports);
+    settings.setValue("build_depend", "[" + depends + "]");
   }
+  if (!run_depends_.isEmpty())
+  {
+    QString depends(run_depends_[0]);
+    for (size_t i(1); i < run_depends_.count(); i++)
+    {
+      depends += "," + run_depends_[i];
+    }
+    settings.setValue("run_depend", "[" + depends + "]");
+  }
+  export_->save(settings);
   settings.endGroup();
+}
+
+void RosPackage::load(const QString& url)
+{
+  QFileInfo file_info(url);
+  ROS_ERROR_STREAM("[RosPackage::load] url: " << url.toStdString());
+  if (!file_info.isReadable())
+  {
+    throw Exception("The given package manifest url must be readeable.");
+  }
+  QSettings settings(url, utilities::XmlSettings::format);
+  if (settings.status() == QSettings::NoError)
+  {
+    load(settings);
+    ROS_INFO_STREAM("Loaded application configuration file ["
+                    << url.toStdString() << "].");
+  }
 }
 
 void RosPackage::load(QSettings& settings)
 {
+  if (settings.value("package@format").toString() == "2")
+  {
+    throw Exception("The given manifest format (2) is not treated yet.");
+  }
   settings.beginGroup("package");
   setName(settings.value("name").toString());
   std::string url;
   rp_.find(name_.toStdString(), url);
-  url = url.substr(0, url.find_last_of('/') - 1);
-  setWorkspaceUrl(QString::fromStdString(url));
-  ROS_ERROR("[RosPackage] workspace url: %s",
-            workspace_url_.toStdString().c_str());
+  workspace_url_ = QString::fromStdString(url);
+  setWorkspaceUrl(workspace_url_.left(workspace_url_.lastIndexOf("/src/")));
   setVersion(settings.value("version").toString());
   setDescription(settings.value("description").toString());
   setAuthor(settings.value("author").toString());
-  setAuthorEmail(settings.value("author").toString());
-  ROS_ERROR("[RosPackage] author email: %s",
-            author_email_.toStdString().c_str());
+  setAuthorEmail(settings.value("author@email").toString());
   setMaintainer(settings.value("maintainer").toString());
-  setMaintainerEmail(settings.value("maintainer").toString());
-  ROS_ERROR("[RosPackage] maintainer email: %s",
-            maintainer_email_.toStdString().c_str());
+  setMaintainerEmail(settings.value("maintainer@email").toString());
   setLicense(settings.value("license").toString());
   setBuildtoolDepend(settings.value("buildtool_depend").toString());
-  clearBuildDepends();
-  // setBuildtoolDepend(settings.value("build_depend").toString());
-  ROS_ERROR("[RosPackage] build_depend: %s",
-            settings.value("build_depend").toString().toStdString().c_str());
-  clearRunDepends();
-  // setBuildtoolDepend(settings.value("run_depend").toString());
-  ROS_ERROR("[RosPackage] run_depend: %s",
-            settings.value("run_depend").toString().toStdString().c_str());
-  clearExports();
-  QString exports(settings.value("export").toString());
-  ROS_ERROR("[RosPackage] exports: %s", exports.toStdString().c_str());
+  setBuildDepends(settings.value("build_depend").toString());
+  setBuildtoolDepend(settings.value("run_depend").toString());
+  export_->load(settings);
   settings.endGroup();
 }
 
@@ -637,7 +645,7 @@ void RosPackage::reset()
   setBuildtoolDepend("catkin");
   clearBuildDepends();
   clearRunDepends();
-  clearExports();
+  export_->reset();
 }
 
 void RosPackage::write(QDataStream& stream) const
@@ -662,11 +670,7 @@ void RosPackage::write(QDataStream& stream) const
   {
     stream << run_depends_[i];
   }
-  stream << exports_.count();
-  for (size_t i(0); i < exports_.count(); i++)
-  {
-    stream << exports_[i];
-  }
+  export_->write(stream);
 }
 
 void RosPackage::read(QDataStream& stream)
@@ -681,10 +685,10 @@ void RosPackage::read(QDataStream& stream)
   QString maintainer_email;
   QString license;
   QString buildtool_depend;
-  quint64 build_depends_count, run_depends_count, exports_count;
-  QString build_depend;
-  QString run_depend;
-  QString exporrt;
+  quint64 count;
+  QString depend;
+  QStringList build_depends;
+  QStringList run_depends;
   stream >> workspace_url;
   setWorkspaceUrl(workspace_url);
   stream >> name;
@@ -705,24 +709,21 @@ void RosPackage::read(QDataStream& stream)
   setLicense(license);
   stream >> buildtool_depend;
   setBuildtoolDepend(buildtool_depend);
-  stream >> build_depends_count;
-  for (size_t i(0); i < build_depends_count; i++)
+  stream >> count;
+  for (size_t i(0); i < count; i++)
   {
-    stream >> build_depend;
-    addBuildDepend(build_depend);
+    stream >> depend;
+    build_depends.append(depend);
   }
-  stream >> run_depends_count;
-  for (size_t i(0); i < run_depends_count; i++)
+  setBuildDepends(build_depends);
+  stream >> count;
+  for (size_t i(0); i < count; i++)
   {
-    stream >> run_depend;
-    addRunDepend(run_depend);
+    stream >> depend;
+    run_depends.append(depend);
   }
-  stream >> exports_count;
-  for (size_t i(0); i < exports_count; i++)
-  {
-    stream >> exporrt;
-    addExport(exporrt);
-  }
+  setBuildDepends(run_depends);
+  export_->read(stream);
 }
 
 RosPackage& RosPackage::operator=(const RosPackage& config)
@@ -739,7 +740,8 @@ RosPackage& RosPackage::operator=(const RosPackage& config)
   setBuildtoolDepend(config.buildtool_depend_);
   setBuildDepends(config.build_depends_);
   setRunDepends(config.run_depends_);
-  setExports(config.exports_);
+  *export_ = *config.export_;
+  return *this;
 }
 
 RosMetapackage::RosMetapackage(QObject* parent) : RosPackage(parent) {}
@@ -749,7 +751,7 @@ RosMetapackage::~RosMetapackage() {}
 void RosMetapackage::reset()
 {
   RosPackage::reset();
-  addExport("<metapackage/>");
+  export_->add("metapackage", "");
 }
 
 bool RosMetapackage::createCMakeLists()
@@ -798,5 +800,127 @@ bool RosMetapackage::createCMakeLists()
   ROS_INFO_STREAM("Created the " << name_.toStdString()
                                  << " CMakeLists.txt file.");
   return true;
+}
+
+Export::Export(RosPackage* parent) : AbstractConfig(parent) {}
+
+Export::~Export() {}
+
+QString Export::getName(size_t index) const { return all_names_[index]; }
+
+QString Export::getValue(const QString& name) const
+{
+  return all_values_[all_names_.indexOf(name)];
+}
+
+QStringList Export::getAllNames() const { return all_names_; }
+
+QStringList Export::getAllValues() const { return all_values_; }
+
+void Export::setAll(const QStringList &all_names, const QStringList &all_values)
+{
+  if (all_names != all_names_ && all_values != all_values_)
+  {
+    all_names_ = all_names;
+    all_values_ = all_values;
+    emit allChanged(all_names, all_values);
+    emit changed();
+  }
+}
+
+size_t Export::count() const { return all_names_.count(); }
+
+void Export::add(const QString& name, const QString& value)
+{
+  int index(all_names_.indexOf(name));
+  if (index == -1)
+  {
+    all_names_.append(name);
+    all_values_.append(value);
+    emit added(name, value);
+    emit changed();
+  }
+}
+
+void Export::remove(const QString& name)
+{
+  int index(all_names_.indexOf(name));
+  if (index != -1)
+  {
+    all_names_.removeAt(index);
+    QString value(all_values_[index]);
+    all_values_.removeAt(index);
+    emit removed(name, value);
+    emit changed();
+  }
+}
+
+void Export::clear()
+{
+  all_names_.clear();
+  all_values_.clear();
+}
+
+void Export::save(QSettings& settings) const
+{
+  settings.beginGroup("export");
+  for (size_t i(0); i < count(); i++)
+  {
+    settings.setValue(all_names_[i], all_values_[i]);
+  }
+  settings.endGroup();
+}
+
+void Export::load(QSettings& settings)
+{
+  settings.beginGroup("export");
+  QStringList all_names(settings.allKeys());
+  QStringList all_values;
+  for (size_t i(0); i < all_names.count(); i++)
+  {
+    all_values.append(settings.value(all_names[i]).toString());
+  }
+  setAll(all_names, all_values);
+  settings.endGroup();
+}
+
+void Export::reset()
+{
+  all_names_.clear();
+  all_values_.clear();
+}
+
+void Export::write(QDataStream& stream) const
+{
+  stream << (quint64) count();
+  for (size_t i(0); i < count(); i++)
+  {
+    stream << all_names_[i];
+    stream << all_values_[i];
+  }
+}
+
+void Export::read(QDataStream& stream)
+{
+  quint64 count;
+  QString name;
+  QString value;
+  stream >> count;
+  QStringList all_names;
+  QStringList all_values;
+  for (size_t i(0); i < count; i++)
+  {
+    stream >> name;
+    stream >> value;
+    all_names.append(name);
+    all_values.append(value);
+  }
+  setAll(all_names, all_values);
+}
+
+Export& Export::operator=(const Export& config)
+{
+  setAll(config.all_names_, config.all_values_);
+  return *this;
 }
 }

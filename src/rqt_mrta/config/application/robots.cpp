@@ -145,6 +145,7 @@ Robots &Robots::operator=(const Robots &config)
   {
     *robots_[index] = *config.robots_[index];
   }
+  return *this;
 }
 
 void Robots::robotChanged()

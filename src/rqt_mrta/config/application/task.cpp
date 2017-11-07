@@ -60,6 +60,7 @@ void Task::read(QDataStream &stream)
 Task &Task::operator=(const Task &config)
 {
   setId(config.id_);
+  return *this;
 }
 }
 }

@@ -27,9 +27,9 @@ RqtMrtaWidget::RqtMrtaWidget(QWidget* parent)
   ui_->launch_application_push_button->setIcon(QIcon(QString::fromStdString(
       ros::package::getPath("rqt_mrta").append("/resource/22x22/run.png"))));
   connect(ui_->new_application_push_button, SIGNAL(clicked()), this,
-          SLOT(newPushButtonClicked()));
+          SLOT(newApplicationPushButtonClicked()));
   connect(ui_->open_application_push_button, SIGNAL(clicked()), this,
-          SLOT(openPushButtonClicked()));
+          SLOT(openApplicationPushButtonClicked()));
 }
 
 RqtMrtaWidget::~RqtMrtaWidget()
@@ -56,7 +56,7 @@ RqtMrtaWidget::~RqtMrtaWidget()
   }
 }
 
-void RqtMrtaWidget::newPushButtonClicked()
+void RqtMrtaWidget::newApplicationPushButtonClicked()
 {
   NewApplicationWizard wizard(this, application_config_, architecture_config_);
   if (wizard.exec() == QWizard::Accepted)
@@ -65,7 +65,7 @@ void RqtMrtaWidget::newPushButtonClicked()
   }
 }
 
-void RqtMrtaWidget::openPushButtonClicked()
+void RqtMrtaWidget::openApplicationPushButtonClicked()
 {
   QFileDialog dialog(this, "Open Application Configuration", QDir::homePath(),
                      "MRTA configurations (*.xml)");
@@ -73,9 +73,7 @@ void RqtMrtaWidget::openPushButtonClicked()
   dialog.setFileMode(QFileDialog::ExistingFile);
   if (dialog.exec() == QDialog::Accepted)
   {
-    ROS_INFO_STREAM("[RqtMrtaWidget] openning: "
-                    << dialog.selectedFiles().first().toStdString());
-    loadConfig(dialog.selectedFiles().first());
+    application_config_->load(dialog.selectedFiles().first());
   }
 }
 }

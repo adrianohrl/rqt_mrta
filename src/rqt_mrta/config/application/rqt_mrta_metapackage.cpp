@@ -19,7 +19,7 @@ RqtMrtaApplicationMetapackage::~RqtMrtaApplicationMetapackage() {}
 bool RqtMrtaApplicationMetapackage::createPackage()
 {
   addRunDepend("rqt_mrta");
-  addExport("<rqt_mrta application=\"{prefix}/rqt_mrta.xml\"/>");
+  export_->add("rqt_mrta@application", "{prefix}/rqt_mrta.xml");
   if (RosPackage::createPackage())
   {
     QDir package_dir(getUrl());

@@ -62,6 +62,7 @@ void IncomingTasks::read(QDataStream& stream)
 IncomingTasks& IncomingTasks::operator=(const IncomingTasks& config)
 {
   *topic_ = *config.topic_;
+  return *this;
 }
 
 void IncomingTasks::topicChanged() { emit changed(); }

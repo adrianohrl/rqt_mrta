@@ -29,13 +29,14 @@ NewApplicationWizard::NewApplicationWizard(
         "The architecture configuration must not be null.");
   }
   setPage(DefineApplication, new DefineApplicationWizardPage(this));
-  // setPage(DefineArchitecture, new DefineArchitectureWizardPage(this));
-  // setPage(DefineRobots, new DefineRobotsWizardPage(this));
-  // setPage(DefineRobotsParameters, new
-  // DefineRobotsParametersWizardPage(this));
-  // setWindowTitle("New Application");
+  setPage(DefineArchitecture, new DefineArchitectureWizardPage(this));
+  setPage(DefineRobots, new DefineRobotsWizardPage(this));
+  setPage(DefineRobotsParameters, new DefineRobotsParametersWizardPage(this));
+  setWindowTitle("New Application");
   connect(this, SIGNAL(accepted()), this, SLOT(generate()));
   connect(this, SIGNAL(rejected()), this, SLOT(resetConfig()));
+
+  metapackage_config_->load("/home/adrianohrl/ros_ws/mrta_ws/src/murdoch/murdoch/package.xml");
 }
 
 NewApplicationWizard::~NewApplicationWizard()
