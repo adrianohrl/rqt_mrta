@@ -18,7 +18,7 @@ RqtMrtaWidget::RqtMrtaWidget(QWidget* parent)
       registry_(new utilities::MessageSubscriberRegistry(this))
 {
   ui_->setupUi(this);
-  ui_->configuration_tab_widget->setCurrentIndex(0);
+  ui_->runtime_tab_widget->setCurrentIndex(0);
   ui_->architecture_tab->activateWindow();
   ui_->new_application_push_button->setIcon(QIcon(QString::fromStdString(
       ros::package::getPath("rqt_mrta").append("/resource/22x22/new.png"))));

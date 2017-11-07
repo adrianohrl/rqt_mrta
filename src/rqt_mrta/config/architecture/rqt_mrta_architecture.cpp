@@ -10,6 +10,7 @@ RqtMrtaArchitecture::RqtMrtaArchitecture(QObject* parent)
     : AbstractConfig(parent), architecture_(new Architecture(this)),
       widgets_(new Widgets(this))
 {
+  reset();
   connect(architecture_, SIGNAL(changed()), this, SLOT(architectureChanged()));
   connect(widgets_, SIGNAL(changed()), this, SLOT(widgetsChanged()));
 }

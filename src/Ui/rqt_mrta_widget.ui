@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>816</width>
-    <height>597</height>
+    <width>1085</width>
+    <height>679</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -20,60 +20,6 @@
    <string>MRTA</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="5" column="1">
-    <widget class="QTabWidget" name="configuration_tab_widget">
-     <property name="currentIndex">
-      <number>2</number>
-     </property>
-     <widget class="QWidget" name="architecture_tab">
-      <attribute name="title">
-       <string>Architecture</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="0">
-        <widget class="QWidget" name="widget" native="true"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="robots_tab">
-      <attribute name="title">
-       <string>Robots</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
-        <widget class="QWidget" name="busy_robots_widget" native="true"/>
-       </item>
-       <item row="0" column="1">
-        <widget class="QWidget" name="idle_robots_widget" native="true"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tasks_tab">
-      <attribute name="title">
-       <string>Tasks</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_5">
-       <item row="0" column="0">
-        <widget class="QWidget" name="incoming_tasks_widget" native="true"/>
-       </item>
-       <item row="0" column="1">
-        <widget class="QWidget" name="allocated_tasks_widget" native="true"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="allocations_tab">
-      <attribute name="title">
-       <string>Allocations</string>
-      </attribute>
-     </widget>
-     <widget class="QWidget" name="launch_tab">
-      <attribute name="title">
-       <string>Launch</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout"/>
-     </widget>
-    </widget>
-   </item>
    <item row="0" column="1">
     <layout class="QGridLayout" name="tools_grid_layout">
      <item row="0" column="1">
@@ -281,11 +227,34 @@
      </item>
     </layout>
    </item>
+   <item row="1" column="1">
+    <widget class="QTabWidget" name="runtime_tab_widget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="application_tab">
+      <attribute name="title">
+       <string>Application</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Robots</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="architecture_tab">
+      <attribute name="title">
+       <string>Architecture</string>
+      </attribute>
+     </widget>
+    </widget>
+   </item>
   </layout>
  </widget>
- <tabstops>
-  <tabstop>configuration_tab_widget</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>

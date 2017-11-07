@@ -42,6 +42,7 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/config/application/robot.cpp
   src/rqt_mrta/config/application/robots.cpp
   src/rqt_mrta/config/application/rqt_mrta_application.cpp
+  src/rqt_mrta/config/application/rqt_mrta_metapackage.cpp
   src/rqt_mrta/config/application/task.cpp
   src/rqt_mrta/config/application/tasks.cpp
   src/rqt_mrta/config/architecture/allocated_tasks.cpp
@@ -58,6 +59,8 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/config/architecture/topic.cpp
   src/rqt_mrta/config/architecture/widget.cpp
   src/rqt_mrta/config/architecture/widgets.cpp
+  src/rqt_mrta/define_application_widget.cpp
+  src/rqt_mrta/define_application_wizard_page.cpp
   src/rqt_mrta/define_architecture_widget.cpp
   src/rqt_mrta/define_architecture_wizard_page.cpp
   src/rqt_mrta/define_robots_widget.cpp
@@ -69,6 +72,7 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/robot_tree_widget.cpp
   src/rqt_mrta/new_application_wizard.cpp
   src/rqt_mrta/new_application_wizard_page.cpp
+  src/rqt_mrta/status_widget.cpp
   src/utilities/abstract_config.cpp
   src/utilities/exception.cpp
   src/utilities/message.cpp
@@ -77,7 +81,7 @@ set (rqt_mrta_SRCS
   src/utilities/message_field.cpp
   src/utilities/message_subscriber.cpp
   src/utilities/message_subscriber_registry.cpp
-  src/utilities/topic_field_monitor.cpp
+  src/utilities/ros_package.cpp
   src/utilities/xml_settings.cpp
 )
 
@@ -92,6 +96,7 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/config/application/robot.h
   include/rqt_mrta/config/application/robots.h
   include/rqt_mrta/config/application/rqt_mrta_application.h
+  include/rqt_mrta/config/application/rqt_mrta_metapackage.h
   include/rqt_mrta/config/application/task.h
   include/rqt_mrta/config/application/tasks.h
   include/rqt_mrta/config/architecture/allocated_tasks.h
@@ -108,6 +113,8 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/config/architecture/topic.h
   include/rqt_mrta/config/architecture/widget.h
   include/rqt_mrta/config/architecture/widgets.h
+  include/rqt_mrta/define_application_widget.h
+  include/rqt_mrta/define_application_wizard_page.h
   include/rqt_mrta/define_architecture_widget.h
   include/rqt_mrta/define_architecture_wizard_page.h
   include/rqt_mrta/define_robots_widget.h
@@ -119,6 +126,7 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/robot_tree_widget.h
   include/rqt_mrta/new_application_wizard.h
   include/rqt_mrta/new_application_wizard_page.h
+  include/rqt_mrta/status_widget.h
   include/utilities/abstract_config.h
   include/utilities/exception.h
   include/utilities/message.h
@@ -127,11 +135,12 @@ set(rqt_mrta_HDRS
   include/utilities/message_field.h
   include/utilities/message_subscriber.h
   include/utilities/message_subscriber_registry.h
-  include/utilities/topic_field_monitor.h
+  include/utilities/ros_package.h
   include/utilities/xml_settings.h
 )
 
 set(rqt_mrta_UIS
+  src/Ui/define_application_widget.ui
   src/Ui/define_architecture_widget.ui
   src/Ui/define_robots_widget.ui
   src/Ui/define_robots_parameters_widget.ui

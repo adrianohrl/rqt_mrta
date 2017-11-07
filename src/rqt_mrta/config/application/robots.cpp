@@ -47,6 +47,19 @@ Robot* Robots::addRobot()
   return robot;
 }
 
+void Robots::removeRobot(Robot *robot)
+{
+  removeRobot(robots_.indexOf(robot));
+}
+
+void Robots::removeRobot(size_t index)
+{
+  if (index >= 0 && index < robots_.count())
+  {
+    robots_.remove(index);
+  }
+}
+
 void Robots::clearRobots()
 {
   if (!robots_.isEmpty())

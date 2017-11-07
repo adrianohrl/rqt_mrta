@@ -13,7 +13,6 @@ class DefineArchitectureWizardPage : public NewApplicationWizardPage
 public:
   DefineArchitectureWizardPage(NewApplicationWizard* parent);
   virtual ~DefineArchitectureWizardPage();
-  void initializePage();
   bool validatePage();
   bool isComplete() const;
 };

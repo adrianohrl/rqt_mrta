@@ -30,6 +30,7 @@ private:
   typedef QList<mrta::Architecture*>::iterator iterator;
   typedef QList<mrta::Architecture*>::const_iterator const_iterator;
   QList<mrta::Architecture*> architectures_;
+  QList<int> indexes_;
   mrta::Architecture* current_architecture_;
   mrta::Taxonomy::AllocationType allocation_type_;
   mrta::Taxonomy::RobotType robot_type_;

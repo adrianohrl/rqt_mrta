@@ -21,6 +21,7 @@ class NewApplicationWizard : public QWizard
 public:
   enum Page
   {
+    DEFINE_APPLICATION,
     DEFINE_ARCHITECTURE,
     DEFINE_ROBOTS,
     DEFINE_ROBOTS_PARAMETERS

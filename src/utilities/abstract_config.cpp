@@ -2,7 +2,9 @@
 
 namespace utilities
 {
-AbstractConfig::AbstractConfig(QObject* parent) : QObject(parent) {}
+AbstractConfig::AbstractConfig(QObject* parent) : QObject(parent)
+{
+}
 
 AbstractConfig::~AbstractConfig() {}
 

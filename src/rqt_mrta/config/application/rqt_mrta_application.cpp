@@ -10,6 +10,7 @@ namespace application
 RqtMrtaApplication::RqtMrtaApplication(QObject *parent)
   : AbstractConfig(parent), application_(new Application(this))
 {
+  reset();
   rp_.setQuiet(true);
   std::vector<std::string> search_path;
   rp_.getSearchPathFromEnv(search_path);

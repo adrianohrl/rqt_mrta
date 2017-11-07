@@ -61,16 +61,12 @@ private:
 private slots:
   void architectureConfigChanged();
   void applicationConfigChanged();
-  void applicationConfigNameChanged(const QString& name);
-  void applicationConfigPackageChanged(const QString& package);
   void architectureChanged();
   void setFilterAllocationType();
   void setFilterRobotType();
   void setFilterTaskType();
   void unknownAchitecture();
   void currentArchitectureChanged(mrta::Architecture* architecture);
-  void nameChanged(const QString& name);
-  void packageChanged(const QString& package);
 };
 }
 

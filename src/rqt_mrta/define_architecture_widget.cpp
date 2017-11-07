@@ -1,10 +1,8 @@
 #include "mrta/architecture.h"
 #include <QFileInfo>
 #include <QSettings>
-#include <ros/console.h>
-#include <ros/package.h>
-#include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
 #include "rqt_mrta/config/application/rqt_mrta_application.h"
+#include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
 #include "rqt_mrta/define_architecture_widget.h"
 #include "rqt_mrta/ui_define_architecture_widget.h"
 #include "utilities/xml_settings.h"
@@ -30,10 +28,6 @@ DefineArchitectureWidget::DefineArchitectureWidget(
   connect(ui_->architectures_combo_box,
           SIGNAL(currentArchitectureChanged(mrta::Architecture*)), this,
           SLOT(currentArchitectureChanged(mrta::Architecture*)));
-  connect(ui_->name_line_edit, SIGNAL(textChanged(const QString&)), this,
-          SLOT(nameChanged(const QString&)));
-  connect(ui_->package_line_edit, SIGNAL(textChanged(const QString&)), this,
-          SLOT(packageChanged(const QString&)));
 }
 
 DefineArchitectureWidget::~DefineArchitectureWidget()
@@ -86,25 +80,12 @@ void DefineArchitectureWidget::setApplicationConfig(
     {
       disconnect(application_config_, SIGNAL(changed()), this,
                  SLOT(applicationConfigChanged()));
-      disconnect(application_config_->getApplication(),
-                 SIGNAL(nameChanged(const QString&)), this,
-                 SLOT(applicationConfigNameChanged(const QString&)));
-      disconnect(application_config_, SIGNAL(packageChanged(const QString&)),
-                 this, SLOT(applicationConfigPackageChanged(const QString&)));
     }
     application_config_ = config;
     if (application_config_)
     {
       connect(config, SIGNAL(changed()), this,
               SLOT(applicationConfigChanged()));
-      connect(application_config_->getApplication(),
-              SIGNAL(nameChanged(const QString&)), this,
-              SLOT(applicationConfigNameChanged(const QString&)));
-      connect(application_config_, SIGNAL(packageChanged(const QString&)), this,
-              SLOT(applicationConfigPackageChanged(const QString&)));
-      applicationConfigNameChanged(
-          application_config_->getApplication()->getName());
-      applicationConfigPackageChanged(application_config_->getPackage());
     }
   }
 }
@@ -145,8 +126,7 @@ bool DefineArchitectureWidget::saveCurrentConfig()
   {
     return false;
   }
-  return saveConfig(QString::fromStdString(ros::package::getPath(package)) +
-                    "rqt_mrta.xml");
+  return saveConfig(application_config_->getPackageUrl() + "rqt_mrta.xml");
 }
 
 bool DefineArchitectureWidget::saveConfig(const QString& url)
@@ -174,26 +154,11 @@ void DefineArchitectureWidget::resetConfig()
   {
     architecture_config_->reset();
   }
-  if (application_config_)
-  {
-    application_config_->reset();
-  }
 }
 
 void DefineArchitectureWidget::architectureConfigChanged() { emit changed(); }
 
 void DefineArchitectureWidget::applicationConfigChanged() { emit changed(); }
-
-void DefineArchitectureWidget::applicationConfigNameChanged(const QString& name)
-{
-  ui_->name_line_edit->setText(name);
-}
-
-void DefineArchitectureWidget::applicationConfigPackageChanged(
-    const QString& package)
-{
-  ui_->package_line_edit->setText(package);
-}
 
 void DefineArchitectureWidget::setFilterAllocationType()
 {
@@ -230,22 +195,5 @@ void DefineArchitectureWidget::currentArchitectureChanged(
       architecture ? mrta::Taxonomy::toQString(*architecture) : "");
   application_config_->getApplication()->setUrl(
       architecture ? architecture->getConfigFilePath() : "");
-}
-
-void DefineArchitectureWidget::nameChanged(const QString& name)
-{
-  if (application_config_)
-  {
-    application_config_->getApplication()->setName(name);
-  }
-}
-
-void DefineArchitectureWidget::packageChanged(const QString& package)
-{
-  if (application_config_)
-  {
-    application_config_->setPackage(package);
-  }
-  // ROS_ERROR("[DefineArchitectureWidget] change package status");
 }
 }

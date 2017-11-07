@@ -1,6 +1,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include "rqt_mrta/new_application_wizard.h"
+#include "rqt_mrta/define_application_wizard_page.h"
 #include "rqt_mrta/define_architecture_wizard_page.h"
 #include "rqt_mrta/define_robots_wizard_page.h"
 #include "rqt_mrta/define_robots_parameters_wizard_page.h"
@@ -24,6 +25,7 @@ NewApplicationWizard::NewApplicationWizard(
   {
     throw utilities::Exception("The architecture configuration must not be null.");
   }
+  //setPage(DEFINE_APPLICATION, new DefineApplicationWizardPage(this));
   setPage(DEFINE_ARCHITECTURE, new DefineArchitectureWizardPage(this));
   setPage(DEFINE_ROBOTS, new DefineRobotsWizardPage(this));
   setPage(DEFINE_ROBOTS_PARAMETERS, new DefineRobotsParametersWizardPage(this));

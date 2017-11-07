@@ -19,14 +19,6 @@ ArchitectureComboBox::ArchitectureComboBox(QWidget* parent)
 ArchitectureComboBox::~ArchitectureComboBox()
 {
   current_architecture_ = NULL;
-  for (iterator it(architectures_.begin()); it != architectures_.end(); it++)
-  {
-    if (*it)
-    {
-      delete *it;
-      *it = NULL;
-    }
-  }
 }
 
 mrta::Architecture* ArchitectureComboBox::getCurrentArchitecture() const
@@ -70,30 +62,59 @@ void ArchitectureComboBox::setFilterTaskType(
   }
 }
 
+void ArchitectureComboBox::load()
+{
+  std::vector<std::string> architectures;
+  rospack::Rospack rp;
+  rp.setQuiet(true);
+  std::vector<std::string> search_path;
+  rp.getSearchPathFromEnv(search_path);
+  rp.crawl(search_path, true);
+  indexes_.clear();
+  indexes_.append(-1);
+  architectures_.clear();
+  if (rp.plugins("rqt_mrta", "architecture", "", architectures))
+  {
+    for (size_t i(0); i < architectures.size(); i++)
+    {
+      size_t index(architectures[i].find(' '));
+      QString package(
+          QString::fromStdString(architectures[i].substr(0, index)));
+      QString architecture_config_path(
+          QString::fromStdString(architectures[i].substr(index + 1)));
+      indexes_.append(i);
+      architectures_.append(
+          new mrta::Architecture(NULL, package, architecture_config_path));
+    }
+  }
+}
+
 void ArchitectureComboBox::filter()
 {
   setEnabled(false);
+  blockSignals(true);
   clear();
   addItem("");
-  int counter(0), index(-1);
-  for (const_iterator it(architectures_.begin()); it != architectures_.end();
-       it++)
+  int counter(1), index(-1);
+  for (size_t i(0); i < architectures_.count(); i++)
   {
-    mrta::Architecture* architecture = *it;
-    if (architecture->belongs(allocation_type_, robot_type_, task_type_))
+    indexes_[counter] = -1;
+    if (architectures_[i]->belongs(allocation_type_, robot_type_, task_type_))
     {
-      addItem(architecture->getPackage());
-      counter++;
-      if (current_architecture_ && *architecture == *current_architecture_)
+      indexes_[counter] = i;
+      addItem(architectures_[i]->getPackage());
+      if (current_architecture_ && *architectures_[i] == *current_architecture_)
       {
         index = counter;
       }
+      counter++;
     }
   }
   if (count() > 1)
   {
     setEnabled(true);
   }
+  blockSignals(false);
   if (index != -1)
   {
     setCurrentIndex(index);
@@ -107,34 +128,11 @@ void ArchitectureComboBox::filter()
   emit changed();
 }
 
-void ArchitectureComboBox::load()
-{
-  std::vector<std::string> architectures;
-  rospack::Rospack rp;
-  rp.setQuiet(true);
-  std::vector<std::string> search_path;
-  rp.getSearchPathFromEnv(search_path);
-  rp.crawl(search_path, true);
-  architectures_.clear();
-  if (rp.plugins("rqt_mrta", "architecture", "", architectures))
-  {
-    for (std::vector<std::string>::iterator it(architectures.begin());
-         it != architectures.end(); it++)
-    {
-      size_t index(it->find(' '));
-      QString package(QString::fromStdString(it->substr(0, index)));
-      QString architecture_config_path(
-          QString::fromStdString(it->substr(index + 1)));
-      mrta::Architecture* mrta_architecture =
-          new mrta::Architecture(this, package, architecture_config_path);
-      architectures_.push_back(mrta_architecture);
-    }
-  }
-}
-
 void ArchitectureComboBox::currentArchitectureChanged(int index)
 {
-  current_architecture_ = index != 0 ? architectures_[index] : NULL;
+  current_architecture_ = index != -1 && indexes_[index] != -1
+                              ? architectures_[indexes_[index]]
+                              : NULL;
   if (!current_architecture_)
   {
     emit unknownAchitecture();
