@@ -16,20 +16,13 @@ RqtMrtaApplicationMetapackage::RqtMrtaApplicationMetapackage(QObject* parent)
 
 RqtMrtaApplicationMetapackage::~RqtMrtaApplicationMetapackage() {}
 
-void RqtMrtaApplicationMetapackage::reset()
-{
-  RosMetapackage::reset();
-  addRunDepend("rqt_mrta");
-  addExport("<rqt_mrta application=\"{prefix}/rqt_mrta.xml\"/>");
-}
-
 bool RqtMrtaApplicationMetapackage::createPackage()
 {
   addRunDepend("rqt_mrta");
   addExport("<rqt_mrta application=\"{prefix}/rqt_mrta.xml\"/>");
   if (RosPackage::createPackage())
   {
-    QDir package_dir(getPackageUrl());
+    QDir package_dir(getUrl());
     package_dir.mkdir("config");
     package_dir.mkdir("launch");
   }

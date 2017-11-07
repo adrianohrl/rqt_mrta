@@ -10,8 +10,7 @@ DefineArchitectureWizardPage::DefineArchitectureWizardPage(
     : NewApplicationWizardPage(parent, "Define the Architecture")
 {
   DefineArchitectureWidget* widget = new DefineArchitectureWidget(
-        this, parent->getApplicationConfig(),
-        parent->getArchitectureConfig());
+      this, parent->getApplicationConfig(), parent->getArchitectureConfig());
 
   registerField("architecture*", widget->ui_->architectures_combo_box);
   connect(widget->ui_->architectures_combo_box, SIGNAL(changed()), this,
@@ -23,7 +22,13 @@ DefineArchitectureWizardPage::~DefineArchitectureWizardPage() {}
 
 bool DefineArchitectureWizardPage::validatePage()
 {
-  static_cast<DefineArchitectureWidget*>(widget_)->loadConfig();
+  if (!application_config_ || !architecture_config_)
+  {
+    return false;
+  }
+  architecture_config_->save(application_config_->getPackageUrl() +
+                             "/rqt_mrta.xml");
+  return true;
 }
 
 bool DefineArchitectureWizardPage::isComplete() const

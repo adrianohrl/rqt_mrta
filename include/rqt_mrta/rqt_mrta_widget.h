@@ -41,7 +41,6 @@ public:
   void resetConfig();
   bool saveConfig();
   bool saveConfig(const QString& url);
-  bool createApplication();
 
 private:
   Ui::RqtMrtaWidget* ui_;

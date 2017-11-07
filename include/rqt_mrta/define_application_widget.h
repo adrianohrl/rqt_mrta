@@ -30,13 +30,12 @@ class DefineApplicationWidget : public QWidget
   Q_OBJECT
 public:
   DefineApplicationWidget(QWidget* parent,
-                          RqtMrtaApplicationConfig* application_config);
+                          RqtMrtaApplicationConfig* application_config, RqtMrtaApplicationMetapackageConfig *metapackage_config);
   virtual ~DefineApplicationWidget();
   RqtMrtaApplicationConfig* getApplicationConfig() const;
   RqtMrtaApplicationMetapackageConfig* getMetapackageConfig() const;
   void setApplicationConfig(RqtMrtaApplicationConfig* config);
   void setMetapackageConfig(RqtMrtaApplicationMetapackageConfig* config);
-  void resetConfig();
   void createMetapackage();
 
 signals:
@@ -60,7 +59,6 @@ private slots:
   void configMaintainerEmailChanged(const QString& email);
   void configLicenseChanged(const QString& license);
   void configRunDependsChanged(const QStringList& depends);
-  void configRunDependsCleared();
   void nameChanged(const QString& name);
   void packageChanged(const QString& package);
   void workspaceBrowserButtonPressed();

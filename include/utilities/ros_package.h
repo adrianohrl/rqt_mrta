@@ -63,7 +63,6 @@ public:
   bool createManifest();
   virtual bool createCMakeLists();
   bool updateManifest();
-  QString getPackageUrl();
   QString getManifestUrl();
   QString getCMakeListsUrl();
   bool catkinMake() const;

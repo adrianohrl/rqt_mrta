@@ -19,8 +19,8 @@ public:
   virtual ~RqtMrtaArchitecture();
   Architecture* getArchitecture() const;
   Widgets* getWidgets() const;
-  void save(QSettings& settings) const;
-  void load(QSettings& settings);
+  void save(const QString& url) const;
+  void load(const QString& url);
   void reset();
   void write(QDataStream& stream) const;
   void read(QDataStream& stream);
@@ -29,6 +29,8 @@ public:
 private:
   Architecture* architecture_;
   Widgets* widgets_;
+  void save(QSettings& settings) const;
+  void load(QSettings& settings);
 
 private slots:
   void architectureChanged();

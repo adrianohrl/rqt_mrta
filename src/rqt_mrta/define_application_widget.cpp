@@ -14,14 +14,20 @@
 namespace rqt_mrta
 {
 DefineApplicationWidget::DefineApplicationWidget(
-    QWidget* parent, RqtMrtaApplicationConfig* application_config)
+    QWidget* parent, RqtMrtaApplicationConfig* application_config,
+    RqtMrtaApplicationMetapackageConfig* metapackage_config)
     : QWidget(parent), ui_(new Ui::DefineApplicationWidget()),
       application_config_(NULL), metapackage_config_(NULL)
 {
   if (!application_config)
   {
     throw utilities::Exception(
-        "[DefineApplicationWidget] The application must not be NULL.");
+        "[DefineApplicationWidget] The application config must not be NULL.");
+  }
+  if (!metapackage_config)
+  {
+    throw utilities::Exception(
+        "[DefineApplicationWidget] The metapackage config must not be NULL.");
   }
   rp_.setQuiet(true);
   std::vector<std::string> search_path;
@@ -50,17 +56,13 @@ DefineApplicationWidget::DefineApplicationWidget(
   connect(ui_->run_depends_plain_text_edit, SIGNAL(textChanged()), this,
           SLOT(runDependsChanged()));
   setApplicationConfig(application_config);
-  setMetapackageConfig(new RqtMrtaApplicationMetapackageConfig(this));
+  setMetapackageConfig(metapackage_config);
 }
 
 DefineApplicationWidget::~DefineApplicationWidget()
 {
   application_config_ = NULL;
-  if (metapackage_config_)
-  {
-    delete metapackage_config_;
-    metapackage_config_ = NULL;
-  }
+  metapackage_config_ = NULL;
   if (ui_)
   {
     delete ui_;
@@ -145,8 +147,6 @@ void DefineApplicationWidget::setMetapackageConfig(
       disconnect(metapackage_config_,
                  SIGNAL(runDependsChanged(const QStringList&)), this,
                  SLOT(configRunDependsChanged(const QStringList&)));
-      disconnect(metapackage_config_, SIGNAL(runDependsCleared()), this,
-                 SLOT(configRunDependsCleared()));
     }
     metapackage_config_ = config;
     if (metapackage_config_)
@@ -171,8 +171,6 @@ void DefineApplicationWidget::setMetapackageConfig(
       connect(metapackage_config_,
               SIGNAL(runDependsChanged(const QStringList&)), this,
               SLOT(configRunDependsChanged(const QStringList&)));
-      connect(metapackage_config_, SIGNAL(runDependsCleared()), this,
-              SLOT(configRunDependsCleared()));
       configPackageChanged(metapackage_config_->getName());
       configWorkspaceUrlChanged(metapackage_config_->getWorkspaceUrl());
       configVersionChanged(metapackage_config_->getVersion());
@@ -184,18 +182,6 @@ void DefineApplicationWidget::setMetapackageConfig(
     }
   }
   ui_->workspace_push_button->setEnabled(metapackage_config_);
-}
-
-void DefineApplicationWidget::resetConfig()
-{
-  if (application_config_)
-  {
-    application_config_->reset();
-  }
-  if (metapackage_config_)
-  {
-    metapackage_config_->reset();
-  }
 }
 
 void DefineApplicationWidget::applicationConfigChanged() { emit changed(); }
@@ -304,11 +290,6 @@ void DefineApplicationWidget::configRunDependsChanged(
   ui_->run_depends_plain_text_edit->setTextCursor(cursor);
 }
 
-void DefineApplicationWidget::configRunDependsCleared()
-{
-  ui_->run_depends_plain_text_edit->clear();
-}
-
 void DefineApplicationWidget::workspaceBrowserButtonPressed()
 {
   QFileDialog dialog(this, "Select the workspace directory", QDir::homePath());
@@ -394,9 +375,12 @@ void DefineApplicationWidget::licenseChanged(const QString& license)
 void DefineApplicationWidget::runDependsChanged()
 {
   QString depends(ui_->run_depends_plain_text_edit->toPlainText());
+  depends.replace('\n', ' ');
   if (metapackage_config_)
   {
+    metapackage_config_->clearRunDepends();
     QStringList run_depends(depends.split(' '));
+    run_depends.removeAll("");
     for (size_t i(0); i < run_depends.count(); i++)
     {
       metapackage_config_->addRunDepend(run_depends[i]);
@@ -408,7 +392,8 @@ void DefineApplicationWidget::runDependsChanged()
     else
     {
       ui_->run_depends_status_widget->setCurrentRole(
-          StatusWidget::Warn, "Some run dependency(ies) is(are) not ROS package(s).");
+          StatusWidget::Warn,
+          "Some run dependency(ies) is(are) not ROS package(s).");
     }
   }
 }

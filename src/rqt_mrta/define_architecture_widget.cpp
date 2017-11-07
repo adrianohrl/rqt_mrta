@@ -1,11 +1,9 @@
 #include "mrta/architecture.h"
-#include <QFileInfo>
-#include <QSettings>
 #include "rqt_mrta/config/application/rqt_mrta_application.h"
 #include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
 #include "rqt_mrta/define_architecture_widget.h"
 #include "rqt_mrta/ui_define_architecture_widget.h"
-#include "utilities/xml_settings.h"
+#include "utilities/exception.h"
 
 namespace rqt_mrta
 {
@@ -13,9 +11,18 @@ DefineArchitectureWidget::DefineArchitectureWidget(
     QWidget* parent, RqtMrtaApplicationConfig* application_config,
     RqtMrtaArchitectureConfig* architecture_config)
     : QWidget(parent), ui_(new Ui::DefineArchitectureWidget()),
-      application_config_(application_config),
-      architecture_config_(architecture_config)
+      application_config_(NULL), architecture_config_(NULL)
 {
+  if (!application_config)
+  {
+    throw utilities::Exception(
+        "[DefineApplicationWidget] The application config must not be NULL.");
+  }
+  if (!architecture_config)
+  {
+    throw utilities::Exception(
+        "[DefineApplicationWidget] The architecture config must not be NULL.");
+  }
   ui_->setupUi(this);
   connect(ui_->allocations_type_combo_box, SIGNAL(currentIndexChanged(int)),
           this, SLOT(setFilterAllocationType()));
@@ -28,6 +35,8 @@ DefineArchitectureWidget::DefineArchitectureWidget(
   connect(ui_->architectures_combo_box,
           SIGNAL(currentArchitectureChanged(mrta::Architecture*)), this,
           SLOT(currentArchitectureChanged(mrta::Architecture*)));
+  setApplicationConfig(application_config);
+  setArchitectureConfig(architecture_config);
 }
 
 DefineArchitectureWidget::~DefineArchitectureWidget()
@@ -87,72 +96,6 @@ void DefineArchitectureWidget::setApplicationConfig(
       connect(config, SIGNAL(changed()), this,
               SLOT(applicationConfigChanged()));
     }
-  }
-}
-
-bool DefineArchitectureWidget::loadConfig()
-{
-  ROS_INFO("[DefineArchitectureWidget] loadConfig()");
-  return application_config_ &&
-         loadConfig(application_config_->getApplication()->getUrl());
-}
-
-bool DefineArchitectureWidget::loadConfig(const QString& url)
-{
-  if (architecture_config_ && !url.isEmpty())
-  {
-    QFileInfo file_info(url);
-    if (file_info.isReadable())
-    {
-      QSettings settings(url, utilities::XmlSettings::format);
-      if (settings.status() == QSettings::NoError)
-      {
-        architecture_config_->load(settings);
-      }
-      return true;
-    }
-  }
-  return false;
-}
-
-bool DefineArchitectureWidget::saveCurrentConfig()
-{
-  if (!application_config_)
-  {
-    return false;
-  }
-  std::string package(application_config_->getPackage().toStdString());
-  if (package.empty())
-  {
-    return false;
-  }
-  return saveConfig(application_config_->getPackageUrl() + "rqt_mrta.xml");
-}
-
-bool DefineArchitectureWidget::saveConfig(const QString& url)
-{
-  if (application_config_ && !url.isEmpty())
-  {
-    QSettings settings(url, utilities::XmlSettings::format);
-    if (settings.isWritable())
-    {
-      settings.clear();
-      application_config_->save(settings);
-      settings.sync();
-      if (settings.status() == QSettings::NoError)
-      {
-        ROS_INFO_STREAM("Saved configuration to [" << url.toStdString() << "]");
-        return true;
-      }
-    }
-  }
-}
-
-void DefineArchitectureWidget::resetConfig()
-{
-  if (architecture_config_)
-  {
-    architecture_config_->reset();
   }
 }
 

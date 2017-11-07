@@ -15,7 +15,6 @@ class RqtMrtaApplicationMetapackage : public utilities::RosMetapackage
 public:
   RqtMrtaApplicationMetapackage(QObject* parent);
   virtual ~RqtMrtaApplicationMetapackage();
-  virtual void reset();
   virtual bool createPackage();
 };
 }

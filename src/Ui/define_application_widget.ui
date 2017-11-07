@@ -252,7 +252,7 @@
    <item row="7" column="0">
     <widget class="QLabel" name="maintainer_email_label">
      <property name="text">
-      <string>E-mail:</string>
+      <string>E-mail*:</string>
      </property>
     </widget>
    </item>

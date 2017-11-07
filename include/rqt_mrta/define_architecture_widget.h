@@ -44,11 +44,6 @@ public:
   RqtMrtaArchitectureConfig* getArchitectureConfig() const;
   void setApplicationConfig(RqtMrtaApplicationConfig* config);
   void setArchitectureConfig(RqtMrtaArchitectureConfig* config);
-  bool loadConfig();
-  bool loadConfig(const QString& url);
-  bool saveCurrentConfig();
-  bool saveConfig(const QString& url);
-  void resetConfig();
 
 signals:
   void changed();

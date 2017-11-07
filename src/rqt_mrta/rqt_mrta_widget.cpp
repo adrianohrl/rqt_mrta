@@ -56,84 +56,12 @@ RqtMrtaWidget::~RqtMrtaWidget()
   }
 }
 
-bool RqtMrtaWidget::loadConfig(const QString& url)
-{
-  ROS_INFO("[RqtMrtaWidget] loadConfig(url)");
-  if (architecture_config_ && !url.isEmpty())
-  {
-    QFileInfo file_info(url);
-    if (file_info.isReadable())
-    {
-      QSettings settings(url, utilities::XmlSettings::format);
-      if (settings.status() == QSettings::NoError)
-      {
-        architecture_config_->load(settings);
-      }
-    }
-  }
-}
-
-void RqtMrtaWidget::resetConfig()
-{
-  if (application_config_)
-  {
-    application_config_->reset();
-  }
-  if (architecture_config_)
-  {
-    architecture_config_->reset();
-  }
-}
-
-bool RqtMrtaWidget::saveConfig()
-{
-  if (application_config_ && application_config_->getPackage().isEmpty())
-  {
-    return false;
-  }
-  std::string url(
-      ros::package::getPath(application_config_->getPackage().toStdString()));
-  ROS_WARN_STREAM("[RqtMrtaWidget] pkg: " << url);
-  if (url.empty())
-  {
-    return false;
-  }
-  url += "/rqt_mrta.xml";
-  ROS_WARN_STREAM("[RqtMrtaWidget] pkg: " << url);
-  return saveConfig(QString::fromStdString(url));
-}
-
-bool RqtMrtaWidget::saveConfig(const QString& url)
-{
-  if (application_config_ && !url.isEmpty())
-  {
-    QSettings settings(url, utilities::XmlSettings::format);
-    if (settings.isWritable())
-    {
-      settings.clear();
-      application_config_->save(settings);
-      settings.sync();
-      if (settings.status() == QSettings::NoError)
-      {
-        ROS_INFO_STREAM("Saved configuration to [" << url.toStdString() << "]");
-        return true;
-      }
-    }
-  }
-}
-
-bool RqtMrtaWidget::createApplication() { return true; }
-
 void RqtMrtaWidget::newPushButtonClicked()
 {
   NewApplicationWizard wizard(this, application_config_, architecture_config_);
   if (wizard.exec() == QWizard::Accepted)
   {
     ROS_INFO_STREAM("[RqtMrtaWidget] accepted!!!");
-    if (createApplication())
-    {
-      saveConfig();
-    }
   }
 }
 

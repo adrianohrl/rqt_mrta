@@ -1,4 +1,6 @@
+#include <QFileInfo>
 #include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
+#include "utilities/xml_settings.h"
 
 namespace rqt_mrta
 {
@@ -36,12 +38,48 @@ Architecture* RqtMrtaArchitecture::getArchitecture() const
 
 Widgets* RqtMrtaArchitecture::getWidgets() const { return widgets_; }
 
+void RqtMrtaArchitecture::save(const QString& url) const
+{
+  if (url.isEmpty())
+  {
+    return;
+  }
+  QSettings settings(url, utilities::XmlSettings::format);
+  if (settings.isWritable())
+  {
+    settings.clear();
+    save(settings);
+    settings.sync();
+    if (settings.status() == QSettings::NoError)
+    {
+      ROS_INFO_STREAM("Saved architecture configuration file ["
+                      << url.toStdString() << "].");
+    }
+  }
+}
+
 void RqtMrtaArchitecture::save(QSettings& settings) const
 {
   settings.beginGroup("rqt_mrta");
   architecture_->save(settings);
   widgets_->save(settings);
   settings.endGroup();
+}
+
+void RqtMrtaArchitecture::load(const QString& url)
+{
+  QFileInfo file_info(url);
+  if (!file_info.isReadable())
+  {
+    return;
+  }
+  QSettings settings(url, utilities::XmlSettings::format);
+  if (settings.status() == QSettings::NoError)
+  {
+    load(settings);
+    ROS_INFO_STREAM("Loaded architecture configuration file ["
+                    << url.toStdString() << "].");
+  }
 }
 
 void RqtMrtaArchitecture::load(QSettings& settings)

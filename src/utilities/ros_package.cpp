@@ -231,6 +231,12 @@ void RosPackage::addRunDepend(const QString& depend)
   if (!run_depends_.contains(depend) && !package_path.empty())
   {
     run_depends_.append(depend);
+    std::stringstream ss;
+    for (int i(0); i < run_depends_.count(); i++)
+    {
+      ss << "(" << i << ", " << run_depends_[i].toStdString() << ")";
+    }
+    ROS_INFO_STREAM("[RosPackage] rundeps: " << ss.str());
     emit runDependAdded(depend);
     emit changed();
   }
@@ -328,6 +334,10 @@ QString RosPackage::validate() const
   {
     return "The package maintainer must be given.";
   }
+  else if (maintainer_email_.isEmpty())
+  {
+    return "The e-mail of the package maintainer must be given.";
+  }
   else if (license_.isEmpty())
   {
     return "The package license must be defined.";
@@ -339,7 +349,8 @@ bool RosPackage::isValid() const
 {
   return !name_.isEmpty() && !name_.contains(' ') && url_.isEmpty() &&
          !version_.isEmpty() && !description_.isEmpty() &&
-         !maintainer_.isEmpty() && !license_.isEmpty();
+         !maintainer_.isEmpty() && !maintainer_email_.isEmpty() &&
+         !license_.isEmpty();
 }
 
 bool RosPackage::isValidPackageName() const
@@ -349,20 +360,20 @@ bool RosPackage::isValidPackageName() const
 
 bool RosPackage::createPackage()
 {
-  if (!getPackageUrl().isEmpty())
+  if (!getUrl().isEmpty())
   {
     ROS_WARN_STREAM("The given package [" << name_.toStdString()
                                           << "] already exists.");
     return false;
   }
-  QDir workspace_dir(workspace_url_);
   if (workspaceExists() || catkinInitWorkspace())
   {
     QDir package_dir(workspace_url_ + "/src");
     package_dir.mkdir(name_);
     return createManifest() && createCMakeLists() && catkinMake();
   }
-  return false;
+  setUrl();
+  return getUrl() == workspace_url_ + "/src/" + name_;
 }
 
 bool RosPackage::createManifest()
@@ -373,15 +384,21 @@ bool RosPackage::createManifest()
     ROS_ERROR("%s", error_message.toStdString().c_str());
     return false;
   }
-  QString package_url(getPackageUrl());
-  if (package_url.isEmpty())
+  if (!workspaceExists())
   {
-    ROS_ERROR_STREAM("The given package [" << name_.toStdString()
-                                           << "] doest not exist.");
+    ROS_ERROR_STREAM("The given url [" << workspace_url_.toStdString()
+                                       << "] is not a ROS workspace.");
     return false;
   }
-  QString file_url(package_url + "/package.xml");
-  QFileInfo file_info(file_url);
+  QString package_url(workspace_url_ + "/src/" + name_);
+  QDir package_dir(package_url);
+  if (!package_dir.exists())
+  {
+    ROS_ERROR_STREAM("The given package location [" << package_url.toStdString()
+                                                    << "] does not exist.");
+    return false;
+  }
+  QFileInfo file_info(getManifestUrl());
   if (file_info.exists())
   {
     ROS_ERROR_STREAM("The given package ["
@@ -389,7 +406,8 @@ bool RosPackage::createManifest()
                      << "] already has its package.xml file.");
     return false;
   }
-  QSettings settings(package_url, utilities::XmlSettings::format);
+  QSettings settings(package_url + "/package.xml",
+                     utilities::XmlSettings::format);
   if (settings.isWritable())
   {
     settings.clear();
@@ -419,23 +437,14 @@ bool RosPackage::updateManifest()
   return false;
 }
 
-QString RosPackage::getPackageUrl()
-{
-  std::string url;
-  rp_.find(name_.toStdString(), url);
-  return QString::fromStdString(url);
-}
-
 QString RosPackage::getManifestUrl()
 {
-  QString package_url(getPackageUrl());
-  return !package_url.isEmpty() ? package_url + "/package.xml" : "";
+  return !getUrl().isEmpty() ? getUrl() + "/package.xml" : "";
 }
 
 QString RosPackage::getCMakeListsUrl()
 {
-  QString package_url(getPackageUrl());
-  return !package_url.isEmpty() ? package_url + "/CMakeLists.txt" : "";
+  return !getUrl().isEmpty() ? getUrl() + "/CMakeLists.txt" : "";
 }
 
 bool RosPackage::catkinMake() const
@@ -459,10 +468,10 @@ bool RosPackage::catkinMake() const
                                        << "] is not a ROS workspace.");
     return false;
   }
+  ROS_INFO_STREAM("Running the catkin_make command at the given workspace url ["
+                  << workspace_url_.toStdString() << "]");
   QString cmd("cd " + workspace_url_ + " && catkin_make");
   system(cmd.toStdString().c_str());
-  ROS_INFO_STREAM("Ran the catkin_make command at the given workspace url ["
-                  << workspace_url_.toStdString() << "]");
   return true;
 }
 
@@ -484,12 +493,19 @@ bool RosPackage::catkinInitWorkspace() const
                                        << "] is already a ROS workspace.");
     return false;
   }
+  QDir workspace_dir(workspace_url_);
+  if (!workspace_dir.exists())
+  {
+    ROS_ERROR_STREAM("The given url ["
+                     << workspace_url_.toStdString()
+                     << "] ror the ROS workspace does not exist.");
+    return false;
+  }
   QString workspace_src_url(workspace_url_ + "/src");
   QDir workspace_src_dir(workspace_src_url);
   if (!workspace_src_dir.exists())
   {
-    QString cmd("mkdir -p " + workspace_src_url);
-    system(cmd.toStdString().c_str());
+    workspace_dir.mkdir("src");
     if (!workspace_src_dir.exists())
     {
       ROS_ERROR_STREAM(
@@ -508,13 +524,7 @@ bool RosPackage::catkinInitWorkspace() const
   }
   ROS_INFO_STREAM(
       "Created ROS workspace at: " << workspace_src_url.toStdString());
-  QDir workspace_dir(workspace_url_);
-  if (workspace_dir.exists())
-  {
-    return false;
-  }
   catkinMake();
-  QString workspace_devel_url(workspace_url_ + "/devel");
   QString bashrc_url(QDir::homePath() + "/.bashrc");
   QFileInfo bashrc_file_info(bashrc_url);
   if (!bashrc_file_info.exists())
@@ -532,6 +542,7 @@ bool RosPackage::catkinInitWorkspace() const
   QTextStream in(&bashrc_file);
   QString bashrc_text(in.readAll());
   cmd = "source " + workspace_url_ + "/devel/setup.bash";
+  ROS_WARN_STREAM("[RosPackage] bashrc: " << cmd.toStdString());
   if (bashrc_text.contains(cmd))
   {
     bashrc_file.write(cmd.toStdString().c_str());
@@ -568,9 +579,9 @@ void RosPackage::save(QSettings& settings) const
     QString exports;
     for (size_t i(0); i < exports_.count(); i++)
     {
-      exports += "\n\t" + exports_[i];
+      exports += "\n\t\t" + exports_[i];
     }
-    exports += "\n";
+    exports += "\n\t";
     settings.setValue("export", exports);
   }
   settings.endGroup();
@@ -749,11 +760,18 @@ bool RosMetapackage::createCMakeLists()
                                                 << "] is not valid.");
     return false;
   }
-  QString package_url(getPackageUrl());
-  if (package_url.isEmpty())
+  if (!workspaceExists())
   {
-    ROS_ERROR_STREAM("The given package [" << name_.toStdString()
-                                           << "] doest not exist.");
+    ROS_ERROR_STREAM("The given url [" << workspace_url_.toStdString()
+                                       << "] is not a ROS workspace.");
+    return false;
+  }
+  QString package_url(workspace_url_ + "/src/" + name_);
+  QDir package_dir(package_url);
+  if (!package_dir.exists())
+  {
+    ROS_ERROR_STREAM("The given package location [" << package_url.toStdString()
+                                                    << "] does not exist.");
     return false;
   }
   QFile file(package_url + "/CMakeLists.txt");
@@ -767,7 +785,7 @@ bool RosMetapackage::createCMakeLists()
   QString cmake_lists_text;
   cmake_lists_text += "cmake_minimum_required(VERSION 2.8.3)\n";
   cmake_lists_text += "project(" + name_ + ")\n";
-  cmake_lists_text += "find_package(catkin REQUIRED)";
+  cmake_lists_text += "find_package(catkin REQUIRED)\n";
   cmake_lists_text += "catkin_metapackage()";
   if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
   {
@@ -777,6 +795,8 @@ bool RosMetapackage::createCMakeLists()
   }
   file.write(cmake_lists_text.toStdString().c_str());
   file.close();
+  ROS_INFO_STREAM("Created the " << name_.toStdString()
+                                 << " CMakeLists.txt file.");
   return true;
 }
 }

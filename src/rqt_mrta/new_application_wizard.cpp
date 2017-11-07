@@ -15,24 +15,27 @@ NewApplicationWizard::NewApplicationWizard(
     QWidget* parent, RqtMrtaApplicationConfig* application_config,
     RqtMrtaArchitectureConfig* architecture_config, Qt::WindowFlags flags)
     : QWizard(parent, flags), application_config_(application_config),
-      architecture_config_(architecture_config), past_id_(-1)
+      metapackage_config_(new RqtMrtaApplicationMetapackageConfig(this)),
+      architecture_config_(architecture_config)
 {
   if (!application_config_)
   {
-    throw utilities::Exception("The application configuration must not be null.");
+    throw utilities::Exception(
+        "The application configuration must not be null.");
   }
   if (!architecture_config_)
   {
-    throw utilities::Exception("The architecture configuration must not be null.");
+    throw utilities::Exception(
+        "The architecture configuration must not be null.");
   }
-  //setPage(DEFINE_APPLICATION, new DefineApplicationWizardPage(this));
-  setPage(DEFINE_ARCHITECTURE, new DefineArchitectureWizardPage(this));
-  setPage(DEFINE_ROBOTS, new DefineRobotsWizardPage(this));
-  setPage(DEFINE_ROBOTS_PARAMETERS, new DefineRobotsParametersWizardPage(this));
-  setWindowTitle("New Application");
-  connect(this, SIGNAL(accepted()), this, SLOT(generatePackage()));
+  setPage(DefineApplication, new DefineApplicationWizardPage(this));
+  // setPage(DefineArchitecture, new DefineArchitectureWizardPage(this));
+  // setPage(DefineRobots, new DefineRobotsWizardPage(this));
+  // setPage(DefineRobotsParameters, new
+  // DefineRobotsParametersWizardPage(this));
+  // setWindowTitle("New Application");
+  connect(this, SIGNAL(accepted()), this, SLOT(generate()));
   connect(this, SIGNAL(rejected()), this, SLOT(resetConfig()));
-  connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(idChanged(int)));
 }
 
 NewApplicationWizard::~NewApplicationWizard()
@@ -46,42 +49,32 @@ RqtMrtaApplicationConfig* NewApplicationWizard::getApplicationConfig() const
   return application_config_;
 }
 
+RqtMrtaApplicationMetapackageConfig*
+NewApplicationWizard::getMetapackageConfig() const
+{
+  return metapackage_config_;
+}
+
 RqtMrtaArchitectureConfig* NewApplicationWizard::getArchitectureConfig() const
 {
   return architecture_config_;
 }
 
-void NewApplicationWizard::idChanged(int id)
+void NewApplicationWizard::generate()
 {
-  bool moved_foward(id - past_id_ > 0);
-  /*if (id == define_architecture_->getId())
+  if (metapackage_config_->createPackage())
   {
-    architecture_config_->reset();
+    ROS_INFO_STREAM("Created package ["
+                    << metapackage_config_->getName().toStdString() << "] @ ["
+                    << metapackage_config_->getUrl().toStdString() << "].");
+    application_config_->save();
   }
-  if (moved_foward)
-  {
-    if (id == define_architecture_->getId() + 1)
-    {
-      define_architecture_->loadArchitectureConfig();
-    }
-  }*/
-  past_id_ = id;
-}
-
-void NewApplicationWizard::generatePackage()
-{
-  ROS_INFO("[NewApplicationWizard] generatePackage");
 }
 
 void NewApplicationWizard::resetConfig()
 {
-  if (application_config_)
-  {
-    application_config_->reset();
-  }
-  if (architecture_config_)
-  {
-    architecture_config_->reset();
-  }
+  application_config_->reset();
+  metapackage_config_->reset();
+  architecture_config_->reset();
 }
 }

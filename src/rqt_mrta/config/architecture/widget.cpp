@@ -1,5 +1,7 @@
 #include "rqt_mrta/config/architecture/widget.h"
 
+#include <ros/console.h>
+
 namespace rqt_mrta
 {
 namespace config
@@ -38,6 +40,7 @@ void Widget::save(QSettings &settings) const
 void Widget::load(QSettings &settings)
 {
   setId(settings.value("id").toString());
+  ROS_WARN_STREAM("[Widget] id: " << id_.toStdString());
 }
 
 void Widget::reset()

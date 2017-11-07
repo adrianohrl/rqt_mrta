@@ -3,6 +3,7 @@
 
 #include <QWizard>
 #include "rqt_mrta/config/application/rqt_mrta_application.h"
+#include "rqt_mrta/config/application/rqt_mrta_metapackage.h"
 #include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
 
 namespace Ui
@@ -13,6 +14,7 @@ class NewApplicationWizard;
 namespace rqt_mrta
 {
 typedef config::application::RqtMrtaApplication RqtMrtaApplicationConfig;
+typedef config::application::RqtMrtaApplicationMetapackage RqtMrtaApplicationMetapackageConfig;
 typedef config::architecture::RqtMrtaArchitecture RqtMrtaArchitectureConfig;
 
 class NewApplicationWizard : public QWizard
@@ -21,10 +23,10 @@ class NewApplicationWizard : public QWizard
 public:
   enum Page
   {
-    DEFINE_APPLICATION,
-    DEFINE_ARCHITECTURE,
-    DEFINE_ROBOTS,
-    DEFINE_ROBOTS_PARAMETERS
+    DefineApplication,
+    DefineArchitecture,
+    DefineRobots,
+    DefineRobotsParameters
   };
   NewApplicationWizard(QWidget* parent,
                        RqtMrtaApplicationConfig* application_config,
@@ -32,16 +34,16 @@ public:
                        Qt::WindowFlags flags = 0);
   virtual ~NewApplicationWizard();
   RqtMrtaApplicationConfig* getApplicationConfig() const;
+  RqtMrtaApplicationMetapackageConfig* getMetapackageConfig() const;
   RqtMrtaArchitectureConfig* getArchitectureConfig() const;
 
 private:
-  int past_id_;
   RqtMrtaApplicationConfig* application_config_;
+  RqtMrtaApplicationMetapackageConfig* metapackage_config_;
   RqtMrtaArchitectureConfig* architecture_config_;
 
 private slots:
-  void idChanged(int id);
-  void generatePackage();
+  void generate();
   void resetConfig();
 };
 }
