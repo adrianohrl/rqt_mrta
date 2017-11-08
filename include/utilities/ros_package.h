@@ -86,18 +86,13 @@ signals:
   void licenseChanged(const QString& license);
   void buildtoolDependChanged(const QString& depend);
   void buildDependsChanged(const QStringList& depends);
-  void runDependsChanged(const QStringList& depends);
-  void exportChanged(const QStringList& all_names,
-                     const QStringList& all_values);
   void buildDependAdded(const QString& depend);
-  void runDependAdded(const QString& depend);
-  void exportAdded(const QString& name, const QString& value);
   void buildDependRemoved(const QString& depend);
-  void runDependRemoved(const QString& depend);
-  void exportRemoved(const QString& name, const QString& value);
   void buildDependsCleared();
+  void runDependsChanged(const QStringList& depends);
+  void runDependAdded(const QString& depend);
+  void runDependRemoved(const QString& depend);
   void runDependsCleared();
-  void exportCleared();
 
 protected:
   rospack::Rospack rp_;
@@ -119,9 +114,11 @@ protected:
   QStringList build_depends_;
   QStringList run_depends_;
   Export* export_;
+  void updateRp();
 
 private slots:
   void setUrl();
+  void exportChanged();
 };
 
 class Export : public AbstractConfig

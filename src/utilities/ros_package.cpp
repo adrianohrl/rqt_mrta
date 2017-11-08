@@ -12,16 +12,8 @@ RosPackage::RosPackage(QObject* parent)
     : AbstractConfig(parent), export_(new Export(this))
 {
   reset();
-  rp_.setQuiet(true);
-  std::vector<std::string> search_path;
-  rp_.getSearchPathFromEnv(search_path);
-  rp_.crawl(search_path, true);
+  updateRp();
   connect(export_, SIGNAL(changed()), this, SLOT(exportChanged()));
-  connect(export_, SIGNAL(added(const QString&, const QString&)), this,
-          SLOT(exportAdded(const QString&, const QString&)));
-  connect(export_, SIGNAL(removed(const QString&, const QString&)), this,
-          SLOT(exportRemoved(const QString&, const QString&)));
-  connect(export_, SIGNAL(cleared()), this, SLOT(exportCleared()));
 }
 
 RosPackage::~RosPackage() {}
@@ -325,7 +317,8 @@ bool RosPackage::isValid() const
   return !name_.isEmpty() && !name_.contains(' ') && url_.isEmpty() &&
          !version_.isEmpty() && !description_.isEmpty() &&
          !maintainer_.isEmpty() && !maintainer_email_.isEmpty() &&
-         !license_.isEmpty();
+         maintainer_email_.contains('@') && !license_.isEmpty() &&
+         !workspace_url_.isEmpty();
 }
 
 bool RosPackage::isValidPackageName() const
@@ -335,7 +328,7 @@ bool RosPackage::isValidPackageName() const
 
 bool RosPackage::createPackage()
 {
-  if (!getUrl().isEmpty())
+  if (!url_.isEmpty())
   {
     ROS_WARN_STREAM("The given package [" << name_.toStdString()
                                           << "] already exists.");
@@ -345,10 +338,13 @@ bool RosPackage::createPackage()
   {
     QDir package_dir(workspace_url_ + "/src");
     package_dir.mkdir(name_);
-    return createManifest() && createCMakeLists() && catkinMake();
+    if (createManifest() && createCMakeLists() && catkinMake())
+    {
+      updateRp();
+      setUrl(workspace_url_ + "/src/" + name_);
+    }
   }
-  setUrl();
-  return getUrl() == workspace_url_ + "/src/" + name_;
+  return url_ == workspace_url_ + "/src/" + name_;
 }
 
 bool RosPackage::createManifest()
@@ -508,21 +504,30 @@ bool RosPackage::catkinInitWorkspace() const
     return false;
   }
   QFile bashrc_file(bashrc_url);
-  if (!bashrc_file.open(QIODevice::ReadWrite | QIODevice::Append |
-                        QIODevice::Text))
+  if (!bashrc_file.open(QIODevice::ReadWrite | QIODevice::Append))
   {
     ROS_ERROR_STREAM("Unable to open the ~/bashrc file.");
     return false;
   }
-  QTextStream in(&bashrc_file);
-  QString bashrc_text(in.readAll());
-  cmd = "source " + workspace_url_ + "/devel/setup.bash";
-  ROS_WARN_STREAM("[RosPackage] bashrc: " << cmd.toStdString());
-  if (bashrc_text.contains(cmd))
+  cmd = "\nsource " + workspace_url_ + "/devel/setup.bash";
+  QTextStream stream(&bashrc_file);
+  QString line(stream.readLine());
+  while (!line.isNull())
+    ;
   {
-    bashrc_file.write(cmd.toStdString().c_str());
+    if (line.contains(cmd))
+    {
+      bashrc_file.close();
+      return true;
+    }
+    line = stream.readLine();
   }
+  ROS_INFO_STREAM("Appending the 'source "
+                  << workspace_url_.toStdString()
+                  << "/devel/setup.bash' command to ~/.bashrc ");
+  bashrc_file.write(cmd.toStdString().c_str());
   bashrc_file.close();
+  return true;
 }
 
 void RosPackage::save() const
@@ -550,20 +555,21 @@ void RosPackage::save() const
 
 void RosPackage::save(QSettings& settings) const
 {
-  if (!isValid())
+  QString validation(validate());
+  if (!validation.isEmpty())
   {
     throw Exception("All mandatory parameters of the package manifest must be "
-                    "given before saving it.");
+                    "given before saving it: " +
+                    validation.toStdString());
   }
-  settings.setValue("package@type", "application");
   settings.beginGroup("package");
   settings.setValue("name", name_);
   settings.setValue("version", version_);
   settings.setValue("description", description_);
   settings.setValue("author", author_);
-  settings.setValue("author@email", author_email_);
+  settings.setValue("author/@email", author_email_);
   settings.setValue("maintainer", maintainer_);
-  settings.setValue("maintainer@email", maintainer_email_);
+  settings.setValue("maintainer/@email", maintainer_email_);
   settings.setValue("license", license_);
   settings.setValue("buildtool_depend", buildtool_depend_);
   if (!build_depends_.isEmpty())
@@ -620,15 +626,24 @@ void RosPackage::load(QSettings& settings)
   setVersion(settings.value("version").toString());
   setDescription(settings.value("description").toString());
   setAuthor(settings.value("author").toString());
-  setAuthorEmail(settings.value("author@email").toString());
+  setAuthorEmail(settings.value("author/@email").toString());
   setMaintainer(settings.value("maintainer").toString());
-  setMaintainerEmail(settings.value("maintainer@email").toString());
+  setMaintainerEmail(settings.value("maintainer/@email").toString());
   setLicense(settings.value("license").toString());
   setBuildtoolDepend(settings.value("buildtool_depend").toString());
   setBuildDepends(settings.value("build_depend").toString());
-  setBuildtoolDepend(settings.value("run_depend").toString());
+  setRunDepends(settings.value("run_depend").toString());
   export_->load(settings);
   settings.endGroup();
+}
+
+void RosPackage::updateRp()
+{
+  rp_ = rospack::Rospack();
+  rp_.setQuiet(true);
+  std::vector<std::string> search_path;
+  rp_.getSearchPathFromEnv(search_path);
+  rp_.crawl(search_path, true);
 }
 
 void RosPackage::reset()
@@ -744,6 +759,8 @@ RosPackage& RosPackage::operator=(const RosPackage& config)
   return *this;
 }
 
+void RosPackage::exportChanged() { emit changed(); }
+
 RosMetapackage::RosMetapackage(QObject* parent) : RosPackage(parent) {}
 
 RosMetapackage::~RosMetapackage() {}
@@ -817,7 +834,7 @@ QStringList Export::getAllNames() const { return all_names_; }
 
 QStringList Export::getAllValues() const { return all_values_; }
 
-void Export::setAll(const QStringList &all_names, const QStringList &all_values)
+void Export::setAll(const QStringList& all_names, const QStringList& all_values)
 {
   if (all_names != all_names_ && all_values != all_values_)
   {
@@ -892,7 +909,7 @@ void Export::reset()
 
 void Export::write(QDataStream& stream) const
 {
-  stream << (quint64) count();
+  stream << (quint64)count();
   for (size_t i(0); i < count(); i++)
   {
     stream << all_names_[i];

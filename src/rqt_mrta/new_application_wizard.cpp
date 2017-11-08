@@ -35,8 +35,6 @@ NewApplicationWizard::NewApplicationWizard(
   setWindowTitle("New Application");
   connect(this, SIGNAL(accepted()), this, SLOT(generate()));
   connect(this, SIGNAL(rejected()), this, SLOT(resetConfig()));
-
-  metapackage_config_->load("/home/adrianohrl/ros_ws/mrta_ws/src/murdoch/murdoch/package.xml");
 }
 
 NewApplicationWizard::~NewApplicationWizard()

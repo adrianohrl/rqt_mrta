@@ -1,5 +1,6 @@
 #include <QObject>
 #include <QDir>
+#include <ros/console.h>
 #include "rqt_mrta/config/application/rqt_mrta_metapackage.h"
 
 namespace rqt_mrta
@@ -19,7 +20,7 @@ RqtMrtaApplicationMetapackage::~RqtMrtaApplicationMetapackage() {}
 bool RqtMrtaApplicationMetapackage::createPackage()
 {
   addRunDepend("rqt_mrta");
-  export_->add("rqt_mrta@application", "{prefix}/rqt_mrta.xml");
+  export_->add("rqt_mrta/@application", "{prefix}/rqt_mrta.xml");
   if (RosPackage::createPackage())
   {
     QDir package_dir(getUrl());

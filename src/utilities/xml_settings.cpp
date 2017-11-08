@@ -1,6 +1,5 @@
 #include <QMap>
 #include <QList>
-#include <QSharedPointer>
 #include <QStringList>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
@@ -30,7 +29,7 @@ bool XmlSettings::read(QIODevice& device, QSettings::SettingsMap& map)
       QXmlStreamAttributes attributes(xml_reader.attributes());
       for (size_t i(0); i < attributes.count(); i++)
       {
-        QString name(groups.join(GROUP_SEPARATOR) + ATTRIBUTE_SEPARATOR +
+        QString name(groups.join(GROUP_SEPARATOR) + "/" + ATTRIBUTE_SEPARATOR +
                      attributes[i].name().toString());
         if (!multiple_elements)
         {
@@ -100,12 +99,8 @@ bool XmlSettings::write(QIODevice& device, const QSettings::SettingsMap& map)
       if (kt == current_map->end())
       {
         kt = current_map->insert(*jt, NestedQSharedPointer(new NestedMap()));
-        current_map = kt.value();
       }
-      else
-      {
-        current_map = kt.value();
-      }
+      current_map = kt.value();
     }
   }
   QXmlStreamWriter xml_writer(&device);
@@ -116,21 +111,25 @@ bool XmlSettings::write(QIODevice& device, const QSettings::SettingsMap& map)
   QList<NestedMap::iterator> nested_map_iterators;
   nested_maps.append(nested_map);
   nested_map_iterators.append(nested_map->begin());
+  QString tag;
+  QString attribute;
+  int value_index(0);
   while (!nested_maps.isEmpty())
   {
     NestedQSharedPointer current_map(nested_maps.last());
     NestedMap::iterator it(nested_map_iterators.last());
     if (it != current_map->end())
     {
-      QStringList start_element(it.key().split('@'));
-      xml_writer.writeStartElement(start_element[0]);
-      if (start_element.count() > 1)
+      tag = it.key();
+      if (it.key().startsWith(ATTRIBUTE_SEPARATOR))
       {
-        ROS_ERROR_STREAM("[XmlSettings::write] start_element.count() > 1 : "
-                         << start_element.count()
-                         << ", att[1]: " << start_element[1].toStdString());
+        attribute = it.key().right(it.key().count() - 1);
       }
-      groups.append(start_element[0]);
+      else
+      {
+        xml_writer.writeStartElement(it.key());
+      }
+      groups.append(it.key());
       nested_maps.append(it.value());
       nested_map_iterators.append(it.value()->begin());
     }
@@ -138,7 +137,56 @@ bool XmlSettings::write(QIODevice& device, const QSettings::SettingsMap& map)
     {
       if (current_map->isEmpty())
       {
-        xml_writer.writeCharacters(map[groups.join("/")].toString());
+        QString value(map[groups.join(GROUP_SEPARATOR)].toString());
+        if (!attribute.isEmpty())
+        {
+          xml_writer.writeAttribute(
+              attribute, map[groups.join(GROUP_SEPARATOR)].toString());
+          if (groups.isEmpty())
+          {
+            nested_maps.removeLast();
+            nested_map_iterators.removeLast();
+            if (!nested_maps.isEmpty())
+            {
+              ++nested_map_iterators.last();
+            }
+            continue;
+          }
+          groups.removeLast();
+          value = map[groups.join(GROUP_SEPARATOR)].toString();
+          groups.append("@" + attribute);
+        }
+        if (value.startsWith("[") && value.endsWith("]"))
+        {
+          QStringRef value_ref(&value, 1, value.count() - 2);
+          QStringList values(value_ref.toString().split(","));
+          value = values[value_index];
+          value_index = value_index == values.count() - 1 ? 0 : value_index + 1;
+        }
+        if (!value.isEmpty())
+        {
+          xml_writer.writeCharacters(value);
+        }
+        if (value_index > 0)
+        {
+          xml_writer.writeEndElement();
+          xml_writer.writeStartElement(tag);
+          continue;
+        }
+      }
+      if (!attribute.isEmpty())
+      {
+        if (!groups.isEmpty())
+        {
+          groups.removeLast();
+        }
+        nested_maps.removeLast();
+        nested_map_iterators.removeLast();
+        if (!nested_maps.isEmpty())
+        {
+          ++nested_map_iterators.last();
+        }
+        attribute.clear();
       }
       xml_writer.writeEndElement();
       if (!groups.isEmpty())

@@ -76,6 +76,7 @@ void RqtMrtaApplication::save(const QString& filename) const
 void RqtMrtaApplication::save(QSettings& settings) const
 {
   settings.beginGroup("rqt_mrta");
+  settings.setValue("@format", "application");
   application_->save(settings);
   settings.endGroup();
 }
@@ -98,20 +99,20 @@ void RqtMrtaApplication::load(const QString& url)
 
 void RqtMrtaApplication::load(QSettings& settings)
 {
-  QString type(settings.value("rqt_mrta@type").toString());
+  settings.beginGroup("rqt_mrta");
+  QString type(settings.value("@format").toString());
   if (type.isEmpty())
   {
     throw utilities::Exception("The <rqt_mrta> tag in the input xml file must "
-                               "have an attribute named 'type'.");
+                               "have an attribute named 'format'.");
   }
   if (type != "application")
   {
-    throw utilities::Exception("The 'type' attribute of the <rqt_mrta> tag in "
+    throw utilities::Exception("The 'format' attribute of the <rqt_mrta> tag in "
                                "the input xml file must be valued as "
                                "'application' to be loaded as an application "
                                "configuration file.");
   }
-  settings.beginGroup("rqt_mrta");
   application_->load(settings);
   settings.endGroup();
 }

@@ -62,6 +62,7 @@ void RqtMrtaArchitecture::save(const QString& url) const
 void RqtMrtaArchitecture::save(QSettings& settings) const
 {
   settings.beginGroup("rqt_mrta");
+  settings.setValue("@format", "architecture");
   architecture_->save(settings);
   widgets_->save(settings);
   settings.endGroup();
@@ -85,20 +86,20 @@ void RqtMrtaArchitecture::load(const QString& url)
 
 void RqtMrtaArchitecture::load(QSettings& settings)
 {
-  QString type(settings.value("rqt_mrta@type").toString());
+  settings.beginGroup("rqt_mrta");
+  QString type(settings.value("@format").toString());
   if (type.isEmpty())
   {
     throw utilities::Exception("The <rqt_mrta> tag in the input xml file must "
-                               "have an attribute named 'type'.");
+                               "have an attribute named 'format'.");
   }
   if (type != "application")
   {
-    throw utilities::Exception("The 'type' attribute of the <rqt_mrta> tag in "
+    throw utilities::Exception("The 'format' attribute of the <rqt_mrta> tag in "
                                "the input xml file must be valued as "
                                "'architecture' to be loaded as an architecture "
                                "configuration file.");
   }
-  settings.beginGroup("rqt_mrta");
   architecture_->load(settings);
   widgets_->load(settings);
   settings.endGroup();

@@ -3,6 +3,7 @@
 
 #include <QIODevice>
 #include <QSettings>
+#include <QSharedPointer>
 
 namespace utilities
 {
