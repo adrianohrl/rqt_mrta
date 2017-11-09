@@ -62,6 +62,18 @@ Task &Task::operator=(const Task &config)
   setId(config.id_);
   return *this;
 }
+
+QString Task::validate() const
+{
+  if (id_.isEmpty())
+  {
+    return "The task id must not be empty.";
+  }
+  if (id_.contains(' '))
+  {
+    return "The task id must not contain <space>.";
+  }
+}
 }
 }
 }

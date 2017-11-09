@@ -23,18 +23,22 @@ public:
   void removeTask(Task* task);
   void removeTask(size_t index);
   void clearTasks();
+  bool contains(const QString &id) const;
+  bool isEmpty() const;
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
   void write(QDataStream& stream) const;
   void read(QDataStream& stream);
   Tasks& operator=(const Tasks& config);
+  QString validate() const;
 
 signals:
-  void taskAdded(size_t index);
-  void taskRemoved(size_t index);
-  void tasksCleared();
   void taskChanged(size_t index);
+  void taskIdChanged(size_t task_index, const QString& task_id);
+  void added(size_t index);
+  void removed(const QString& task_id);
+  void cleared();
 
 private:
   typedef QVector<Task*>::iterator iterator;
@@ -43,6 +47,7 @@ private:
 
 private slots:
   void taskChanged();
+  void taskIdChanged(const QString& task_id);
   void taskDestroyed();
 };
 }

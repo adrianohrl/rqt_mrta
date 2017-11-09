@@ -23,6 +23,7 @@ public:
   void write(QDataStream& stream) const;
   void read(QDataStream& stream);
   Task& operator=(const Task& config);
+  QString validate() const;
 
 signals:
   void idChanged(const QString &id);

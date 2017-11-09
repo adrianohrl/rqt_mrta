@@ -61,7 +61,7 @@ private slots:
   void configRunDependsChanged(const QStringList& depends);
   void nameChanged(const QString& name);
   void packageChanged(const QString& package);
-  void workspaceBrowserButtonPressed();
+  void workspaceBrowserButtonClicked();
   void workspaceUrlChanged(const QString& url);
   void versionChanged(const QString& version);
   void descriptionChanged();

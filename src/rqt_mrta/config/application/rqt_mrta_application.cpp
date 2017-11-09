@@ -56,6 +56,7 @@ void RqtMrtaApplication::save(const QString& filename) const
 {
   if (package_url_.isEmpty() || filename.isEmpty())
   {
+    ROS_ERROR("[RqtMrtaApplication] unable to save application rqt_mrta.xml file.");
     return;
   }
   QString url(package_url_ + "/" + filename);

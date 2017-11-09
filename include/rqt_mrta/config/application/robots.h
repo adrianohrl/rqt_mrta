@@ -25,18 +25,26 @@ public:
   void removeRobot(Robot* robot);
   void removeRobot(size_t index);
   void clearRobots();
+  bool contains(const QString& id) const;
+  bool isEmpty() const;
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
   void write(QDataStream& stream) const;
   void read(QDataStream& stream);
   Robots& operator=(const Robots& config);
+  QString validate() const;
 
 signals:
-  void robotAdded(size_t index);
-  void robotRemoved(size_t index);
-  void robotsCleared();
-  void robotChanged(size_t index);
+  void added(size_t robot_index);
+  void removed(const QString& robot_id);
+  void cleared();
+  void robotIdChanged(size_t index, const QString& robot_id);
+  void taskIdChanged(size_t robot_index, size_t task_index,
+                     const QString& task_id);
+  void taskAdded(size_t robot_index, size_t task_index);
+  void taskRemoved(size_t robot_index, const QString& task_id);
+  void tasksCleared(size_t robot_index);
 
 private:
   typedef QVector<Robot*>::iterator iterator;
@@ -44,7 +52,11 @@ private:
   QVector<Robot*> robots_;
 
 private slots:
-  void robotChanged();
+  void robotIdChanged(const QString& robot_id);
+  void taskIdChanged(size_t task_index, const QString& task_id);
+  void taskAdded(size_t task_index);
+  void taskRemoved(const QString& task_id);
+  void tasksCleared();
   void robotDestroyed();
 };
 }

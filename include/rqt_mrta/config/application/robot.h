@@ -25,9 +25,14 @@ public:
   void write(QDataStream& stream) const;
   void read(QDataStream& stream);
   Robot& operator=(const Robot& config);
+  QString validate() const;
 
 signals:
-  void idChanged(const QString &id);
+  void idChanged(const QString& id);
+  void taskIdChanged(size_t task_index, const QString& task_id);
+  void added(size_t task_index);
+  void removed(const QString& task_id);
+  void cleared();
 
 private:
   QString id_;
@@ -35,6 +40,10 @@ private:
 
 private slots:
   void tasksChanged();
+  void taskChanged(size_t task_index, const QString& task_id);
+  void taskAdded(size_t task_index);
+  void taskRemoved(const QString& task_id);
+  void tasksCleared();
 };
 }
 }

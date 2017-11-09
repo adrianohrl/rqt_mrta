@@ -40,7 +40,7 @@ DefineApplicationWidget::DefineApplicationWidget(
   connect(ui_->package_line_edit, SIGNAL(textChanged(const QString&)), this,
           SLOT(packageChanged(const QString&)));
   connect(ui_->workspace_push_button, SIGNAL(clicked()), this,
-          SLOT(workspaceBrowserButtonPressed()));
+          SLOT(workspaceBrowserButtonClicked()));
   connect(ui_->workspace_package_line_edit, SIGNAL(textChanged(const QString&)),
           this, SLOT(workspaceUrlChanged(const QString&)));
   connect(ui_->version_line_edit, SIGNAL(textChanged(const QString&)), this,
@@ -290,7 +290,7 @@ void DefineApplicationWidget::configRunDependsChanged(
   ui_->run_depends_plain_text_edit->setTextCursor(cursor);
 }
 
-void DefineApplicationWidget::workspaceBrowserButtonPressed()
+void DefineApplicationWidget::workspaceBrowserButtonClicked()
 {
   QFileDialog dialog(this, "Select the workspace directory", QDir::homePath());
   dialog.setAcceptMode(QFileDialog::AcceptSave);

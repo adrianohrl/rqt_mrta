@@ -7,10 +7,7 @@ namespace config
 {
 namespace application
 {
-Robots::Robots(QObject *parent)
-  : AbstractConfig(parent)
-{
-}
+Robots::Robots(QObject* parent) : AbstractConfig(parent) {}
 
 Robots::~Robots()
 {
@@ -24,10 +21,7 @@ Robots::~Robots()
   }
 }
 
-size_t Robots::count() const
-{
-  return robots_.count();
-}
+size_t Robots::count() const { return robots_.count(); }
 
 Robot* Robots::getRobot(size_t index) const
 {
@@ -38,25 +32,30 @@ Robot* Robots::addRobot()
 {
   Robot* robot = new Robot(this);
   robots_.append(robot);
-  connect(robot, SIGNAL(changed()), this,
-    SLOT(robotChanged()));
-  connect(robot, SIGNAL(destroyed()), this,
-    SLOT(robotDestroyed()));
-  emit robotAdded(robots_.count() - 1);
+  connect(robot, SIGNAL(idChanged(const QString&)), this,
+          SLOT(robotIdChanged(const QString&)));
+  connect(robot, SIGNAL(taskIdChanged(size_t, const QString&)), this,
+          SLOT(taskIdChanged(size_t, const QString&)));
+  connect(robot, SIGNAL(added(size_t)), this, SLOT(taskAdded(size_t)));
+  connect(robot, SIGNAL(removed(const QString&)), this,
+          SLOT(taskRemoved(const QString&)));
+  connect(robot, SIGNAL(cleared()), this, SLOT(tasksCleared()));
+  connect(robot, SIGNAL(destroyed()), this, SLOT(robotDestroyed()));
+  emit added(robots_.count() - 1);
   emit changed();
   return robot;
 }
 
-void Robots::removeRobot(Robot *robot)
-{
-  removeRobot(robots_.indexOf(robot));
-}
+void Robots::removeRobot(Robot* robot) { removeRobot(robots_.indexOf(robot)); }
 
 void Robots::removeRobot(size_t index)
 {
   if (index >= 0 && index < robots_.count())
   {
+    QString robot_id(robots_[index]->getId());
     robots_.remove(index);
+    emit removed(robot_id);
+    emit changed();
   }
 }
 
@@ -73,12 +72,26 @@ void Robots::clearRobots()
       }
     }
     robots_.clear();
-    emit robotsCleared();
+    emit cleared();
     emit changed();
   }
 }
 
-void Robots::save(QSettings &settings) const
+bool Robots::contains(const QString& id) const
+{
+  for (size_t i(0); i < robots_.count(); i++)
+  {
+    if (robots_[i]->getId() == id)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Robots::isEmpty() const { return robots_.isEmpty(); }
+
+void Robots::save(QSettings& settings) const
 {
   settings.beginGroup("robots");
   for (size_t index(0); index < robots_.count(); ++index)
@@ -90,14 +103,16 @@ void Robots::save(QSettings &settings) const
   settings.endGroup();
 }
 
-void Robots::load(QSettings &settings)
+void Robots::load(QSettings& settings)
 {
   settings.beginGroup("robots");
   QStringList groups(settings.childGroups());
   size_t index(0);
 
-  for (QStringList::iterator it = groups.begin(); it != groups.end(); ++it) {
-    Robot* robot = index < robots_.count() ? robot = robots_[index] : addRobot();
+  for (QStringList::iterator it = groups.begin(); it != groups.end(); ++it)
+  {
+    Robot* robot =
+        index < robots_.count() ? robot = robots_[index] : addRobot();
     settings.beginGroup(*it);
     robot->load(settings);
     settings.endGroup();
@@ -110,12 +125,9 @@ void Robots::load(QSettings &settings)
   }
 }
 
-void Robots::reset()
-{
-  clearRobots();
-}
+void Robots::reset() { clearRobots(); }
 
-void Robots::write(QDataStream &stream) const
+void Robots::write(QDataStream& stream) const
 {
   for (size_t index(0); index < robots_.count(); ++index)
   {
@@ -123,7 +135,7 @@ void Robots::write(QDataStream &stream) const
   }
 }
 
-void Robots::read(QDataStream &stream)
+void Robots::read(QDataStream& stream)
 {
   for (size_t index(0); index < robots_.count(); ++index)
   {
@@ -131,7 +143,7 @@ void Robots::read(QDataStream &stream)
   }
 }
 
-Robots &Robots::operator=(const Robots &config)
+Robots& Robots::operator=(const Robots& config)
 {
   while (robots_.count() < config.robots_.count())
   {
@@ -148,26 +160,83 @@ Robots &Robots::operator=(const Robots &config)
   return *this;
 }
 
-void Robots::robotChanged()
+QString Robots::validate() const
 {
-  for (size_t index(0); index < robots_.count(); ++index)
+  if (robots_.isEmpty())
   {
-    if (robots_[index] == sender())
+    return "Enter the system robots.";
+  }
+  QString validation;
+  for (size_t i(0); i < robots_.count(); i++)
+  {
+    validation = robots_[i]->validate();
+    if (!validation.isEmpty())
     {
-      emit robotChanged(index);
       break;
     }
   }
-  emit changed();
+  return validation;
+}
+
+void Robots::taskIdChanged(size_t task_index, const QString& task_id)
+{
+  int index(robots_.indexOf(static_cast<Robot*>(sender())));
+  if (index != -1)
+  {
+    emit taskIdChanged(index, task_index, task_id);
+    emit changed();
+  }
+}
+
+void Robots::taskAdded(size_t task_index)
+{
+  int index(robots_.indexOf(static_cast<Robot*>(sender())));
+  if (index != -1)
+  {
+    emit taskAdded(index, task_index);
+    emit changed();
+  }
+}
+
+void Robots::taskRemoved(const QString& task_id)
+{
+  int index(robots_.indexOf(static_cast<Robot*>(sender())));
+  if (index != -1)
+  {
+    emit taskRemoved(index, task_id);
+    emit changed();
+  }
+}
+
+void Robots::tasksCleared()
+{
+  int index(robots_.indexOf(static_cast<Robot*>(sender())));
+  if (index != -1)
+  {
+    emit tasksCleared(index);
+    emit changed();
+  }
+}
+
+void Robots::robotIdChanged(const QString& robot_id)
+{
+  int index(robots_.indexOf(static_cast<Robot*>(sender())));
+  if (index != -1)
+  {
+    emit robotIdChanged(index, robot_id);
+    emit changed();
+  }
 }
 
 void Robots::robotDestroyed()
 {
-  int index(robots_.indexOf(static_cast<Robot*>(sender())));
+  Robot* robot = static_cast<Robot*>(sender());
+  int index(robots_.indexOf(robot));
   if (index >= 0)
   {
+    QString robot_id(robot->getId());
     robots_.remove(index);
-    emit robotRemoved(index);
+    emit removed(robot_id);
     emit changed();
   }
 }

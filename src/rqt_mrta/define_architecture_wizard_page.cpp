@@ -26,7 +26,7 @@ bool DefineArchitectureWizardPage::validatePage()
   {
     return false;
   }
-  architecture_config_->save(application_config_->getPackageUrl() +
+  architecture_config_->load(application_config_->getPackageUrl() +
                              "/rqt_mrta.xml");
   return true;
 }

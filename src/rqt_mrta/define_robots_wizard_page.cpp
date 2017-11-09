@@ -10,7 +10,8 @@ DefineRobotsWizardPage::DefineRobotsWizardPage(NewApplicationWizard* parent)
                                "Define the Application Robots and Tasks")
 {
   DefineRobotsWidget* widget =
-      new DefineRobotsWidget(this, application_config_, architecture_config_);
+      new DefineRobotsWidget(this, application_config_);
+  //connect(widget, SIGNAL(changed()), this, SLOT(updateComplete()));
   setWidget(widget);
 }
 
@@ -22,5 +23,8 @@ void DefineRobotsWizardPage::cleanupPage() { architecture_config_->reset(); }
 
 bool DefineRobotsWizardPage::validatePage() {}
 
-bool DefineRobotsWizardPage::isComplete() const { return true; }
+bool DefineRobotsWizardPage::isComplete() const
+{
+  return static_cast<DefineRobotsWidget*>(widget_)->validate().isEmpty();
+}
 }

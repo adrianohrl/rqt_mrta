@@ -2,6 +2,7 @@
 #define _RQT_MRTA_DEFINE_ROBOTS_WIDGET_H_
 
 #include <QWidget>
+#include <QStringListModel>
 
 namespace Ui
 {
@@ -16,15 +17,9 @@ namespace application
 {
 class RqtMrtaApplication;
 }
-
-namespace architecture
-{
-class RqtMrtaArchitecture;
-}
 }
 
 typedef config::application::RqtMrtaApplication RqtMrtaApplicationConfig;
-typedef config::architecture::RqtMrtaArchitecture RqtMrtaArchitectureConfig;
 
 class DefineRobotsWidget : public QWidget
 {
@@ -32,13 +27,11 @@ class DefineRobotsWidget : public QWidget
   Q_OBJECT
 public:
   DefineRobotsWidget(
-      QWidget* parent, RqtMrtaApplicationConfig* application_config = NULL,
-      RqtMrtaArchitectureConfig* architecture_config = NULL);
+      QWidget* parent, RqtMrtaApplicationConfig* application_config = NULL);
   virtual ~DefineRobotsWidget();
   RqtMrtaApplicationConfig* getApplicationConfig() const;
-  RqtMrtaArchitectureConfig* getArchitectureConfig() const;
   void setApplicationConfig(RqtMrtaApplicationConfig* config);
-  void setArchitectureConfig(RqtMrtaArchitectureConfig* config);
+  QString validate() const;
 
 signals:
   void changed();
@@ -46,11 +39,15 @@ signals:
 private:
   Ui::DefineRobotsWidget* ui_;
   RqtMrtaApplicationConfig* application_config_;
-  RqtMrtaArchitectureConfig* architecture_config_;
+  QStringListModel* tasks_model_;
 
 private slots:
-  void architectureConfigChanged();
   void applicationConfigChanged();
+  void idChanged(const QString& id);
+  void newRobotButtonClicked();
+  void newTaskButtonClicked();
+  void robotSelected(const QString& robot_id);
+  void taskSelected(const QString& task_id);
 };
 }
 
