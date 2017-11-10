@@ -1,5 +1,4 @@
 #include <QStringList>
-#include <ros/console.h>
 #include "rqt_mrta/config/architecture/config.h"
 #include "rqt_mrta/config/architecture/param_factory.h"
 
@@ -58,15 +57,8 @@ ParamInterface* Config::getParam(const QString& full_name) const
 
 void Config::addParam(ParamInterface* param)
 {
-  ParamInterface* parent(param->getParentParam());
-  if (parent)
-  {
-    parent->addParam(param);
-    return;
-  }
-  param->setParent(NULL);
   params_.append(param);
-  connect(param, SIGNAL(nameChanged(const QString&, const QString&)), this,
+  /*connect(param, SIGNAL(nameChanged(const QString&, const QString&)), this,
           SLOT(paramNameChanged(const QString&, const QString&)));
   connect(param, SIGNAL(typeChanged(const QString&, const QMetaType::Type&)),
           this, SLOT(paramTypeChanged(const QString&, const QMetaType::Type&)));
@@ -83,7 +75,7 @@ void Config::addParam(ParamInterface* param)
           SLOT(paramRemoved(const QString&)));
   connect(param, SIGNAL(cleared(const QString&)), this,
           SLOT(paramCleared(const QString&)));
-  connect(param, SIGNAL(destroyed()), this, SLOT(paramDestroyed()));
+  connect(param, SIGNAL(destroyed()), this, SLOT(paramDestroyed()));*/
   emit added(param->getFullName());
   emit changed();
 }
@@ -194,39 +186,32 @@ bool Config::isEmpty(const QString &full_name) const
 
 void Config::save(QSettings& settings) const
 {
-  settings.beginGroup("config");
   settings.setValue("id", id_);
   for (size_t index(0); index < params_.count(); ++index)
   {
+    settings.beginGroup(params_[index]->getGroupName() + "_" + QString::number(index));
     params_[index]->save(settings);
+    settings.endGroup();
   }
-  settings.endGroup();
 }
 
 void Config::load(QSettings& settings)
 {
-  settings.beginGroup("config");
   setId(settings.value("id").toString());
+  QStringList groups(Params::sortGroups(settings.childGroups()));
   clearParams();
-  QStringList groups(settings.childGroups());
-  for (int i(0); i < groups.count(); i++)
+  for (size_t index(0); index < groups.count(); index++)
   {
-    ROS_INFO_STREAM("[Configs::load] group " << i << ": "
-                                             << groups[i].toStdString());
-  }
-  for (QStringList::iterator it(groups.begin()); it != groups.end(); ++it)
-  {
-    ParamInterface* param = ParamFactory::newInstance(it->split("/").first());
-    ROS_WARN("[Config::load] to aki, acabei de criar um param");
+    ParamInterface* param = ParamFactory::newInstance(groups[index]);
     addParam(param);
+    settings.beginGroup(param->getGroupName() + "_" + QString::number(index));
     param->load(settings);
+    settings.endGroup();
   }
-  settings.endGroup();
 }
 
 void Config::reset()
 {
-  setId("");
   for (size_t index(0); index < params_.count(); index++)
   {
     params_[index]->reset();
@@ -236,6 +221,7 @@ void Config::reset()
 void Config::write(QDataStream& stream) const
 {
   stream << id_;
+  stream << params_.count();
   for (size_t index(0); index < params_.count(); ++index)
   {
     params_[index]->write(stream);
@@ -244,10 +230,13 @@ void Config::write(QDataStream& stream) const
 
 void Config::read(QDataStream& stream)
 {
+  quint64 count;
   QString id;
   stream >> id;
   setId(id);
-  for (size_t index(0); index < params_.count(); ++index)
+  stream >> count;
+  clearParams();
+  for (size_t index(0); index < count; ++index)
   {
     params_[index]->read(stream);
   }

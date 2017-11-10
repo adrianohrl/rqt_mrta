@@ -1,5 +1,4 @@
 #include <QFileInfo>
-#include <QStringList>
 #include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
 #include "utilities/exception.h"
 #include "utilities/xml_settings.h"
@@ -86,12 +85,13 @@ void RqtMrtaArchitecture::load(const QString& url)
     return;
   }
   QSettings settings(url, utilities::XmlSettings::format);
-  if (settings.status() == QSettings::NoError)
+  if (settings.status() != QSettings::NoError)
   {
-    load(settings);
-    ROS_INFO_STREAM("Loaded architecture configuration file ["
-                    << url.toStdString() << "].");
+    ROS_ERROR("The given file is not well formatted.");
   }
+  load(settings);
+  ROS_INFO_STREAM("Loaded architecture configuration file ["
+                  << url.toStdString() << "].");
 }
 
 void RqtMrtaArchitecture::load(QSettings& settings)
@@ -109,11 +109,6 @@ void RqtMrtaArchitecture::load(QSettings& settings)
                                "the input xml file must be valued as "
                                "'architecture' to be loaded as an architecture "
                                "configuration file.");
-  }
-  QStringList groups(settings.childGroups());
-  for (int i(0); i < groups.count(); i++)
-  {
-    ROS_INFO_STREAM("[RqtMrtaArchitecture::load] group " << i << ": " << groups[i].toStdString());
   }
   architecture_->load(settings);
   configs_->load(settings);

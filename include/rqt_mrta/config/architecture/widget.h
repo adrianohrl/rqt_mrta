@@ -15,8 +15,8 @@ class Widget : public utilities::AbstractConfig
 public:
   Widget(QObject* parent = NULL);
   virtual ~Widget();
-  QString getId() const;
-  void setId(const QString& name);
+  QString getPluginName() const;
+  void setPluginName(const QString& plugin_name);
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
@@ -25,10 +25,10 @@ public:
   Widget& operator=(const Widget& config);
 
 signals:
-  void idChanged(const QString &id);
+  void pluginNameChanged(const QString &plugin_name);
 
 private:
-  QString id_;
+  QString plugin_name_;
 };
 }
 }

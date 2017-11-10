@@ -15,7 +15,7 @@ class Params : public ParamInterface
 {
   Q_OBJECT
 public:
-  Params(ParamInterface* parent = NULL);
+  Params(Params* parent = NULL);
   virtual ~Params();
   ParamInterface* getParam(const QString& full_name) const;
   void addParam(ParamInterface* param);
@@ -32,6 +32,7 @@ public:
   Params& operator=(const Params& config);
   ParamInterface* clone() const;
   QString validate() const;
+  static QStringList sortGroups(const QStringList& groups);
 
 signals:
   void idChanged(const QString& name);

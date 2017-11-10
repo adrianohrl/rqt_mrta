@@ -7,10 +7,7 @@ namespace config
 {
 namespace architecture
 {
-Widgets::Widgets(QObject *parent)
-  : AbstractConfig(parent)
-{
-}
+Widgets::Widgets(QObject* parent) : AbstractConfig(parent) {}
 
 Widgets::~Widgets()
 {
@@ -24,10 +21,7 @@ Widgets::~Widgets()
   }
 }
 
-size_t Widgets::count() const
-{
-  return widgets_.count();
-}
+size_t Widgets::count() const { return widgets_.count(); }
 
 Widget* Widgets::getWidget(size_t index) const
 {
@@ -38,11 +32,11 @@ Widget* Widgets::addWidget()
 {
   Widget* widget = new Widget(this);
   widgets_.append(widget);
-  connect(widget, SIGNAL(changed()), this,
-    SLOT(widgetChanged()));
-  connect(widget, SIGNAL(destroyed()), this,
-    SLOT(widgetDestroyed()));
-  emit widgetAdded(widgets_.count() - 1);
+  connect(widget, SIGNAL(changed()), this, SLOT(widgetChanged()));
+  connect(widget, SIGNAL(pluginNameChanged(const QString&)), this,
+          SLOT(widgetPluginNameChanged(const QString&)));
+  connect(widget, SIGNAL(destroyed()), this, SLOT(widgetDestroyed()));
+  emit added(widgets_.count() - 1);
   emit changed();
   return widget;
 }
@@ -60,12 +54,12 @@ void Widgets::clearWidgets()
       }
     }
     widgets_.clear();
-    emit widgetsCleared();
+    emit cleared();
     emit changed();
   }
 }
 
-void Widgets::save(QSettings &settings) const
+void Widgets::save(QSettings& settings) const
 {
   settings.beginGroup("widgets");
   for (size_t index(0); index < widgets_.count(); ++index)
@@ -77,32 +71,26 @@ void Widgets::save(QSettings &settings) const
   settings.endGroup();
 }
 
-void Widgets::load(QSettings &settings)
+void Widgets::load(QSettings& settings)
 {
   settings.beginGroup("widgets");
   QStringList groups(settings.childGroups());
   size_t index(0);
-
-  for (QStringList::iterator it = groups.begin(); it != groups.end(); ++it) {
-    Widget* widget = index < widgets_.count() ? widget = widgets_[index] : addWidget();
+  clearWidgets();
+  for (QStringList::iterator it = groups.begin(); it != groups.end(); ++it)
+  {
+    Widget* widget = addWidget();
     settings.beginGroup(*it);
     widget->load(settings);
     settings.endGroup();
     ++index;
   }
   settings.endGroup();
-  while (index < widgets_.count())
-  {
-    removeWidget(index);
-  }
 }
 
-void Widgets::reset()
-{
-  clearWidgets();
-}
+void Widgets::reset() { clearWidgets(); }
 
-void Widgets::write(QDataStream &stream) const
+void Widgets::write(QDataStream& stream) const
 {
   for (size_t index(0); index < widgets_.count(); ++index)
   {
@@ -110,7 +98,7 @@ void Widgets::write(QDataStream &stream) const
   }
 }
 
-void Widgets::read(QDataStream &stream)
+void Widgets::read(QDataStream& stream)
 {
   for (size_t index(0); index < widgets_.count(); ++index)
   {
@@ -118,7 +106,7 @@ void Widgets::read(QDataStream &stream)
   }
 }
 
-Widgets &Widgets::operator=(const Widgets &config)
+Widgets& Widgets::operator=(const Widgets& config)
 {
   while (widgets_.count() < config.widgets_.count())
   {
@@ -148,13 +136,24 @@ void Widgets::widgetChanged()
   emit changed();
 }
 
+void Widgets::widgetPluginNameChanged(const QString& plugin_name)
+{
+  Widget* widget = static_cast<Widget*>(sender());
+  int index(widgets_.indexOf(widget));
+  if (index != -1)
+  {
+    emit widgetPluginNameChanged(index, plugin_name);
+    emit changed();
+  }
+}
+
 void Widgets::widgetDestroyed()
 {
   int index(widgets_.indexOf(static_cast<Widget*>(sender())));
   if (index >= 0)
   {
     widgets_.remove(index);
-    emit widgetRemoved(index);
+    emit removed(index);
     emit changed();
   }
 }

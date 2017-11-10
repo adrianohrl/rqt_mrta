@@ -1,5 +1,6 @@
 #include <ros/console.h>
 #include "rqt_mrta/config/architecture/param.h"
+#include "rqt_mrta/config/architecture/params.h"
 
 namespace rqt_mrta
 {
@@ -7,7 +8,7 @@ namespace config
 {
 namespace architecture
 {
-Param::Param(ParamInterface* parent) : ParamInterface("param", parent) {}
+Param::Param(Params *parent) : ParamInterface("param", parent) {}
 
 Param::~Param() {}
 
@@ -156,16 +157,11 @@ void Param::load(QSettings& settings)
   setValue(settings.value("value").toString());
   setDefaultValue(settings.value("value").toString());
   setToolTip(settings.value("tool_tip").toString());
-  settings.endGroup();
 }
 
 void Param::reset()
 {
-  ParamInterface::reset();
-  setType(QMetaType::QString);
   setValue(QString());
-  setDefaultValue(QString());
-  setToolTip("");
 }
 
 void Param::write(QDataStream& stream) const

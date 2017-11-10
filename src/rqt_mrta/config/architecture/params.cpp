@@ -9,7 +9,7 @@ namespace config
 {
 namespace architecture
 {
-Params::Params(ParamInterface* parent) : ParamInterface("params", parent) {}
+Params::Params(Params *parent) : ParamInterface("params", parent) {}
 
 Params::Params(const QString& group_name, Params* parent)
     : ParamInterface(group_name, parent)
@@ -40,15 +40,8 @@ ParamInterface* Params::getParam(const QString& full_name) const
 
 void Params::addParam(ParamInterface* param)
 {
-  ParamInterface* parent(param->getParentParam());
-  if (parent)
-  {
-    parent->addParam(param);
-    return;
-  }
-  param->setParent(this);
   params_.append(param);
-  connect(param, SIGNAL(nameChanged(const QString&, const QString&)), this,
+  /*connect(param, SIGNAL(nameChanged(const QString&, const QString&)), this,
           SLOT(paramNameChanged(const QString&, const QString&)));
   connect(param, SIGNAL(typeChanged(const QString&, const QMetaType::Type&)),
           this, SLOT(paramTypeChanged(const QString&, const QMetaType::Type&)));
@@ -65,7 +58,7 @@ void Params::addParam(ParamInterface* param)
           SLOT(paramRemoved(const QString&)));
   connect(param, SIGNAL(cleared(const QString&)), this,
           SLOT(paramCleared(const QString&)));
-  connect(param, SIGNAL(destroyed()), this, SLOT(paramDestroyed()));
+  connect(param, SIGNAL(destroyed()), this, SLOT(paramDestroyed()));*/
   emit added(param->getFullName());
   emit changed();
 }
@@ -146,28 +139,29 @@ void Params::save(QSettings& settings) const
   ParamInterface::save(settings);
   for (size_t index(0); index < params_.count(); ++index)
   {
+    settings.beginGroup(params_[index]->getGroupName() + "_" + QString::number(index));
     params_[index]->save(settings);
+    settings.endGroup();
   }
-  settings.endGroup();
 }
 
 void Params::load(QSettings& settings)
 {
   ParamInterface::load(settings);
+  QStringList groups(Params::sortGroups(settings.childGroups()));
   clearParams();
-  QStringList groups(settings.childGroups());
-  for (QStringList::iterator it(groups.begin()); it != groups.end(); ++it)
+  for (size_t index(0); index < groups.count(); index++)
   {
-    ParamInterface* param = ParamFactory::newInstance(it->split("/").first());
+    ParamInterface* param = ParamFactory::newInstance(groups[index], this);
     addParam(param);
+    settings.beginGroup(param->getGroupName() + "_" + QString::number(index));
     param->load(settings);
+    settings.endGroup();
   }
-  settings.endGroup();
 }
 
 void Params::reset()
 {
-  ParamInterface::reset();
   for (size_t index(0); index < params_.count(); index++)
   {
     params_[index]->reset();
@@ -177,6 +171,7 @@ void Params::reset()
 void Params::write(QDataStream& stream) const
 {
   ParamInterface::write(stream);
+  stream << params_.count();
   for (size_t index(0); index < params_.count(); ++index)
   {
     params_[index]->write(stream);
@@ -185,8 +180,11 @@ void Params::write(QDataStream& stream) const
 
 void Params::read(QDataStream& stream)
 {
+  quint64 count;
   ParamInterface::read(stream);
-  for (size_t index(0); index < params_.count(); ++index)
+  stream >> count;
+  clearParams();
+  for (size_t index(0); index < count; ++index)
   {
     params_[index]->read(stream);
   }
@@ -291,6 +289,22 @@ void Params::paramDestroyed()
     emit removed(full_name);
     emit changed();
   }
+}
+
+QStringList Params::sortGroups(const QStringList &groups)
+{
+  QStringList sorted_groups;
+  for (size_t index(0); index < groups.count(); index++)
+  {
+    QString group(groups.filter("_" + QString::number(index)).first());
+    if (group.isEmpty())
+    {
+      ROS_ERROR("Invalid param index.");
+      return sorted_groups;
+    }
+    sorted_groups.append(group);
+  }
+  return sorted_groups;
 }
 }
 }

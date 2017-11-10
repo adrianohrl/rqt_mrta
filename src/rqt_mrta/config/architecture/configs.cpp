@@ -1,5 +1,4 @@
 #include <QStringList>
-#include <ros/console.h>
 #include "rqt_mrta/config/architecture/configs.h"
 
 namespace rqt_mrta
@@ -103,7 +102,9 @@ void Configs::save(QSettings& settings) const
   settings.beginGroup("configs");
   for (size_t index(0); index < configs_.count(); ++index)
   {
+    settings.beginGroup("config_" + QString::number(index));
     configs_[index]->save(settings);
+    settings.endGroup();
   }
   settings.endGroup();
 }
@@ -113,16 +114,12 @@ void Configs::load(QSettings& settings)
   settings.beginGroup("configs");
   clearConfigs();
   QStringList groups(settings.childGroups());
-  for (int i(0); i < groups.count(); i++)
-  {
-    ROS_INFO_STREAM("[Configs::load] group " << i << ": "
-                                             << groups[i].toStdString());
-  }
-
-  for (size_t i(0); i < groups.count(); i++)
+  for (size_t index(0); index < groups.count(); index++)
   {
     Config* config = addConfig();
+    settings.beginGroup("config_" + QString::number(index));
     config->load(settings);
+    settings.endGroup();
   }
   settings.endGroup();
 }
@@ -131,6 +128,7 @@ void Configs::reset() { clearConfigs(); }
 
 void Configs::write(QDataStream& stream) const
 {
+  stream << configs_.count();
   for (size_t index(0); index < configs_.count(); ++index)
   {
     configs_[index]->write(stream);
@@ -139,7 +137,10 @@ void Configs::write(QDataStream& stream) const
 
 void Configs::read(QDataStream& stream)
 {
-  for (size_t index(0); index < configs_.count(); ++index)
+  quint64 count;
+  stream >> count;
+  clearConfigs();
+  for (size_t index(0); index < count; ++index)
   {
     configs_[index]->read(stream);
   }

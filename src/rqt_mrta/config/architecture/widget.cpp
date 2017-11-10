@@ -17,52 +17,51 @@ Widget::~Widget()
 {
 }
 
-QString Widget::getId() const
+QString Widget::getPluginName() const
 {
-  return id_;
+  return plugin_name_;
 }
 
-void Widget::setId(const QString &id)
+void Widget::setPluginName(const QString &plugin_name)
 {
-  if (id != id_)
+  if (plugin_name != plugin_name_)
   {
-    id_ = id;
-    emit idChanged(id);
+    plugin_name_ = plugin_name;
+    emit pluginNameChanged(plugin_name);
     emit changed();
   }
 }
 
 void Widget::save(QSettings &settings) const
 {
-  settings.setValue("id", id_);
+  settings.setValue("plugin_name", plugin_name_);
 }
 
 void Widget::load(QSettings &settings)
 {
-  setId(settings.value("id").toString());
-  ROS_WARN_STREAM("[Widget] id: " << id_.toStdString());
+  setPluginName(settings.value("plugin_name").toString());
 }
 
 void Widget::reset()
 {
-  setId("");
+  setPluginName("");
 }
 
 void Widget::write(QDataStream &stream) const
 {
-  stream << id_;
+  stream << plugin_name_;
 }
 
 void Widget::read(QDataStream &stream)
 {
-  QString id;
-  stream >> id;
-  setId(id);
+  QString plugin_name;
+  stream >> plugin_name;
+  setPluginName(plugin_name);
 }
 
 Widget &Widget::operator=(const Widget &config)
 {
-  setId(config.id_);
+  setPluginName(config.plugin_name_);
   return *this;
 }
 }

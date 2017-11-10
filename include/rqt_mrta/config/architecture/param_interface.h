@@ -9,11 +9,14 @@ namespace config
 {
 namespace architecture
 {
+class Params;
+
 class ParamInterface : public utilities::AbstractConfig
 {
   Q_OBJECT
 public:
   virtual ~ParamInterface();
+  QString getGroupName() const;
   QString getName() const;
   QString getFullName() const;
   ParamInterface* getParentParam() const;
@@ -45,9 +48,9 @@ signals:
   void cleared(const QString& full_name);
 
 protected:
-  ParamInterface(const QString &group_name, ParamInterface* parent);
+  ParamInterface(const QString &group_name, Params* parent);
   QString name_;
-  QString group_name_;
+  const QString group_name_;
 
 protected slots:
   void paramTypeChanged(const QString &full_name, const QMetaType::Type& type);

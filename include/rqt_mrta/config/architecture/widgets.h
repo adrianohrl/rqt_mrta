@@ -31,10 +31,12 @@ public:
   Widgets& operator=(const Widgets& config);
 
 signals:
-  void widgetAdded(size_t index);
-  void widgetRemoved(size_t index);
-  void widgetsCleared();
+
+  void added(size_t index);
+  void removed(size_t index);
+  void cleared();
   void widgetChanged(size_t index);
+  void widgetPluginNameChanged(size_t index, const QString& plugin_name);
 
 private:
   typedef QVector<Widget*>::iterator iterator;
@@ -43,6 +45,7 @@ private:
 
 private slots:
   void widgetChanged();
+  void widgetPluginNameChanged(const QString& plugin_name);
   void widgetDestroyed();
 };
 }

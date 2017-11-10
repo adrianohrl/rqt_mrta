@@ -1,6 +1,5 @@
-#include <QStringList>
-#include <ros/console.h>
 #include "rqt_mrta/config/architecture/param_interface.h"
+#include "rqt_mrta/config/architecture/params.h"
 #include "utilities/exception.h"
 
 namespace rqt_mrta
@@ -9,12 +8,15 @@ namespace config
 {
 namespace architecture
 {
-ParamInterface::ParamInterface(const QString& group_name, ParamInterface *parent)
+ParamInterface::ParamInterface(const QString& group_name,
+                               Params *parent)
     : AbstractConfig(parent), group_name_(group_name)
 {
 }
 
 ParamInterface::~ParamInterface() {}
+
+QString ParamInterface::getGroupName() const { return group_name_; }
 
 QString ParamInterface::getName() const { return name_; }
 
@@ -24,7 +26,7 @@ QString ParamInterface::getFullName() const
   return (parent ? parent->getFullName() + "/" : "") + name_;
 }
 
-ParamInterface *ParamInterface::getParentParam() const
+ParamInterface* ParamInterface::getParentParam() const
 {
   return parent() ? static_cast<ParamInterface*>(parent()) : NULL;
 }
@@ -40,7 +42,7 @@ void ParamInterface::setName(const QString& name)
   }
 }
 
-ParamInterface *ParamInterface::getParam(const QString &full_name) const
+ParamInterface* ParamInterface::getParam(const QString& full_name) const
 {
   return NULL;
 }
@@ -77,23 +79,15 @@ QString ParamInterface::validate() const
 
 void ParamInterface::save(QSettings& settings) const
 {
-  settings.beginGroup(group_name_);
   settings.setValue("name", name_);
 }
 
 void ParamInterface::load(QSettings& settings)
 {
-  settings.beginGroup(group_name_);
-  QStringList groups(settings.childGroups());
-  for (int i(0); i < groups.count(); i++)
-  {
-    ROS_INFO_STREAM("[ParamInterface::load] group " << i << ": "
-                                             << groups[i].toStdString());
-  }
   setName(settings.value("name").toString());
 }
 
-void ParamInterface::reset() { setName(""); }
+void ParamInterface::reset() { }
 
 void ParamInterface::write(QDataStream& stream) const { stream << name_; }
 

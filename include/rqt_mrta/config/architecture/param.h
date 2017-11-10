@@ -13,7 +13,7 @@ class Param : public ParamInterface
 {
   Q_OBJECT
 public:
-  Param(ParamInterface* parent = NULL);
+  Param(Params* parent = NULL);
   virtual ~Param();
   QMetaType::Type getType() const;
   QString getToolTip() const;

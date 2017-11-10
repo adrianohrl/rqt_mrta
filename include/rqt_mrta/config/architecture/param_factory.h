@@ -1,6 +1,7 @@
 #ifndef _RQT_MRTA_ARCHITECTURE_CONFIG_PARAM_FACTORY_H_
 #define _RQT_MRTA_ARCHITECTURE_CONFIG_PARAM_FACTORY_H_
 
+#include <ros/console.h>
 #include "rqt_mrta/config/architecture/param.h"
 #include "rqt_mrta/config/architecture/params.h"
 #include "rqt_mrta/config/architecture/params_array.h"
@@ -14,20 +15,20 @@ namespace architecture
 class ParamFactory
 {
 public:
-  static ParamInterface* newInstance(const QString& group_name)
+  static ParamInterface* newInstance(const QString& group_name, Params* parent = NULL)
   {
     ParamInterface* param = NULL;
-    if (group_name == "param")
+    if (group_name.startsWith("param_"))
     {
-      param = new Param();
+      param = new Param(parent);
     }
-    else if (group_name == "params")
+    else if (group_name.startsWith("params_"))
     {
-      param = new Params();
+      param = new Params(parent);
     }
-    else if (group_name == "array")
+    else if (group_name.startsWith("array_"))
     {
-      param = new ParamsArray();
+      param = new ParamsArray(parent);
     }
     return param;
   }
