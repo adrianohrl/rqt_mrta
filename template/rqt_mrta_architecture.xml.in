@@ -22,6 +22,29 @@
           <horizon>@BUSY_ROBOTS_TOPIC_HISTORY_LENGTH@</horizon>
         </topic>
       </busy_robots>
+      <config>
+        <name><name>
+        <namespace><namespace>
+        <params>
+          <param_0>
+            <for_each_task>@PARAM_0_FOR_EACH_TASK@</for_each_task>
+            <params>
+              <param_0>
+                <name>@PARAM_0_0_NAME@</name>
+                <type>@PARAM_0_0_TYPE@</type>
+                <mandatory>@PARAM_0_0_MANDATORY@</mandatory>
+                <default>@PARAM_0_0_DEFAULT@</default>
+              </param_0>
+              <param_1>
+                <name>@PARAM_0_1_NAME@</name>
+                <type>@PARAM_0_1_TYPE@</type>
+                <mandatory>true</mandatory>
+                <default>@PARAM_0_1_DEFAULT@</default>
+              </param_1>
+            </params>
+          </param_0>
+        </params>
+      </config>
       <launch>
         <name>@ROBOTS_LAUNCH_FILE_NAME@</name>
         <params>

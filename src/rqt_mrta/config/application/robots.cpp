@@ -108,8 +108,7 @@ void Robots::load(QSettings& settings)
   settings.beginGroup("robots");
   QStringList groups(settings.childGroups());
   size_t index(0);
-
-  for (QStringList::iterator it = groups.begin(); it != groups.end(); ++it)
+  for (QStringList::iterator it(groups.begin()); it != groups.end(); ++it)
   {
     Robot* robot =
         index < robots_.count() ? robot = robots_[index] : addRobot();

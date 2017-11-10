@@ -17,13 +17,13 @@ class Tasks : public utilities::AbstractConfig
 public:
   Tasks(QObject* parent = NULL);
   virtual ~Tasks();
-  size_t count() const;
   Task* getTask(size_t index) const;
   Task* addTask();
   void removeTask(Task* task);
   void removeTask(size_t index);
   void clearTasks();
   bool contains(const QString &id) const;
+  size_t count() const;
   bool isEmpty() const;
   void save(QSettings& settings) const;
   void load(QSettings& settings);
@@ -34,15 +34,13 @@ public:
   QString validate() const;
 
 signals:
-  void taskChanged(size_t index);
-  void taskIdChanged(size_t task_index, const QString& task_id);
   void added(size_t index);
   void removed(const QString& task_id);
   void cleared();
+  void taskChanged(size_t index);
+  void taskIdChanged(size_t task_index, const QString& task_id);
 
 private:
-  typedef QVector<Task*>::iterator iterator;
-  typedef QVector<Task*>::const_iterator const_iterator;
   QVector<Task*> tasks_;
 
 private slots:

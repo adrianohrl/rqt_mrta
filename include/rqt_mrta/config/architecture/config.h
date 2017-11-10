@@ -1,5 +1,5 @@
-#ifndef _RQT_MRTA_ARCHITECTURE_CONFIG_PARAMS_H_
-#define _RQT_MRTA_ARCHITECTURE_CONFIG_PARAMS_H_
+#ifndef _RQT_MRTA_ARCHITECTURE_CONFIG_CONFIG_H_
+#define _RQT_MRTA_ARCHITECTURE_CONFIG_CONFIG_H_
 
 #include <QVector>
 #include "utilities/abstract_config.h"
@@ -11,26 +11,32 @@ namespace config
 {
 namespace architecture
 {
-class Params : public ParamInterface
+class ParamInterface;
+
+class Config : public utilities::AbstractConfig
 {
   Q_OBJECT
 public:
-  Params(ParamInterface* parent = NULL);
-  virtual ~Params();
+  Config(QObject* parent = NULL);
+  virtual ~Config();
+  QString getId() const;
+  void setId(const QString& id);
   ParamInterface* getParam(const QString& full_name) const;
   void addParam(ParamInterface* param);
   void removeParam(const QString& full_name);
   void clearParams();
+  void clearParams(const QString& full_name);
   bool contains(const QString& full_name) const;
   size_t count() const;
+  size_t count(const QString& full_name) const;
   bool isEmpty() const;
+  bool isEmpty(const QString& full_name) const;
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
   void write(QDataStream& stream) const;
   void read(QDataStream& stream);
-  Params& operator=(const Params& config);
-  ParamInterface* clone() const;
+  Config& operator=(const Config& config);
   QString validate() const;
 
 signals:
@@ -44,10 +50,8 @@ signals:
   void defaultValueChanged(const QString& name, const QVariant& default_value);
   void toolTipChanged(const QString& name, const QString& tool_tip);
 
-protected:
-  Params(const QString& group_name, Params* parent = NULL);
-
 private:
+  QString id_;
   QVector<ParamInterface*> params_;
 
 private slots:
@@ -66,4 +70,4 @@ private slots:
 }
 }
 
-#endif // _RQT_MRTA_ARCHITECTURE_CONFIG_PARAMS_H_
+#endif // _RQT_MRTA_ARCHITECTURE_CONFIG_CONFIG_H_

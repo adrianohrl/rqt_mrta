@@ -6,10 +6,10 @@ namespace config
 {
 namespace architecture
 {
-Architecture::Architecture(QObject *parent)
-  : AbstractConfig(parent), allocations_(new Allocations(this)),
-    launch_(new ArchitectureLaunch(this)), robots_(new Robots(this)),
-    tasks_(new Tasks(this))
+Architecture::Architecture(QObject* parent)
+    : AbstractConfig(parent), allocations_(new Allocations(this)),
+      launch_(new ArchitectureLaunch(this)), robots_(new Robots(this)),
+      tasks_(new Tasks(this))
 {
   connect(allocations_, SIGNAL(changed()), this, SLOT(allocationsChanged()));
   connect(launch_, SIGNAL(changed()), this, SLOT(launchChanged()));
@@ -41,27 +41,15 @@ Architecture::~Architecture()
   }
 }
 
-Allocations *Architecture::getAllocations() const
-{
-  return allocations_;
-}
+Allocations* Architecture::getAllocations() const { return allocations_; }
 
-ArchitectureLaunch *Architecture::getLaunch() const
-{
-  return launch_;
-}
+ArchitectureLaunch* Architecture::getLaunch() const { return launch_; }
 
-Robots *Architecture::getRobots() const
-{
-  return robots_;
-}
+Robots* Architecture::getRobots() const { return robots_; }
 
-Tasks *Architecture::getTasks() const
-{
-  return tasks_;
-}
+Tasks* Architecture::getTasks() const { return tasks_; }
 
-void Architecture::save(QSettings &settings) const
+void Architecture::save(QSettings& settings) const
 {
   settings.beginGroup("architecture");
   allocations_->save(settings);
@@ -71,7 +59,7 @@ void Architecture::save(QSettings &settings) const
   settings.endGroup();
 }
 
-void Architecture::load(QSettings &settings)
+void Architecture::load(QSettings& settings)
 {
   settings.beginGroup("architecture");
   allocations_->load(settings);
@@ -89,7 +77,7 @@ void Architecture::reset()
   tasks_->reset();
 }
 
-void Architecture::write(QDataStream &stream) const
+void Architecture::write(QDataStream& stream) const
 {
   allocations_->write(stream);
   launch_->write(stream);
@@ -97,7 +85,7 @@ void Architecture::write(QDataStream &stream) const
   tasks_->write(stream);
 }
 
-void Architecture::read(QDataStream &stream)
+void Architecture::read(QDataStream& stream)
 {
   allocations_->read(stream);
   launch_->read(stream);
@@ -105,7 +93,7 @@ void Architecture::read(QDataStream &stream)
   tasks_->read(stream);
 }
 
-Architecture &Architecture::operator=(const Architecture &config)
+Architecture& Architecture::operator=(const Architecture& config)
 {
   *allocations_ = *config.allocations_;
   *launch_ = *config.launch_;
@@ -114,25 +102,13 @@ Architecture &Architecture::operator=(const Architecture &config)
   return *this;
 }
 
-void Architecture::allocationsChanged()
-{
-  emit changed();
-}
+void Architecture::allocationsChanged() { emit changed(); }
 
-void Architecture::launchChanged()
-{
-  emit changed();
-}
+void Architecture::launchChanged() { emit changed(); }
 
-void Architecture::robotsChanged()
-{
-  emit changed();
-}
+void Architecture::robotsChanged() { emit changed(); }
 
-void Architecture::tasksChanged()
-{
-  emit changed();
-}
+void Architecture::tasksChanged() { emit changed(); }
 }
 }
 }

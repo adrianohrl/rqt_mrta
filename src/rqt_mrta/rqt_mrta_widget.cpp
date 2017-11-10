@@ -30,6 +30,12 @@ RqtMrtaWidget::RqtMrtaWidget(QWidget* parent)
           SLOT(newApplicationPushButtonClicked()));
   connect(ui_->open_application_push_button, SIGNAL(clicked()), this,
           SLOT(openApplicationPushButtonClicked()));
+
+
+
+  architecture_config_->load("/home/adrianohrl/ros_ws/mrta_ws/src/alliance/alliance/rqt_mrta.xml");
+
+
 }
 
 RqtMrtaWidget::~RqtMrtaWidget()

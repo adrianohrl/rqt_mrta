@@ -50,8 +50,14 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/config/architecture/architecture.cpp
   src/rqt_mrta/config/architecture/architecture_launch.cpp
   src/rqt_mrta/config/architecture/busy_robots.cpp
+  src/rqt_mrta/config/architecture/config.cpp
+  src/rqt_mrta/config/architecture/configs.cpp
   src/rqt_mrta/config/architecture/idle_robots.cpp
   src/rqt_mrta/config/architecture/incoming_tasks.cpp
+  src/rqt_mrta/config/architecture/param.cpp
+  src/rqt_mrta/config/architecture/param_interface.cpp
+  src/rqt_mrta/config/architecture/params.cpp
+  src/rqt_mrta/config/architecture/params_array.cpp
   src/rqt_mrta/config/architecture/robot_launch.cpp
   src/rqt_mrta/config/architecture/robots.cpp
   src/rqt_mrta/config/architecture/rqt_mrta_architecture.cpp
@@ -104,8 +110,15 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/config/architecture/architecture.h
   include/rqt_mrta/config/architecture/architecture_launch.h
   include/rqt_mrta/config/architecture/busy_robots.h
+  include/rqt_mrta/config/architecture/config.h
+  include/rqt_mrta/config/architecture/configs.h
   include/rqt_mrta/config/architecture/idle_robots.h
   include/rqt_mrta/config/architecture/incoming_tasks.h
+  include/rqt_mrta/config/architecture/param.h
+  include/rqt_mrta/config/architecture/param_factory.h
+  include/rqt_mrta/config/architecture/param_interface.h
+  include/rqt_mrta/config/architecture/params.h
+  include/rqt_mrta/config/architecture/params_array.h
   include/rqt_mrta/config/architecture/robot_launch.h
   include/rqt_mrta/config/architecture/robots.h
   include/rqt_mrta/config/architecture/rqt_mrta_architecture.h

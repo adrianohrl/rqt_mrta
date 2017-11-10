@@ -11,12 +11,12 @@ Tasks::Tasks(QObject* parent) : AbstractConfig(parent) {}
 
 Tasks::~Tasks()
 {
-  for (iterator it(tasks_.begin()); it != tasks_.end(); it++)
+  for (size_t index(0); index < tasks_.count(); index++)
   {
-    if (*it)
+    if (tasks_[index])
     {
-      delete *it;
-      *it = NULL;
+      delete tasks_[index];
+      tasks_[index] = NULL;
     }
   }
 }
@@ -74,9 +74,9 @@ void Tasks::clearTasks()
 
 bool Tasks::contains(const QString& id) const
 {
-  for (size_t i(0); i < tasks_.count(); i++)
+  for (size_t index(0); index < tasks_.count(); index++)
   {
-    if (tasks_[i]->getId() == id)
+    if (tasks_[index]->getId() == id)
     {
       return true;
     }
@@ -103,8 +103,7 @@ void Tasks::load(QSettings& settings)
   settings.beginGroup("tasks");
   QStringList groups(settings.childGroups());
   size_t index(0);
-
-  for (QStringList::iterator it = groups.begin(); it != groups.end(); ++it)
+  for (QStringList::iterator it(groups.begin()); it != groups.end(); ++it)
   {
     Task* task = index < tasks_.count() ? task = tasks_[index] : addTask();
     settings.beginGroup(*it);
@@ -199,7 +198,7 @@ void Tasks::taskDestroyed()
 {
   Task* task = static_cast<Task*>(sender());
   int index(tasks_.indexOf(task));
-  if (index >= 0)
+  if (index != -1)
   {
     QString task_id(task->getId());
     tasks_.remove(index);

@@ -16,7 +16,7 @@ public:
   Task(QObject* parent = NULL);
   virtual ~Task();
   QString getId() const;
-  void setId(const QString& name);
+  void setId(const QString& id);
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();

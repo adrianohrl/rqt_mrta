@@ -3,6 +3,7 @@
 
 #include "utilities/abstract_config.h"
 #include "rqt_mrta/config/architecture/architecture.h"
+#include "rqt_mrta/config/architecture/configs.h"
 #include "rqt_mrta/config/architecture/widgets.h"
 
 namespace rqt_mrta
@@ -18,6 +19,7 @@ public:
   RqtMrtaArchitecture(QObject* parent = NULL);
   virtual ~RqtMrtaArchitecture();
   Architecture* getArchitecture() const;
+  Configs* getConfigs() const;
   Widgets* getWidgets() const;
   void save(const QString& url) const;
   void load(const QString& url);
@@ -28,12 +30,14 @@ public:
 
 private:
   Architecture* architecture_;
+  Configs* configs_;
   Widgets* widgets_;
   void save(QSettings& settings) const;
   void load(QSettings& settings);
 
 private slots:
   void architectureChanged();
+  void configsChanged();
   void widgetsChanged();
 };
 }

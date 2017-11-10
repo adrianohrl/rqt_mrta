@@ -11,7 +11,7 @@ DefineRobotsWizardPage::DefineRobotsWizardPage(NewApplicationWizard* parent)
 {
   DefineRobotsWidget* widget =
       new DefineRobotsWidget(this, application_config_);
-  //connect(widget, SIGNAL(changed()), this, SLOT(updateComplete()));
+  connect(widget, SIGNAL(changed()), this, SLOT(updateComplete()));
   setWidget(widget);
 }
 
