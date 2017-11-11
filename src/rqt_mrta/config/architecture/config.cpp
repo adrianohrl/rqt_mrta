@@ -58,24 +58,25 @@ ParamInterface* Config::getParam(const QString& full_name) const
 void Config::addParam(ParamInterface* param)
 {
   params_.append(param);
-  /*connect(param, SIGNAL(nameChanged(const QString&, const QString&)), this,
-          SLOT(paramNameChanged(const QString&, const QString&)));
+  connect(param, SIGNAL(changed()), this, SLOT(paramChanged()));
+  connect(param, SIGNAL(nameChanged(const QString&, const QString&)), this,
+          SIGNAL(nameChanged(const QString&, const QString&)));
   connect(param, SIGNAL(typeChanged(const QString&, const QMetaType::Type&)),
-          this, SLOT(paramTypeChanged(const QString&, const QMetaType::Type&)));
+          this, SIGNAL(typeChanged(const QString&, const QMetaType::Type&)));
   connect(param, SIGNAL(valueChanged(const QString&, const QVariant&)), this,
-          SLOT(paramValueChanged(const QString&, const QVariant&)));
+          SIGNAL(valueChanged(const QString&, const QVariant&)));
   connect(
       param, SIGNAL(defaultValueChanged(const QString&, const QVariant&)),
-      this, SLOT(paramDefaultValueChanged(const QString&, const QVariant&)));
+      this, SIGNAL(defaultValueChanged(const QString&, const QVariant&)));
   connect(param, SIGNAL(toolTipChanged(const QString&, const QString&)), this,
-          SLOT(paramToolTipChanged(const QString&, const QString&)));
+          SIGNAL(toolTipChanged(const QString&, const QString&)));
   connect(param, SIGNAL(added(const QString&)), this,
-          SLOT(paramAdded(const QString&)));
+          SIGNAL(added(const QString&)));
   connect(param, SIGNAL(removed(const QString&)), this,
-          SLOT(paramRemoved(const QString&)));
+          SIGNAL(removed(const QString&)));
   connect(param, SIGNAL(cleared(const QString&)), this,
-          SLOT(paramCleared(const QString&)));
-  connect(param, SIGNAL(destroyed()), this, SLOT(paramDestroyed()));*/
+          SIGNAL(cleared(const QString&)));
+  connect(param, SIGNAL(destroyed()), this, SLOT(paramDestroyed()));
   emit added(param->getFullName());
   emit changed();
 }
@@ -279,55 +280,8 @@ QString Config::validate() const
   return validation;
 }
 
-void Config::paramAdded(const QString& full_name)
+void Config::paramChanged()
 {
-  emit added(full_name);
-  emit changed();
-}
-
-void Config::paramRemoved(const QString& full_name)
-{
-  emit removed(full_name);
-  emit changed();
-}
-
-void Config::paramCleared(const QString& full_name)
-{
-  emit cleared(full_name);
-  emit changed();
-}
-
-void Config::paramNameChanged(const QString& previous_full_name,
-                              const QString& name)
-{
-  emit paramNameChanged(previous_full_name, name);
-  emit changed();
-}
-
-void Config::paramTypeChanged(const QString& full_name,
-                              const QMetaType::Type& type)
-{
-  emit paramTypeChanged(full_name, type);
-  emit changed();
-}
-
-void Config::paramValueChanged(const QString& full_name, const QVariant& value)
-{
-  emit paramValueChanged(full_name, value);
-  emit changed();
-}
-
-void Config::paramDefaultValueChanged(const QString& full_name,
-                                      const QVariant& default_value)
-{
-  emit paramDefaultValueChanged(full_name, default_value);
-  emit changed();
-}
-
-void Config::paramToolTipChanged(const QString& full_name,
-                                 const QString& tool_tip)
-{
-  emit paramToolTipChanged(full_name, tool_tip);
   emit changed();
 }
 

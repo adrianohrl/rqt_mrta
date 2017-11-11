@@ -52,7 +52,7 @@ void Param::setType(const QMetaType::Type& type)
   if (type != type_)
   {
     type_ = type;
-    emit typeChanged(name_, type);
+    emit typeChanged(getFullName(), type);
     emit changed();
   }
 }
@@ -62,7 +62,7 @@ void Param::setToolTip(const QString& tool_tip)
   if (tool_tip != tool_tip_)
   {
     tool_tip_ = tool_tip;
-    emit toolTipChanged(name_, tool_tip);
+    emit toolTipChanged(getFullName(), tool_tip);
     emit changed();
   }
 }
@@ -92,7 +92,7 @@ void Param::setValue(const QVariant &value)
   if (value != value_)
   {
     value_ = value;
-    emit valueChanged(name_, value);
+    emit valueChanged(getFullName(), value);
     emit changed();
   }
 }
@@ -122,7 +122,7 @@ void Param::setDefaultValue(const QVariant& default_value)
   if (default_value != default_value_)
   {
     default_value_ = default_value;
-    emit defaultValueChanged(name_, default_value);
+    emit defaultValueChanged(getFullName(), default_value);
     emit changed();
   }
 }

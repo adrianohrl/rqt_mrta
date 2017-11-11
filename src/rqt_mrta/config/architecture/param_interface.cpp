@@ -8,11 +8,12 @@ namespace config
 {
 namespace architecture
 {
-ParamInterface::ParamInterface(const QString& group_name,
-                               Params *parent)
+ParamInterface::ParamInterface(const QString& group_name, Params* parent)
     : AbstractConfig(parent), group_name_(group_name)
 {
 }
+
+void ParamInterface::paramChanged() { emit changed(); }
 
 ParamInterface::~ParamInterface() {}
 
@@ -35,9 +36,9 @@ void ParamInterface::setName(const QString& name)
 {
   if (name != name_)
   {
-    QString previous_name(name_);
+    QString full_name(getFullName());
     name_ = name;
-    emit nameChanged(previous_name, name);
+    emit nameChanged(full_name, name);
     emit changed();
   }
 }
@@ -87,7 +88,7 @@ void ParamInterface::load(QSettings& settings)
   setName(settings.value("name").toString());
 }
 
-void ParamInterface::reset() { }
+void ParamInterface::reset() {}
 
 void ParamInterface::write(QDataStream& stream) const { stream << name_; }
 

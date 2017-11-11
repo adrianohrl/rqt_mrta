@@ -55,15 +55,7 @@ private:
   QVector<ParamInterface*> params_;
 
 private slots:
-  void paramNameChanged(const QString& previous_name, const QString& name);
-  void paramTypeChanged(const QString& full_name, const QMetaType::Type& type);
-  void paramValueChanged(const QString& full_name, const QVariant& value);
-  void paramDefaultValueChanged(const QString& full_name,
-                                const QVariant& default_value);
-  void paramToolTipChanged(const QString& full_name, const QString& tool_tip);
-  void paramAdded(const QString& full_name);
-  void paramRemoved(const QString& full_name);
-  void paramCleared(const QString& full_name);
+  void paramChanged();
   void paramDestroyed();
 };
 }

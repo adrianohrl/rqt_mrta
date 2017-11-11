@@ -31,7 +31,6 @@ public:
   Widgets& operator=(const Widgets& config);
 
 signals:
-
   void added(size_t index);
   void removed(size_t index);
   void cleared();

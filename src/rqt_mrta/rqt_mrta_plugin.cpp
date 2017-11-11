@@ -18,11 +18,16 @@ RqtMrtaPlugin::RqtMrtaPlugin()
 
 RqtMrtaPlugin::~RqtMrtaPlugin()
 {
+  /*if (mrta_widget_)
+  {
+    delete mrta_widget_;
+    mrta_widget_ = NULL;
+  }*/
 }
 
 void RqtMrtaPlugin::initPlugin(qt_gui_cpp::PluginContext& context)
 {
-  mrta_widget_ = new RqtMrtaWidget();
+  mrta_widget_ = new RqtMrtaWidget(NULL, context);
   context.addWidget(mrta_widget_);
 }
 }
