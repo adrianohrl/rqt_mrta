@@ -12,6 +12,13 @@ namespace application
 {
 class Robot;
 }
+
+namespace architecture
+{
+class Robots;
+class BusyRobots;
+class IdleRobots;
+}
 }
 }
 
@@ -26,6 +33,9 @@ public:
   typedef QList<Task*>::iterator iterator;
   typedef QList<Task*>::const_iterator const_iterator;
   typedef rqt_mrta::config::application::Robot Config;
+  typedef rqt_mrta::config::architecture::Robots TopicsConfig;
+  typedef rqt_mrta::config::architecture::BusyRobots BusyTopicConfig;
+  typedef rqt_mrta::config::architecture::IdleRobots IdleTopicConfig;
   enum State
   {
     Idle,
@@ -33,11 +43,15 @@ public:
     Offline
   };
   Robot(QObject* parent = NULL);
-  Robot(QObject* parent, Config *config);
+  Robot(QObject* parent, Config* config, TopicsConfig* topics_config);
   Robot(const Robot& robot);
   virtual ~Robot();
-  Config *getConfig() const;
+  Config* getConfig() const;
+  BusyTopicConfig* getBusyTopicConfig() const;
+  IdleTopicConfig* getIdleTopicConfig() const;
   void setConfig(Config* config);
+  void setBusyTopicConfig(BusyTopicConfig* config);
+  void setIdleTopicConfig(IdleTopicConfig* config);
   QString getId() const;
   State getState() const;
   void setState(State state);
@@ -65,12 +79,16 @@ signals:
 
 private:
   QString id_;
+  State state_;
   QVector<Task*> tasks_;
   Config* config_;
-  State state_;
+  BusyTopicConfig* busy_config_;
+  IdleTopicConfig* idle_config_;
 
 private slots:
   void configDestroyed();
+  void busyTopicConfigDestroyed();
+  void idleTopicConfigDestroyed();
   void taskDestroyed();
 };
 }

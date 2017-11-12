@@ -48,7 +48,7 @@ void MessageField::setField(const QString& field)
 variant_topic_tools::BuiltinVariant
 MessageField::getFieldValue(const Message& message)
 {
-  std::string type(message.getVariant().getType().getTypeInfo().name());
+  std::string type(message.getVariant().getType().getIdentifier());
   if (type != type_.toStdString())
   {
     throw ros::Exception(type + " does not match to " + type_.toStdString() +

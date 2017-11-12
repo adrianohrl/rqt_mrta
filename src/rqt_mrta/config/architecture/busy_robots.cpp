@@ -44,9 +44,6 @@ void BusyRobots::load(QSettings& settings)
 void BusyRobots::reset()
 {
   topic_->reset();
-  topic_->setName("/busy_robots");
-  topic_->setType("mrta_msgs/Robot");
-  topic_->setField("robot_id");
 }
 
 void BusyRobots::write(QDataStream& stream) const

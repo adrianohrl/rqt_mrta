@@ -1,4 +1,6 @@
 #include "rqt_mrta/config/architecture/topic.h"
+#include "utilities/message_field_subscriber.h"
+#include "utilities/message_subscriber_registry.h"
 
 namespace rqt_mrta
 {
@@ -6,7 +8,10 @@ namespace config
 {
 namespace architecture
 {
-Topic::Topic(QObject* parent) : AbstractConfig(parent), subscriber_(NULL), registry_(NULL) {}
+Topic::Topic(QObject* parent) : AbstractConfig(parent), subscriber_(NULL), registry_(NULL)
+{
+  connect(this, SIGNAL(changed()), this, SLOT(updateSubscriber()));
+}
 
 Topic::~Topic()
 {
@@ -179,8 +184,6 @@ Topic& Topic::operator=(const Topic& config)
 
 void Topic::updateSubscriber()
 {
-  ROS_INFO_STREAM("[Topic] updating subscriber: (" << name_.toStdString()
-                  << ", " << type_.toStdString() << ", " << field_.toStdString() << ")");
   if (subscriber_)
   {
     disconnect(
@@ -195,28 +198,27 @@ void Topic::updateSubscriber()
     delete subscriber_;
     subscriber_ = NULL;
   }
-  if (name_.isEmpty() || type_.isEmpty() || field_.isEmpty())
+  if (name_.isEmpty() || type_.isEmpty() || field_.isEmpty() || !registry_)
   {
     return;
   }
-  if (registry_)
+  ROS_INFO_STREAM("[Topic] updating subscriber: (" << name_.toStdString()
+                  << ", " << type_.toStdString() << ", " << field_.toStdString() << ")");
+  subscriber_ =
+      new utilities::MessageFieldSubscriber(this, type_, field_, registry_);
+  subscriber_->subscribe(name_, queue_size_);
+  if (subscriber_->isSubscribed())
   {
-    subscriber_ =
-        new utilities::MessageFieldSubscriber(this, type_, field_, registry_);
-    subscriber_->subscribe(name_, queue_size_);
-    if (subscriber_->isSubscribed())
-    {
-      connect(
-          subscriber_,
-          SIGNAL(received(const variant_topic_tools::BuiltinVariant&)),
-          this,
-          SLOT(subscriberReceived(const variant_topic_tools::BuiltinVariant&)));
-    }
-    else
-    {
-      delete subscriber_;
-      subscriber_ = NULL;
-    }
+    connect(
+        subscriber_,
+        SIGNAL(received(const variant_topic_tools::BuiltinVariant&)),
+        this,
+        SLOT(subscriberReceived(const variant_topic_tools::BuiltinVariant&)));
+  }
+  else
+  {
+    delete subscriber_;
+    subscriber_ = NULL;
   }
 }
 

@@ -37,15 +37,15 @@ void MessageFieldSubscriber::setRegistry(MessageSubscriberRegistry* registry)
 {
   if (registry != registry_)
   {
-    bool was_subscribed(isSubscribed());
+    QString subscribed_topic(subscribed_topic_);
     if (registry_)
     {
       unsubscribe();
     }
     registry_ = registry;
-    if (registry_ && was_subscribed)
+    if (registry_ && !subscribed_topic.isEmpty())
     {
-      subscribe();
+      subscribe(subscribed_topic, 10);
     }
   }
 }

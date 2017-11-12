@@ -42,11 +42,32 @@ RqtMrtaWidget::RqtMrtaWidget(QWidget* parent,
           SLOT(newArchitecturePushButtonClicked()));
   connect(ui_->open_architecture_push_button, SIGNAL(clicked()), this,
           SLOT(openArchitecturePushButtonClicked()));
+  architecture_config_->getArchitecture()
+      ->getAllocations()
+      ->getAllocatedTasks()
+      ->getTopic()
+      ->setRegistry(registry_);
+  architecture_config_->getArchitecture()
+      ->getRobots()
+      ->getBusyRobots()
+      ->getTopic()
+      ->setRegistry(registry_);
+  architecture_config_->getArchitecture()
+      ->getRobots()
+      ->getIdleRobots()
+      ->getTopic()
+      ->setRegistry(registry_);
+  architecture_config_->getArchitecture()
+      ->getTasks()
+      ->getIncomingTasks()
+      ->getTopic()
+      ->setRegistry(registry_);
 
-  /*architecture_config_->load(
+  architecture_config_->load(
       "/home/adrianohrl/ros_ws/mrta_ws/src/alliance/alliance/rqt_mrta.xml");
-  loadArchitecturePlugins();*/
-  /*config::application::Robots* robots = application_config_->getApplication()->getRobots();
+  loadArchitecturePlugins();
+  config::application::Robots* robots =
+      application_config_->getApplication()->getRobots();
   robots->addRobot();
   robots->getRobot(0)->setId("robot1");
   robots->addRobot();
@@ -55,7 +76,9 @@ RqtMrtaWidget::RqtMrtaWidget(QWidget* parent,
   robots->getRobot(2)->setId("robot3");
   robots->addRobot();
   robots->getRobot(3)->setId("robot4");
-  loadRobots();*/
+  robots->addRobot();
+  robots->getRobot(4)->setId("robot5");
+  loadRobots();
 }
 
 RqtMrtaWidget::~RqtMrtaWidget()
@@ -165,12 +188,16 @@ void RqtMrtaWidget::clearRobots()
 void RqtMrtaWidget::loadRobots()
 {
   clearRobots();
-  config::application::Robots* robots(application_config_->getApplication()->getRobots());
-  for (size_t index(0); index < robots->count(); index++)
+  config::architecture::Robots* topic_config =
+      architecture_config_->getArchitecture()->getRobots();
+  config::application::Robots* configs =
+      application_config_->getApplication()->getRobots();
+  for (size_t index(0); index < configs->count(); index++)
   {
-    mrta::Robot* robot = new mrta::Robot(this, robots->getRobot(index));
+    mrta::Robot* robot =
+        new mrta::Robot(this, configs->getRobot(index), topic_config);
     LabeledStatusWidget* widget = new LabeledStatusWidget(this, robot);
-    QListWidgetItem *item = new QListWidgetItem();
+    QListWidgetItem* item = new QListWidgetItem();
     item->setSizeHint(widget->sizeHint());
     ui_->robots_list_widget->addItem(item);
     ui_->robots_list_widget->setItemWidget(item, widget);

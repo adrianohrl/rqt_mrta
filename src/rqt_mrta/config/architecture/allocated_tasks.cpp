@@ -44,9 +44,6 @@ void AllocatedTasks::load(QSettings& settings)
 void AllocatedTasks::reset()
 {
   topic_->reset();
-  topic_->setName("/allocated_tasks");
-  topic_->setType("mrta_msgs/Task");
-  topic_->setField("task_id");
 }
 
 void AllocatedTasks::write(QDataStream& stream) const

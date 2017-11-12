@@ -32,11 +32,18 @@ To launch the standalone rqt plugin, run
 
 ```shell
 rosrun rqt_mrta rqt_mrta
+``````
+
+or simply:
+
+```shell
+rqt_mrta
 ```
 
 To launch the rqt GUI without a perspective, run
 
 ```shell
+rm ~/.config/ros.org/rqt_gui.ini
 rqt --force-discover
 ```
 

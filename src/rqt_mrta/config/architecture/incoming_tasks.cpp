@@ -44,9 +44,6 @@ void IncomingTasks::load(QSettings& settings)
 void IncomingTasks::reset()
 {
   topic_->reset();
-  topic_->setName("/incoming_tasks");
-  topic_->setType("mrta_msgs/Task");
-  topic_->setField("task_id");
 }
 
 void IncomingTasks::write(QDataStream& stream) const

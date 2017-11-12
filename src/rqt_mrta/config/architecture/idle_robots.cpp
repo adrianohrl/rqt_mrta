@@ -44,9 +44,6 @@ void IdleRobots::load(QSettings& settings)
 void IdleRobots::reset()
 {
   topic_->reset();
-  topic_->setName("/idle_robots");
-  topic_->setType("mrta_msgs/Robot");
-  topic_->setField("robot_id");
 }
 
 void IdleRobots::write(QDataStream& stream) const

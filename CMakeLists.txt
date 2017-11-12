@@ -86,6 +86,7 @@ set (rqt_mrta_SRCS
   src/utilities/message_broker.cpp
   src/utilities/message_event.cpp
   src/utilities/message_field.cpp
+  src/utilities/message_field_subscriber.cpp
   src/utilities/message_subscriber.cpp
   src/utilities/message_subscriber_registry.cpp
   src/utilities/ros_package.cpp
@@ -148,6 +149,7 @@ set(rqt_mrta_HDRS
   include/utilities/message_broker.h
   include/utilities/message_event.h
   include/utilities/message_field.h
+  include/utilities/message_field_subscriber.h
   include/utilities/message_subscriber.h
   include/utilities/message_subscriber_registry.h
   include/utilities/ros_package.h
