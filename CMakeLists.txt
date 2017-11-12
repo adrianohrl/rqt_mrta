@@ -73,6 +73,7 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/define_robots_wizard_page.cpp
   src/rqt_mrta/define_robots_parameters_widget.cpp
   src/rqt_mrta/define_robots_parameters_wizard_page.cpp
+  src/rqt_mrta/labeled_status_widget.cpp
   src/rqt_mrta/rqt_mrta_plugin.cpp
   src/rqt_mrta/rqt_mrta_widget.cpp
   src/rqt_mrta/robot_tree_widget.cpp
@@ -134,6 +135,7 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/define_robots_wizard_page.h
   include/rqt_mrta/define_robots_parameters_widget.h
   include/rqt_mrta/define_robots_parameters_wizard_page.h
+  include/rqt_mrta/labeled_status_widget.h
   include/rqt_mrta/rqt_mrta_plugin.h
   include/rqt_mrta/rqt_mrta_widget.h
   include/rqt_mrta/robot_tree_widget.h
@@ -157,6 +159,7 @@ set(rqt_mrta_UIS
   src/Ui/define_architecture_widget.ui
   src/Ui/define_robots_widget.ui
   src/Ui/define_robots_parameters_widget.ui
+  src/Ui/labeled_status_widget.ui
   src/Ui/rqt_mrta_widget.ui
 )
 

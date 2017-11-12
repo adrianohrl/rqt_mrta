@@ -3,25 +3,46 @@
 
 #include <QObject>
 
+namespace rqt_mrta
+{
+namespace config
+{
+namespace application
+{
+class Task;
+}
+}
+}
+
 namespace mrta
 {
 class Task : public QObject
 {
   Q_OBJECT
 public:
+  typedef rqt_mrta::config::application::Task Config;
   Task(QObject *parent = NULL);
+  Task(QObject *parent, Config* config);
   Task(const Task& task);
   virtual ~Task();
+  Config *getConfig() const;
+  void setConfig(Config* config);
   QString getId() const;
-  void setId(const QString& id);
   Task& operator=(const Task& task);
+
+public slots:
+  void setId(const QString& id);
 
 signals:
   void changed();
-  void idChanged();
+  void idChanged(const QString& id);
 
 private:
   QString id_;
+  Config* config_;
+
+private slots:
+  void configDestroyed();
 };
 }
 

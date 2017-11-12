@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1085</width>
-    <height>679</height>
+    <width>760</width>
+    <height>426</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -247,10 +247,27 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QGroupBox" name="robots_group_box">
          <property name="title">
           <string>Robots</string>
          </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QListWidget" name="robots_list_widget"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QGroupBox" name="tasks_group_box">
+         <property name="title">
+          <string>Tasks</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QListWidget" name="tasks_list_widget"/>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>

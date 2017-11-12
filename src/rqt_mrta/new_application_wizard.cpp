@@ -28,10 +28,10 @@ NewApplicationWizard::NewApplicationWizard(
     throw utilities::Exception(
         "The architecture configuration must not be null.");
   }
-  //setPage(DefineApplication, new DefineApplicationWizardPage(this));
+  setPage(DefineApplication, new DefineApplicationWizardPage(this));
   setPage(DefineArchitecture, new DefineArchitectureWizardPage(this));
-  //setPage(DefineRobots, new DefineRobotsWizardPage(this));
-  //setPage(DefineRobotsParameters, new DefineRobotsParametersWizardPage(this));
+  setPage(DefineRobots, new DefineRobotsWizardPage(this));
+  setPage(DefineRobotsParameters, new DefineRobotsParametersWizardPage(this));
   setWindowTitle("New Application");
   connect(this, SIGNAL(accepted()), this, SLOT(generate()));
   connect(this, SIGNAL(rejected()), this, SLOT(resetConfig()));

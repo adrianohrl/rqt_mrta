@@ -5,6 +5,12 @@
 #include <pluginlib/class_loader.h>
 #include <rqt_gui_cpp/plugin.h>
 
+namespace mrta
+{
+class Robot;
+class Task;
+}
+
 namespace utilities
 {
 class MessageSubscriberRegistry;
@@ -54,13 +60,18 @@ private:
   qt_gui_cpp::PluginContext context_;
   VectorPluginPtr external_plugins_;
   pluginlib::ClassLoader<rqt_gui_cpp::Plugin> loader_;
+  QVector<mrta::Robot*> robots_;
+
+private:
+  void loadArchitecturePlugins();
+  void clearRobots();
+  void loadRobots();
 
 private slots:
   void newApplicationPushButtonClicked();
   void openApplicationPushButtonClicked();
   void newArchitecturePushButtonClicked();
   void openArchitecturePushButtonClicked();
-  void loadArchitecturePlugins();
 };
 }
 

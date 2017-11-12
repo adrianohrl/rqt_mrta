@@ -16,11 +16,21 @@ StatusWidget::StatusWidget(QWidget* parent, Role role)
   frames_[Warn] = QList<QPixmap>();
   frames_[Error] = QList<QPixmap>();
   frames_[Busy] = QList<QPixmap>();
+  frames_[Green] = QList<QPixmap>();
+  frames_[Yellow] = QList<QPixmap>();
+  frames_[Red] = QList<QPixmap>();
+  frames_[Blue] = QList<QPixmap>();
+  frames_[Gray] = QList<QPixmap>();
   frame_rates_[None] = 0.0;
   frame_rates_[Okay] = 0.0;
   frame_rates_[Warn] = 0.0;
   frame_rates_[Error] = 0.0;
   frame_rates_[Busy] = 0.0;
+  frame_rates_[Green] = 0.0;
+  frame_rates_[Yellow] = 0.0;
+  frame_rates_[Red] = 0.0;
+  frame_rates_[Blue] = 0.0;
+  frame_rates_[Gray] = 0.0;
   QPixmap pixmap_none(QString::fromStdString(
       ros::package::getPath("rqt_mrta").append("/resource/22x22/none.png")));
   QPixmap pixmap_okay(QString::fromStdString(
@@ -31,11 +41,26 @@ StatusWidget::StatusWidget(QWidget* parent, Role role)
       ros::package::getPath("rqt_mrta").append("/resource/22x22/error.png")));
   QPixmap pixmap_busy(QString::fromStdString(
       ros::package::getPath("rqt_mrta").append("/resource/22x22/busy.png")));
+  QPixmap pixmap_green(QString::fromStdString(
+      ros::package::getPath("rqt_mrta").append("/resource/22x22/green.png")));
+  QPixmap pixmap_yellow(QString::fromStdString(
+      ros::package::getPath("rqt_mrta").append("/resource/22x22/yellow.png")));
+  QPixmap pixmap_red(QString::fromStdString(
+      ros::package::getPath("rqt_mrta").append("/resource/22x22/red.png")));
+  QPixmap pixmap_blue(QString::fromStdString(
+      ros::package::getPath("rqt_mrta").append("/resource/22x22/blue.png")));
+  QPixmap pixmap_gray(QString::fromStdString(
+      ros::package::getPath("rqt_mrta").append("/resource/22x22/gray.png")));
   setIcon(None, pixmap_none);
   setIcon(Okay, pixmap_okay);
   setIcon(Warn, pixmap_warn);
   setIcon(Error, pixmap_error);
   setFrames(Busy, pixmap_busy, 8);
+  setIcon(Green, pixmap_green);
+  setIcon(Yellow, pixmap_yellow);
+  setIcon(Red, pixmap_red);
+  setIcon(Blue, pixmap_blue);
+  setIcon(Gray, pixmap_gray);
   connect(timer_, SIGNAL(timeout()), this, SLOT(timerTimeout()));
 }
 

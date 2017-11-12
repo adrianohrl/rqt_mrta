@@ -1,8 +1,10 @@
 #include <QFileDialog>
+#include "mrta/robot.h"
 #include <ros/package.h>
 #include <ros/console.h>
 #include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
 #include "rqt_mrta/config/application/rqt_mrta_application.h"
+#include "rqt_mrta/labeled_status_widget.h"
 #include "rqt_mrta/new_application_wizard.h"
 #include "rqt_mrta/rqt_mrta_widget.h"
 #include "rqt_mrta/ui_rqt_mrta_widget.h"
@@ -44,6 +46,16 @@ RqtMrtaWidget::RqtMrtaWidget(QWidget* parent,
   /*architecture_config_->load(
       "/home/adrianohrl/ros_ws/mrta_ws/src/alliance/alliance/rqt_mrta.xml");
   loadArchitecturePlugins();*/
+  /*config::application::Robots* robots = application_config_->getApplication()->getRobots();
+  robots->addRobot();
+  robots->getRobot(0)->setId("robot1");
+  robots->addRobot();
+  robots->getRobot(1)->setId("robot2");
+  robots->addRobot();
+  robots->getRobot(2)->setId("robot3");
+  robots->addRobot();
+  robots->getRobot(3)->setId("robot4");
+  loadRobots();*/
 }
 
 RqtMrtaWidget::~RqtMrtaWidget()
@@ -76,7 +88,7 @@ void RqtMrtaWidget::newApplicationPushButtonClicked()
   if (wizard.exec() == QWizard::Accepted)
   {
     loadArchitecturePlugins();
-    ROS_INFO_STREAM("[RqtMrtaWidget] accepted!!!");
+    loadRobots();
   }
 }
 
@@ -89,6 +101,8 @@ void RqtMrtaWidget::openApplicationPushButtonClicked()
   if (dialog.exec() == QDialog::Accepted)
   {
     application_config_->load(dialog.selectedFiles().first());
+    loadArchitecturePlugins();
+    loadRobots();
   }
 }
 
@@ -103,6 +117,8 @@ void RqtMrtaWidget::openArchitecturePushButtonClicked()
   if (dialog.exec() == QDialog::Accepted)
   {
     architecture_config_->load(dialog.selectedFiles().first());
+    loadArchitecturePlugins();
+    loadRobots();
   }
 }
 
@@ -130,6 +146,35 @@ void RqtMrtaWidget::loadArchitecturePlugins()
       ROS_ERROR("The plugin failed to load for some reason. Error: %s",
                 ex.what());
     }
+  }
+}
+
+void RqtMrtaWidget::clearRobots()
+{
+  for (size_t index(0); index < robots_.count(); index++)
+  {
+    if (robots_[index])
+    {
+      delete robots_[index];
+      robots_[index] = NULL;
+    }
+  }
+  robots_.clear();
+}
+
+void RqtMrtaWidget::loadRobots()
+{
+  clearRobots();
+  config::application::Robots* robots(application_config_->getApplication()->getRobots());
+  for (size_t index(0); index < robots->count(); index++)
+  {
+    mrta::Robot* robot = new mrta::Robot(this, robots->getRobot(index));
+    LabeledStatusWidget* widget = new LabeledStatusWidget(this, robot);
+    QListWidgetItem *item = new QListWidgetItem();
+    item->setSizeHint(widget->sizeHint());
+    ui_->robots_list_widget->addItem(item);
+    ui_->robots_list_widget->setItemWidget(item, widget);
+    robots_.append(robot);
   }
 }
 }

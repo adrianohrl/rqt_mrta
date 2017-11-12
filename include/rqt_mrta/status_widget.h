@@ -22,7 +22,12 @@ public:
     Okay,
     Warn,
     Error,
-    Busy
+    Busy,
+    Green,
+    Yellow,
+    Red,
+    Blue,
+    Gray
   };
   StatusWidget(QWidget* parent = NULL, Role role = None);
   virtual ~StatusWidget();

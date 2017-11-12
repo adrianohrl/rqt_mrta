@@ -1,8 +1,19 @@
 #ifndef _MRTA_ROBOT_H_
 #define _MRTA_ROBOT_H_
 
-#include <QList>
+#include <QVector>
 #include <QObject>
+
+namespace rqt_mrta
+{
+namespace config
+{
+namespace application
+{
+class Robot;
+}
+}
+}
 
 namespace mrta
 {
@@ -14,11 +25,22 @@ class Robot : public QObject
 public:
   typedef QList<Task*>::iterator iterator;
   typedef QList<Task*>::const_iterator const_iterator;
-  Robot(QObject* object = NULL);
+  typedef rqt_mrta::config::application::Robot Config;
+  enum State
+  {
+    Idle,
+    Busy,
+    Offline
+  };
+  Robot(QObject* parent = NULL);
+  Robot(QObject* parent, Config *config);
   Robot(const Robot& robot);
   virtual ~Robot();
+  Config *getConfig() const;
+  void setConfig(Config* config);
   QString getId() const;
-  void setId(const QString& id);
+  State getState() const;
+  void setState(State state);
   size_t count() const;
   Task* getTask(int index) const;
   void addTask(Task* task);
@@ -26,18 +48,30 @@ public:
   void clearTasks();
   Robot& operator=(const Robot& robot);
 
+public slots:
+  void setId(const QString& id);
+
 signals:
   void changed();
-  void idChanged();
-  void taskAdded(Task* task);
-  void taskRemoved(Task* task);
+  void idChanged(const QString& id);
+  void stateChanged(State state);
+  void idle();
+  void busy();
+  void offline();
+  void added(size_t index);
+  void removed(const QString& task_id);
+  void taskChanged();
+  void taskIdChanged(const QString& task_id);
 
 private:
   QString id_;
-  QList<Task*> tasks_;
+  QVector<Task*> tasks_;
+  Config* config_;
+  State state_;
 
 private slots:
-  void tasksChanged();
+  void configDestroyed();
+  void taskDestroyed();
 };
 }
 
