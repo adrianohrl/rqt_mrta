@@ -16,7 +16,9 @@ class Allocations : public utilities::AbstractConfig
 public:
   Allocations(QObject* parent = NULL);
   virtual ~Allocations();
+  QString getType() const;
   AllocatedTasks* getAllocatedTasks() const;
+  void setType(const QString& type);
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
@@ -24,11 +26,13 @@ public:
   void read(QDataStream& stream);
   Allocations& operator=(const Allocations& config);
 
-private:
-  AllocatedTasks* allocated_tasks_;
+signals:
+  void changed();
+  void typeChanged();
 
-private slots:
-  void allocatedTasksChanged();
+private:
+  QString type_;
+  AllocatedTasks* allocated_tasks_;
 };
 }
 }

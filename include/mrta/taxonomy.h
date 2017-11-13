@@ -12,21 +12,21 @@ class Taxonomy
 public:
   enum AllocationType
   {
-    UNKNOWN_ALLOCATION_TYPE,
-    INSTANTANEOUS_ASSIGNMENT,
-    TIME_EXTENDED_ASSIGNMENT
+    UnknownAllocationType,
+    InstantaneousAssignment,
+    TimeExtendedAssignment
   };
   enum RobotType
   {
-    UNKNOWN_ROBOT_TYPE,
-    SINGLE_TASK,
-    MULTI_TASK
+    UnknownRobotType,
+    SingleTask,
+    MultiTask
   };
   enum TaskType
   {
-    UNKNOWN_TASK_TYPE,
-    SINGLE_ROBOT,
-    MULTI_ROBOT
+    UnknownTaskType,
+    SingleRobot,
+    MultiRobot
   };
   static AllocationType getAllocationType(const QString& type);
   static RobotType getRobotType(const QString& type);

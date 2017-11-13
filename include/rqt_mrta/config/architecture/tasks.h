@@ -16,7 +16,9 @@ class Tasks : public utilities::AbstractConfig
 public:
   Tasks(QObject* parent = NULL);
   virtual ~Tasks();
+  QString getType() const;
   IncomingTasks* getIncomingTasks() const;
+  void setType(const QString& type);
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
@@ -24,11 +26,13 @@ public:
   void read(QDataStream& stream);
   Tasks& operator=(const Tasks& config);
 
-private:
-  IncomingTasks* incoming_tasks_;
+signals:
+  void changed();
+  void typeChanged();
 
-private slots:
-  void incomingTasksChanged();
+private:
+  QString type_;
+  IncomingTasks* incoming_tasks_;
 };
 }
 }

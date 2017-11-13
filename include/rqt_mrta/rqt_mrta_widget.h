@@ -7,8 +7,7 @@
 
 namespace mrta
 {
-class Robot;
-class Task;
+class System;
 }
 
 namespace utilities
@@ -60,11 +59,12 @@ private:
   qt_gui_cpp::PluginContext context_;
   VectorPluginPtr external_plugins_;
   pluginlib::ClassLoader<rqt_gui_cpp::Plugin> loader_;
-  QVector<mrta::Robot*> robots_;
+  mrta::System* system_;
 
 private:
+  void loadSystem();
+  void clear();
   void loadArchitecturePlugins();
-  void clearRobots();
   void loadRobots();
 
 private slots:

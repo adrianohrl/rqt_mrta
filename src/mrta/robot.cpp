@@ -9,7 +9,7 @@ namespace mrta
 {
 Robot::Robot(QObject* parent)
     : QObject(parent), config_(NULL), busy_config_(NULL), idle_config_(NULL),
-      state_(Offline)
+      type_(Taxonomy::SingleTask), state_(Offline)
 {
 }
 
@@ -90,7 +90,8 @@ void Robot::setBusyTopicConfig(Robot::BusyTopicConfig* config)
     if (busy_config_)
     {
       connect(busy_config_, SIGNAL(changed()), this, SIGNAL(changed()));
-      connect(busy_config_, SIGNAL(destroyed()), this, SLOT(busyTopicConfigDestroyed()));
+      connect(busy_config_, SIGNAL(destroyed()), this,
+              SLOT(busyTopicConfigDestroyed()));
     }
     emit changed();
   }
@@ -107,13 +108,16 @@ void Robot::setIdleTopicConfig(Robot::IdleTopicConfig* config)
     if (idle_config_)
     {
       connect(idle_config_, SIGNAL(changed()), this, SIGNAL(changed()));
-      connect(idle_config_, SIGNAL(destroyed()), this, SLOT(idleTopicConfigDestroyed()));
+      connect(idle_config_, SIGNAL(destroyed()), this,
+              SLOT(idleTopicConfigDestroyed()));
     }
     emit changed();
   }
 }
 
 QString Robot::getId() const { return id_; }
+
+Robot::Type Robot::getType() const { return type_; }
 
 Robot::State Robot::getState() const { return state_; }
 

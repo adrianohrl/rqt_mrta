@@ -10,7 +10,7 @@ Taxonomy::AllocationType Taxonomy::getAllocationType(const QString& type)
       type == "Instantaneous Assignment" ||
       type == "Instantaneous Assignment (IA)")
   {
-    return Taxonomy::INSTANTANEOUS_ASSIGNMENT;
+    return Taxonomy::InstantaneousAssignment;
   }
   else if (type == "time_extended_assignment" || type == "TA" || type == "ta" ||
            type == "TIME_EXTENDED_ASSIGNMENT" ||
@@ -18,9 +18,9 @@ Taxonomy::AllocationType Taxonomy::getAllocationType(const QString& type)
            type == "Time-Extended Assignment" ||
            type == "Time-Extended Assignment (TA)")
   {
-    return Taxonomy::TIME_EXTENDED_ASSIGNMENT;
+    return Taxonomy::TimeExtendedAssignment;
   }
-  return Taxonomy::UNKNOWN_ALLOCATION_TYPE;
+  return Taxonomy::UnknownAllocationType;
 }
 
 Taxonomy::RobotType Taxonomy::getRobotType(const QString& type)
@@ -29,15 +29,15 @@ Taxonomy::RobotType Taxonomy::getRobotType(const QString& type)
       type == "SINGLE_TASK" || type == "SingleTask" || type == "Single Task" ||
       type == "Single Task (ST)")
   {
-    return Taxonomy::SINGLE_TASK;
+    return Taxonomy::SingleTask;
   }
   else if (type == "multi_task" || type == "MT" || type == "mt" ||
            type == "MULTI_TASK" || type == "MultiTask" ||
            type == "Multi Task" || type == "Multi Task (MT)")
   {
-    return Taxonomy::MULTI_TASK;
+    return Taxonomy::MultiTask;
   }
-  return Taxonomy::UNKNOWN_ROBOT_TYPE;
+  return Taxonomy::UnknownRobotType;
 }
 
 Taxonomy::TaskType Taxonomy::getTaskType(const QString& type)
@@ -46,43 +46,42 @@ Taxonomy::TaskType Taxonomy::getTaskType(const QString& type)
       type == "SINGLE_ROBOT" || type == "SingleRobot" ||
       type == "Single Robot" || type == "Single Robot (SR)")
   {
-    return Taxonomy::SINGLE_ROBOT;
+    return Taxonomy::SingleRobot;
   }
   else if (type == "multi_robot" || type == "MR" || type == "mr" ||
            type == "MULTI_ROBOT" || type == "MultiRobot" ||
            type == "Multi Robot" || type == "Multi Robot (MR)")
   {
-    return Taxonomy::MULTI_ROBOT;
+    return Taxonomy::MultiRobot;
   }
-  return Taxonomy::UNKNOWN_TASK_TYPE;
+  return Taxonomy::UnknownTaskType;
 }
 
 QString Taxonomy::toQString(const Taxonomy::AllocationType& type)
 {
-  return type == Taxonomy::INSTANTANEOUS_ASSIGNMENT
+  return type == Taxonomy::InstantaneousAssignment
              ? "IA"
-             : type == Taxonomy::TIME_EXTENDED_ASSIGNMENT ? "TA" : "";
+             : type == Taxonomy::TimeExtendedAssignment ? "TA" : "";
 }
 
 QString Taxonomy::toQString(const Taxonomy::RobotType& type)
 {
-  return type == Taxonomy::SINGLE_TASK ? "ST" : type == Taxonomy::MULTI_TASK
-                                                    ? "MT"
-                                                    : "";
+  return type == Taxonomy::SingleTask ? "ST"
+                                      : type == Taxonomy::MultiTask ? "MT" : "";
 }
 
 QString Taxonomy::toQString(const Taxonomy::TaskType& type)
 {
-  return type == Taxonomy::SINGLE_ROBOT ? "SR" : type == Taxonomy::MULTI_ROBOT
-                                                     ? "MR"
-                                                     : "";
+  return type == Taxonomy::SingleRobot ? "SR" : type == Taxonomy::MultiRobot
+                                                    ? "MR"
+                                                    : "";
 }
 
-QString Taxonomy::toQString(const Architecture &architecture)
+QString Taxonomy::toQString(const Architecture& architecture)
 {
-  return Taxonomy::toQString(architecture.getRobotType()) + "-"
-      + Taxonomy::toQString(architecture.getTaskType()) + "-"
-      + Taxonomy::toQString(architecture.getAllocationType());
+  return Taxonomy::toQString(architecture.getRobotType()) + "-" +
+         Taxonomy::toQString(architecture.getTaskType()) + "-" +
+         Taxonomy::toQString(architecture.getAllocationType());
 }
 
 std::string Taxonomy::toString(const Taxonomy::AllocationType& type)
@@ -100,7 +99,7 @@ std::string Taxonomy::toString(const Taxonomy::TaskType& type)
   return Taxonomy::toQString(type).toStdString();
 }
 
-std::string Taxonomy::toString(const Architecture &architecture)
+std::string Taxonomy::toString(const Architecture& architecture)
 {
   return Taxonomy::toQString(architecture).toStdString();
 }
@@ -120,7 +119,7 @@ const char* Taxonomy::toCString(const Taxonomy::TaskType& type)
   return Taxonomy::toString(type).c_str();
 }
 
-const char *Taxonomy::toCString(const Architecture &architecture)
+const char* Taxonomy::toCString(const Architecture& architecture)
 {
   return Taxonomy::toString(architecture).c_str();
 }

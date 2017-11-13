@@ -3,6 +3,7 @@
 
 #include <QVector>
 #include <QObject>
+#include "mrta/taxonomy.h"
 
 namespace rqt_mrta
 {
@@ -25,7 +26,6 @@ class IdleRobots;
 namespace mrta
 {
 class Task;
-
 class Robot : public QObject
 {
   Q_OBJECT
@@ -36,6 +36,7 @@ public:
   typedef rqt_mrta::config::architecture::Robots TopicsConfig;
   typedef rqt_mrta::config::architecture::BusyRobots BusyTopicConfig;
   typedef rqt_mrta::config::architecture::IdleRobots IdleTopicConfig;
+  typedef Taxonomy::RobotType Type;
   enum State
   {
     Idle,
@@ -49,12 +50,13 @@ public:
   Config* getConfig() const;
   BusyTopicConfig* getBusyTopicConfig() const;
   IdleTopicConfig* getIdleTopicConfig() const;
+  QString getId() const;
+  Type getType() const;
+  State getState() const;
+  void setState(State state);
   void setConfig(Config* config);
   void setBusyTopicConfig(BusyTopicConfig* config);
   void setIdleTopicConfig(IdleTopicConfig* config);
-  QString getId() const;
-  State getState() const;
-  void setState(State state);
   size_t count() const;
   Task* getTask(int index) const;
   void addTask(Task* task);
@@ -68,7 +70,7 @@ public slots:
 signals:
   void changed();
   void idChanged(const QString& id);
-  void stateChanged(State state);
+  void stateChanged(int state);
   void idle();
   void busy();
   void offline();
@@ -79,6 +81,7 @@ signals:
 
 private:
   QString id_;
+  Type type_;
   State state_;
   QVector<Task*> tasks_;
   Config* config_;

@@ -18,9 +18,11 @@ class Robots : public utilities::AbstractConfig
 public:
   Robots(QObject* parent = NULL);
   virtual ~Robots();
+  QString getType() const;
   BusyRobots* getBusyRobots() const;
   IdleRobots* getIdleRobots() const;
   RobotLaunch* getLaunch() const;
+  void setType(const QString& type);
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
@@ -28,15 +30,15 @@ public:
   void read(QDataStream& stream);
   Robots& operator=(const Robots& config);
 
+signals:
+  void changed();
+  void typeChanged();
+
 private:
+  QString type_;
   BusyRobots* busy_robots_;
   IdleRobots* idle_robots_;
   RobotLaunch* launch_;
-
-private slots:
-  void busyRobotsChanged();
-  void idleRobotsChanged();
-  void launchChanged();
 };
 }
 }

@@ -4,12 +4,25 @@
 #include <QObject>
 #include "mrta/taxonomy.h"
 
+namespace rqt_mrta
+{
+namespace config
+{
+namespace architecture
+{
+class RqtMrtaArchitecture;
+}
+}
+}
+
 namespace mrta
 {
+typedef rqt_mrta::config::architecture::RqtMrtaArchitecture Config;
 class Architecture : public QObject
 {
   Q_OBJECT
 public:
+  Architecture(QObject* parent, Config* config);
   Architecture(QObject* parent, const QString& package,
                const QString& config_file_path);
   virtual ~Architecture();
@@ -29,6 +42,9 @@ public:
   QString toString() const;
   bool operator==(const QString& package) const;
   bool operator==(const Architecture& architecture) const;
+  bool isValid(Taxonomy::AllocationType type) const;
+  bool isValid(Taxonomy::RobotType type) const;
+  bool isValid(Taxonomy::TaskType type) const;
 
 private:
   QString package_;

@@ -6,9 +6,9 @@ namespace rqt_mrta
 {
 ArchitectureComboBox::ArchitectureComboBox(QWidget* parent)
     : QComboBox(parent), current_architecture_(NULL),
-      allocation_type_(mrta::Taxonomy::UNKNOWN_ALLOCATION_TYPE),
-      robot_type_(mrta::Taxonomy::UNKNOWN_ROBOT_TYPE),
-      task_type_(mrta::Taxonomy::UNKNOWN_TASK_TYPE)
+      allocation_type_(mrta::Taxonomy::UnknownAllocationType),
+      robot_type_(mrta::Taxonomy::UnknownRobotType),
+      task_type_(mrta::Taxonomy::UnknownTaskType)
 {
   load();
   filter();

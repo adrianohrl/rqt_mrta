@@ -1,10 +1,21 @@
 #include "mrta/architecture.h"
-#include <QFileInfo>
 #include "mrta/architecture_config.h"
+#include <QFileInfo>
+#include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
 #include "utilities/xml_settings.h"
 
 namespace mrta
 {
+Architecture::Architecture(QObject* parent, Config* config) : QObject(parent)
+{
+  setAllocationType(Taxonomy::getAllocationType(
+      config->getArchitecture()->getAllocations()->getType()));
+  setRobotType(Taxonomy::getRobotType(
+      config->getArchitecture()->getRobots()->getType()));
+  setTaskType(
+      Taxonomy::getTaskType(config->getArchitecture()->getTasks()->getType()));
+}
+
 Architecture::Architecture(QObject* parent, const QString& package,
                            const QString& config_file_path)
     : QObject(parent), package_(package), config_file_path_(config_file_path)
@@ -44,10 +55,7 @@ Taxonomy::RobotType Architecture::getRobotType() const { return robot_type_; }
 
 Taxonomy::TaskType Architecture::getTaskType() const { return task_type_; }
 
-void Architecture::setName(const QString& name)
-{
-  name_ = name;
-}
+void Architecture::setName(const QString& name) { name_ = name; }
 
 void Architecture::setAllocationType(const Taxonomy::AllocationType& type)
 {
@@ -69,10 +77,10 @@ bool Architecture::belongs(const Taxonomy::AllocationType& allocation_type,
                            const Taxonomy::TaskType& task_type) const
 {
   return (allocation_type_ == allocation_type ||
-          allocation_type == Taxonomy::UNKNOWN_ALLOCATION_TYPE) &&
+          allocation_type == Taxonomy::UnknownAllocationType) &&
          (robot_type_ == robot_type ||
-          robot_type == Taxonomy::UNKNOWN_ROBOT_TYPE) &&
-         (task_type_ == task_type || task_type == Taxonomy::UNKNOWN_TASK_TYPE);
+          robot_type == Taxonomy::UnknownRobotType) &&
+         (task_type_ == task_type || task_type == Taxonomy::UnknownTaskType);
 }
 
 QString Architecture::toString() const { return package_; }
@@ -85,5 +93,20 @@ bool Architecture::operator==(const QString& package) const
 bool Architecture::operator==(const Architecture& architecture) const
 {
   return package_ == architecture.package_;
+}
+
+bool Architecture::isValid(Taxonomy::AllocationType type) const
+{
+  return allocation_type_ == type;
+}
+
+bool Architecture::isValid(Taxonomy::RobotType type) const
+{
+  return robot_type_ == type;
+}
+
+bool Architecture::isValid(Taxonomy::TaskType type) const
+{
+  return task_type_ == type;
 }
 }

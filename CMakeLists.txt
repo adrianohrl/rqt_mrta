@@ -32,9 +32,12 @@ catkin_package(
 )
 
 set (rqt_mrta_SRCS
+  src/mrta/allocation.cpp
   src/mrta/architecture.cpp
   src/mrta/architecture_config.cpp
+  src/mrta/problem.cpp
   src/mrta/robot.cpp
+  src/mrta/system.cpp
   src/mrta/task.cpp
   src/mrta/taxonomy.cpp
   src/rqt_mrta/architecture_combo_box.cpp
@@ -94,9 +97,12 @@ set (rqt_mrta_SRCS
 )
 
 set(rqt_mrta_HDRS
+  include/mrta/allocation.h
   include/mrta/architecture.h
   include/mrta/architecture_config.h
+  include/mrta/problem.h
   include/mrta/robot.h
+  include/mrta/system.h
   include/mrta/task.h
   include/mrta/taxonomy.h
   include/rqt_mrta/architecture_combo_box.h
