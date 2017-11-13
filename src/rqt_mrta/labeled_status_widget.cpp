@@ -47,25 +47,21 @@ void LabeledStatusWidget::setGreen()
 
 void LabeledStatusWidget::setYellow()
 {
-
   ui_->status_widget->setCurrentRole(StatusWidget::Yellow, "");
 }
 
 void LabeledStatusWidget::setRed()
 {
-
   ui_->status_widget->setCurrentRole(StatusWidget::Red, "");
 }
 
 void LabeledStatusWidget::setBlue()
 {
-
   ui_->status_widget->setCurrentRole(StatusWidget::Blue, "");
 }
 
 void LabeledStatusWidget::setGray()
 {
-
   ui_->status_widget->setCurrentRole(StatusWidget::Gray, "");
 }
 

@@ -13,18 +13,14 @@ namespace application
 {
 class Robot;
 }
-
-namespace architecture
-{
-class Robots;
-class BusyRobots;
-class IdleRobots;
-}
 }
 }
 
 namespace mrta
 {
+class History;
+class StateMonitor;
+class System;
 class Task;
 class Robot : public QObject
 {
@@ -33,30 +29,25 @@ public:
   typedef QList<Task*>::iterator iterator;
   typedef QList<Task*>::const_iterator const_iterator;
   typedef rqt_mrta::config::application::Robot Config;
-  typedef rqt_mrta::config::architecture::Robots TopicsConfig;
-  typedef rqt_mrta::config::architecture::BusyRobots BusyTopicConfig;
-  typedef rqt_mrta::config::architecture::IdleRobots IdleTopicConfig;
   typedef Taxonomy::RobotType Type;
   enum State
   {
     Idle,
     Busy,
-    Offline
+    Offline,
+    STATE_COUNT
   };
-  Robot(QObject* parent = NULL);
-  Robot(QObject* parent, Config* config, TopicsConfig* topics_config);
+  Robot(System* parent = NULL, Config* config = NULL);
   Robot(const Robot& robot);
   virtual ~Robot();
   Config* getConfig() const;
-  BusyTopicConfig* getBusyTopicConfig() const;
-  IdleTopicConfig* getIdleTopicConfig() const;
   QString getId() const;
   Type getType() const;
   State getState() const;
+  History* getHistory() const;
+  StateMonitor* getStateMonitor() const;
   void setState(State state);
   void setConfig(Config* config);
-  void setBusyTopicConfig(BusyTopicConfig* config);
-  void setIdleTopicConfig(IdleTopicConfig* config);
   size_t count() const;
   Task* getTask(int index) const;
   void addTask(Task* task);
@@ -85,14 +76,13 @@ private:
   State state_;
   QVector<Task*> tasks_;
   Config* config_;
-  BusyTopicConfig* busy_config_;
-  IdleTopicConfig* idle_config_;
+  History* history_;
+  StateMonitor* monitor_;
 
 private slots:
   void configDestroyed();
-  void busyTopicConfigDestroyed();
-  void idleTopicConfigDestroyed();
   void taskDestroyed();
+  void monitorUpdated(size_t index, bool up_to_date);
 };
 }
 

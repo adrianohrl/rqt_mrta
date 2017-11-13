@@ -35,8 +35,14 @@ set (rqt_mrta_SRCS
   src/mrta/allocation.cpp
   src/mrta/architecture.cpp
   src/mrta/architecture_config.cpp
+  src/mrta/history.cpp
+  src/mrta/log.cpp
+  src/mrta/monitor.cpp
   src/mrta/problem.cpp
   src/mrta/robot.cpp
+  src/mrta/robot_monitor.cpp
+  src/mrta/sample_holder.cpp
+  src/mrta/state_monitor.cpp
   src/mrta/system.cpp
   src/mrta/task.cpp
   src/mrta/taxonomy.cpp
@@ -100,8 +106,14 @@ set(rqt_mrta_HDRS
   include/mrta/allocation.h
   include/mrta/architecture.h
   include/mrta/architecture_config.h
+  include/mrta/history.h
+  include/mrta/log.h
+  include/mrta/monitor.h
   include/mrta/problem.h
   include/mrta/robot.h
+  include/mrta/robot_monitor.h
+  include/mrta/sample_holder.h
+  include/mrta/state_monitor.h
   include/mrta/system.h
   include/mrta/task.h
   include/mrta/taxonomy.h

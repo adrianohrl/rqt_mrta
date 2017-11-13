@@ -6,7 +6,6 @@
 namespace mrta
 {
 class Architecture;
-
 class Taxonomy
 {
 public:

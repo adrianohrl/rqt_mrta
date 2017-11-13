@@ -1,21 +1,25 @@
 #include "mrta/allocation.h"
 #include "mrta/problem.h"
 #include "mrta/robot.h"
+#include "mrta/robot_monitor.h"
 #include "mrta/task.h"
 #include "mrta/system.h"
 #include "rqt_mrta/config/application/rqt_mrta_application.h"
 #include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
 #include "utilities/exception.h"
+#include "utilities/message_subscriber_registry.h"
 
 namespace mrta
 {
 System::System(QObject* parent, ApplicationConfig* application_config,
-               ArchitectureConfig* architecture_config)
+               ArchitectureConfig* architecture_config,
+               utilities::MessageSubscriberRegistry* registry)
     : QObject(parent), application_config_(application_config),
       architecture_config_(architecture_config),
       problem_(new Problem(this,
                            application_config->getApplication()->getName(),
-                           architecture_config))
+                           architecture_config)),
+      idle_monitor_(NULL)
 {
   if (!application_config_)
   {
@@ -27,6 +31,15 @@ System::System(QObject* parent, ApplicationConfig* application_config,
     throw utilities::Exception(
         "The architecture configuration must not be null.");
   }
+  ROS_ERROR_STREAM("[System] initing");
+  busy_monitor_ = new RobotMonitor(
+      this, registry,
+      architecture_config->getArchitecture()->getRobots()->getBusyRobots()->getTopic(),
+      Robot::Busy);
+  idle_monitor_ = new RobotMonitor(
+      this, registry,
+      architecture_config->getArchitecture()->getRobots()->getIdleRobots()->getTopic(),
+      Robot::Idle);
   connect(problem_, SIGNAL(taskStateChanged(const QString&, int)), this,
           SIGNAL(changed()));
   connect(problem_, SIGNAL(taskStateChanged(const QString&, int)), this,
@@ -75,19 +88,19 @@ Allocation* System::getAllocation(const QString& id)
   return problem_->getAllocation(id);
 }
 
-QList<Robot *> System::getRobots() const
-{
-  return robots_.values();
-}
+QList<Robot*> System::getRobots() const { return robots_.values(); }
 
-QList<Task *> System::getTasks() const
-{
-  return problem_->getTasks();
-}
+QList<Task*> System::getTasks() const { return problem_->getTasks(); }
 
-QList<Allocation *> System::getAllocations() const
+QList<Allocation*> System::getAllocations() const
 {
   return problem_->getAllocations();
+}
+
+void System::setRegistry(utilities::MessageSubscriberRegistry* registry)
+{
+  busy_monitor_->setRegistry(registry);
+  idle_monitor_->setRegistry(registry);
 }
 
 Robot* System::addRobot(RobotConfig* config)
@@ -96,8 +109,7 @@ Robot* System::addRobot(RobotConfig* config)
   {
     return robots_[config->getId()];
   }
-  Robot* robot = new Robot(
-      this, config, architecture_config_->getArchitecture()->getRobots());
+  Robot* robot = new Robot(this, config);
   robots_[robot->getId()] = robot;
   emit added(robot->getId());
   emit changed();

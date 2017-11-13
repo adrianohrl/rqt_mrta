@@ -43,26 +43,6 @@ RqtMrtaWidget::RqtMrtaWidget(QWidget* parent,
           SLOT(newArchitecturePushButtonClicked()));
   connect(ui_->open_architecture_push_button, SIGNAL(clicked()), this,
           SLOT(openArchitecturePushButtonClicked()));
-  architecture_config_->getArchitecture()
-      ->getAllocations()
-      ->getAllocatedTasks()
-      ->getTopic()
-      ->setRegistry(registry_);
-  architecture_config_->getArchitecture()
-      ->getRobots()
-      ->getBusyRobots()
-      ->getTopic()
-      ->setRegistry(registry_);
-  architecture_config_->getArchitecture()
-      ->getRobots()
-      ->getIdleRobots()
-      ->getTopic()
-      ->setRegistry(registry_);
-  architecture_config_->getArchitecture()
-      ->getTasks()
-      ->getIncomingTasks()
-      ->getTopic()
-      ->setRegistry(registry_);
 
   application_config_->load(
       "/home/adrianohrl/ros_ws/mrta_ws/src/alliance_test/rqt_mrta.xml");
@@ -141,7 +121,7 @@ void RqtMrtaWidget::loadSystem()
 {
   clear();
   loadArchitecturePlugins();
-  system_ = new mrta::System(this, application_config_, architecture_config_);
+  system_ = new mrta::System(this, application_config_, architecture_config_, registry_);
   QList<mrta::Robot*> robots(system_->getRobots());
   for (size_t index(0); index < robots.count(); index++)
   {

@@ -1,4 +1,5 @@
 #include <QFileInfo>
+#include <ros/console.h>
 #include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
 #include "utilities/exception.h"
 #include "utilities/xml_settings.h"

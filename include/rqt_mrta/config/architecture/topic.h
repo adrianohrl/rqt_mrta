@@ -2,9 +2,7 @@
 #define _RQT_MRTA_ARCHITECTURE_CONFIG_TOPIC_H_
 
 #include <ros/duration.h>
-#include <ros/node_handle.h>
 #include "utilities/abstract_config.h"
-#include "utilities/message_field_subscriber.h"
 
 namespace rqt_mrta
 {
@@ -30,7 +28,6 @@ public:
   void setField(const QString& field);
   void setTimeout(const ros::Duration& timeout);
   void setHorizon(const ros::Duration& horizon);
-  void setRegistry(utilities::MessageSubscriberRegistry* registry);
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
@@ -53,13 +50,6 @@ private:
   QString field_;
   ros::Duration timeout_;
   ros::Duration horizon_;
-  ros::NodeHandlePtr nh_;
-  utilities::MessageFieldSubscriber* subscriber_;
-  utilities::MessageSubscriberRegistry* registry_;
-
-private slots:
-  void updateSubscriber();
-  void subscriberReceived(variant_topic_tools::BuiltinVariant field_value);
 };
 }
 }

@@ -1,15 +1,16 @@
 #include "mrta/allocation.h"
+#include "mrta/problem.h"
 #include "mrta/robot.h"
 #include "mrta/task.h"
 #include <ros/time.h>
 
 namespace mrta
 {
-Allocation::Allocation(QObject* parent, Task* task,
+Allocation::Allocation(Problem* problem, Task* task,
                        const QVector<Robot*>& robots)
-    : QObject(parent),
-      id_(task->getId() + "-" + QString::number(ros::Time::now().toSec())),
-      task_(task), state_(OnHold)
+    : QObject(problem), task_(task), state_(OnHold),
+      id_(task->getId() + "-" + QString::number(ros::Time::now().toSec()))
+
 {
   setRobots(robots);
   connect(task_, SIGNAL(stateChanged(int)), this, SLOT(taskStateChanged(int)));

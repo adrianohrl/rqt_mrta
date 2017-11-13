@@ -1,55 +1,41 @@
+#include "mrta/history.h"
 #include "mrta/robot.h"
+#include "mrta/sample_holder.h"
+#include "mrta/state_monitor.h"
+#include "mrta/system.h"
 #include "mrta/task.h"
 #include "rqt_mrta/config/application/robot.h"
-#include "rqt_mrta/config/architecture/busy_robots.h"
-#include "rqt_mrta/config/architecture/idle_robots.h"
-#include "rqt_mrta/config/architecture/robots.h"
 
 namespace mrta
 {
-Robot::Robot(QObject* parent)
-    : QObject(parent), config_(NULL), busy_config_(NULL), idle_config_(NULL),
-      type_(Taxonomy::SingleTask), state_(Offline)
-{
-}
-
-Robot::Robot(QObject* parent, Config* config, TopicsConfig* topics_config)
-    : QObject(parent), id_(config->getId()), config_(NULL), busy_config_(NULL),
-      idle_config_(NULL), state_(Offline)
+Robot::Robot(System* parent, Config* config)
+    : QObject(parent), config_(NULL), state_(Offline),
+      monitor_(new StateMonitor(this, ros::Duration(5.0), STATE_COUNT)),
+      history_(new History(this))
 {
   setConfig(config);
-  setBusyTopicConfig(topics_config->getBusyRobots());
-  setIdleTopicConfig(topics_config->getIdleRobots());
+  connect(monitor_, SIGNAL(updated(size_t, bool)), this,
+          SLOT(monitorUpdated(size_t, bool)));
 }
 
 Robot::Robot(const Robot& robot)
-    : QObject(robot.parent()), config_(NULL), busy_config_(NULL),
-      idle_config_(NULL), id_(robot.id_), tasks_(robot.tasks_),
-      state_(robot.state_)
+    : QObject(robot.parent()), config_(NULL), id_(robot.id_), tasks_(robot.tasks_),
+      state_(robot.state_), history_(robot.history_), monitor_(robot.monitor_)
 {
   setConfig(robot.config_);
-  setBusyTopicConfig(robot.busy_config_);
-  setIdleTopicConfig(robot.idle_config_);
 }
 
 Robot::~Robot()
 {
   config_ = NULL;
-  busy_config_ = NULL;
-  idle_config_ = NULL;
+  if (history_)
+  {
+    delete history_;
+    history_ = NULL;
+  }
 }
 
 Robot::Config* Robot::getConfig() const { return config_; }
-
-Robot::BusyTopicConfig* Robot::getBusyTopicConfig() const
-{
-  return busy_config_;
-}
-
-Robot::IdleTopicConfig* Robot::getIdleTopicConfig() const
-{
-  return idle_config_;
-}
 
 void Robot::setConfig(Robot::Config* config)
 {
@@ -79,69 +65,15 @@ void Robot::setConfig(Robot::Config* config)
   }
 }
 
-void Robot::setBusyTopicConfig(Robot::BusyTopicConfig* config)
-{
-  if (busy_config_ != config)
-  {
-    if (busy_config_)
-    {
-    }
-    busy_config_ = config;
-    if (busy_config_)
-    {
-      connect(busy_config_, SIGNAL(changed()), this, SIGNAL(changed()));
-      connect(busy_config_, SIGNAL(destroyed()), this,
-              SLOT(busyTopicConfigDestroyed()));
-    }
-    emit changed();
-  }
-}
-
-void Robot::setIdleTopicConfig(Robot::IdleTopicConfig* config)
-{
-  if (idle_config_ != config)
-  {
-    if (idle_config_)
-    {
-    }
-    idle_config_ = config;
-    if (idle_config_)
-    {
-      connect(idle_config_, SIGNAL(changed()), this, SIGNAL(changed()));
-      connect(idle_config_, SIGNAL(destroyed()), this,
-              SLOT(idleTopicConfigDestroyed()));
-    }
-    emit changed();
-  }
-}
-
 QString Robot::getId() const { return id_; }
 
 Robot::Type Robot::getType() const { return type_; }
 
 Robot::State Robot::getState() const { return state_; }
 
-void Robot::setState(Robot::State state)
-{
-  if (state != state_)
-  {
-    state_ = state;
-    switch (state_)
-    {
-    case Idle:
-      emit idle();
-      break;
-    case Busy:
-      emit busy();
-      break;
-    case Offline:
-      emit offline();
-      break;
-    }
-    emit stateChanged(state);
-    emit changed();
-  }
-}
+History* Robot::getHistory() const { return history_; }
+
+StateMonitor* Robot::getStateMonitor() const { return monitor_; }
 
 void Robot::setId(const QString& id)
 {
@@ -149,6 +81,33 @@ void Robot::setId(const QString& id)
   {
     id_ = id;
     emit idChanged(id);
+    emit changed();
+  }
+}
+
+void Robot::setState(Robot::State state)
+{
+  if (state != state_)
+  {
+    state_ = state;
+    Log::Severity severity;
+    switch (state_)
+    {
+    case Idle:
+      severity = Log::Info;
+      emit idle();
+      break;
+    case Busy:
+      severity = Log::Info;
+      emit busy();
+      break;
+    case Offline:
+      severity = Log::Warn;
+      emit offline();
+      break;
+    }
+    history_->log(ros::Time::now(), Log::Robot, severity, id_, state_);
+    emit stateChanged(state);
     emit changed();
   }
 }
@@ -189,10 +148,6 @@ Robot& Robot::operator=(const Robot& robot)
 
 void Robot::configDestroyed() { config_ = NULL; }
 
-void Robot::busyTopicConfigDestroyed() { busy_config_ = NULL; }
-
-void Robot::idleTopicConfigDestroyed() { idle_config_ = NULL; }
-
 void Robot::taskDestroyed()
 {
   Task* task = static_cast<Task*>(sender());
@@ -203,6 +158,19 @@ void Robot::taskDestroyed()
     tasks_.remove(index);
     emit removed(task_id);
     emit changed();
+  }
+}
+
+void Robot::monitorUpdated(size_t index, bool up_to_date)
+{
+  if (up_to_date)
+  {
+    setState(static_cast<State>(index));
+  }
+  else if (index == Busy)
+  {
+    bool idle(monitor_->getSampleHolder(Idle)->isUpToDate());
+    setState(idle ? Idle : Offline);
   }
 }
 }

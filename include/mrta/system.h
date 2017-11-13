@@ -5,6 +5,11 @@
 #include <QObject>
 #include "mrta/taxonomy.h"
 
+namespace utilities
+{
+class MessageSubscriberRegistry;
+}
+
 namespace rqt_mrta
 {
 namespace config
@@ -30,13 +35,15 @@ typedef rqt_mrta::config::architecture::RqtMrtaArchitecture ArchitectureConfig;
 class Allocation;
 class Problem;
 class Robot;
+class RobotMonitor;
 class Task;
 class System : public QObject
 {
   Q_OBJECT
 public:
   System(QObject* parent, ApplicationConfig* application_config,
-         ArchitectureConfig* architecture_config);
+         ArchitectureConfig* architecture_config,
+         utilities::MessageSubscriberRegistry* registry);
   virtual ~System();
   Robot* getRobot(const QString& id);
   Task* getTask(const QString& id);
@@ -44,6 +51,7 @@ public:
   QList<Robot*> getRobots() const;
   QList<Task*> getTasks() const;
   QList<Allocation*> getAllocations() const;
+  void setRegistry(utilities::MessageSubscriberRegistry* registry);
 
 signals:
   void changed();
@@ -58,6 +66,8 @@ private:
   Problem* problem_;
   ApplicationConfig* application_config_;
   ArchitectureConfig* architecture_config_;
+  RobotMonitor* busy_monitor_;
+  RobotMonitor* idle_monitor_;
   Robot* addRobot(RobotConfig* config);
 
 private slots:

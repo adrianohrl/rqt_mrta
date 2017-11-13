@@ -7,20 +7,21 @@
 
 namespace mrta
 {
+class Problem;
 class Robot;
 class Task;
 class Allocation : public QObject
 {
   Q_OBJECT
 public:
-  typedef Taxonomy::AllocationType Type;
   enum State
   {
     OnHold,
     Assigned,
     Done
   };
-  Allocation(QObject* parent, Task* task,
+  typedef Taxonomy::AllocationType Type;
+  Allocation(Problem* problem, Task* task,
              const QVector<Robot*>& robots = QVector<Robot*>());
   virtual ~Allocation();
   QString getId() const;
