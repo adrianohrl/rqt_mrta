@@ -2,6 +2,7 @@
 #define _MRTA_TAXONOMY_H_
 
 #include <QString>
+#include <ros/console.h>
 
 namespace mrta
 {

@@ -4,6 +4,7 @@
 #include <QDataStream>
 #include <QObject>
 #include <QSettings>
+#include <ros/console.h>
 
 namespace utilities
 {

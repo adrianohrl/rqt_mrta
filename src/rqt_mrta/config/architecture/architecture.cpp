@@ -19,6 +19,7 @@ Architecture::Architecture(QObject* parent)
 
 Architecture::~Architecture()
 {
+  ROS_INFO_STREAM("[~Architecture] before ...");
   if (allocations_)
   {
     delete allocations_;
@@ -39,19 +40,33 @@ Architecture::~Architecture()
     delete tasks_;
     tasks_ = NULL;
   }
+  ROS_INFO_STREAM("[~Architecture] after ...");
 }
 
 Allocations* Architecture::getAllocations() const { return allocations_; }
 
 ArchitectureLaunch* Architecture::getLaunch() const { return launch_; }
 
+QString Architecture::getName() const { return name_; }
+
 Robots* Architecture::getRobots() const { return robots_; }
 
 Tasks* Architecture::getTasks() const { return tasks_; }
 
+void Architecture::setName(const QString& name)
+{
+  if (name != name_)
+  {
+    name_ = name;
+    emit nameChanged(name);
+    emit changed();
+  }
+}
+
 void Architecture::save(QSettings& settings) const
 {
   settings.beginGroup("architecture");
+  settings.setValue("name", name_);
   allocations_->save(settings);
   launch_->save(settings);
   robots_->save(settings);
@@ -62,6 +77,7 @@ void Architecture::save(QSettings& settings) const
 void Architecture::load(QSettings& settings)
 {
   settings.beginGroup("architecture");
+  setName(settings.value("name").toString());
   allocations_->load(settings);
   launch_->load(settings);
   robots_->load(settings);
@@ -71,6 +87,7 @@ void Architecture::load(QSettings& settings)
 
 void Architecture::reset()
 {
+  setName("");
   allocations_->reset();
   launch_->reset();
   robots_->reset();
@@ -79,6 +96,7 @@ void Architecture::reset()
 
 void Architecture::write(QDataStream& stream) const
 {
+  stream << name_;
   allocations_->write(stream);
   launch_->write(stream);
   robots_->write(stream);
@@ -87,6 +105,9 @@ void Architecture::write(QDataStream& stream) const
 
 void Architecture::read(QDataStream& stream)
 {
+  QString name;
+  stream >> name;
+  setName(name);
   allocations_->read(stream);
   launch_->read(stream);
   robots_->read(stream);
@@ -95,6 +116,7 @@ void Architecture::read(QDataStream& stream)
 
 Architecture& Architecture::operator=(const Architecture& config)
 {
+  setName(config.name_);
   *allocations_ = *config.allocations_;
   *launch_ = *config.launch_;
   *robots_ = *config.robots_;

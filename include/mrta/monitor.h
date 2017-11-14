@@ -70,9 +70,9 @@ private:
   QString field_;
   ros::Duration timeout_;
   ros::Duration horizon_;
-  utilities::MessageFieldSubscriber* subscriber_;
-  utilities::MessageSubscriberRegistry* registry_;
   Config* config_;
+  utilities::MessageSubscriberRegistry* registry_;
+  utilities::MessageFieldSubscriber* subscriber_;
   StateMonitorMap monitors_;
   bool subscribe();
   bool unsubscribe();

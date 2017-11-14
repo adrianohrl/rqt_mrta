@@ -10,7 +10,10 @@ namespace architecture
 {
 Param::Param(Params *parent) : ParamInterface("param", parent) {}
 
-Param::~Param() {}
+Param::~Param()
+{
+  ROS_INFO("[~Param]");
+}
 
 QMetaType::Type Param::getType() const { return type_; }
 

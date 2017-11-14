@@ -12,15 +12,17 @@ Config::Config(QObject* parent) : AbstractConfig(parent) {}
 
 Config::~Config()
 {
-  for (size_t i(0); i < params_.count(); i++)
+  ROS_INFO_STREAM("[~Config] before ...");
+  for (size_t index(0); index < params_.count(); index++)
   {
-    if (params_[i])
+    if (params_[index])
     {
-      delete params_[i];
-      params_[i] = NULL;
+      delete params_[index];
+      params_[index] = NULL;
     }
   }
   params_.clear();
+  ROS_INFO_STREAM("[~Config] after ...");
 }
 
 QString Config::getId() const { return id_; }

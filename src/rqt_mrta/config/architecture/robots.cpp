@@ -17,6 +17,7 @@ Robots::Robots(QObject* parent)
 
 Robots::~Robots()
 {
+  ROS_INFO_STREAM("[~Robots] before ...");
   if (busy_robots_)
   {
     delete busy_robots_;
@@ -32,6 +33,7 @@ Robots::~Robots()
     delete launch_;
     launch_ = NULL;
   }
+  ROS_INFO_STREAM("[~Robots] after ...");
 }
 
 QString Robots::getType() const
@@ -47,7 +49,7 @@ RobotLaunch* Robots::getLaunch() const { return launch_; }
 
 void Robots::setType(const QString &type)
 {
-  if (type != type)
+  if (type != type_)
   {
     type_ = type;
     emit typeChanged();
@@ -103,7 +105,7 @@ void Robots::read(QDataStream& stream)
 
 Robots& Robots::operator=(const Robots& config)
 {
-  type_ = config.type_;
+  setType(config.type_);
   *busy_robots_ = *config.busy_robots_;
   *idle_robots_ = *config.idle_robots_;
   *launch_ = *config.launch_;

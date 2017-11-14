@@ -1,6 +1,7 @@
 #ifndef _RQT_MRTA_MRTA_WIDGET_H_
 #define _RQT_MRTA_MRTA_WIDGET_H_
 
+#include <QVector>
 #include <QWidget>
 #include <pluginlib/class_loader.h>
 #include <rqt_gui_cpp/plugin.h>
@@ -44,17 +45,13 @@ class RqtMrtaWidget : public QWidget
 public:
   RqtMrtaWidget(QWidget* parent, const qt_gui_cpp::PluginContext& context);
   virtual ~RqtMrtaWidget();
-  bool loadConfig(const QString& url);
-  void resetConfig();
-  bool saveConfig();
-  bool saveConfig(const QString& url);
 
 private:
   typedef boost::shared_ptr<rqt_gui_cpp::Plugin> PluginPtr;
-  typedef std::vector<PluginPtr> VectorPluginPtr;
+  typedef QVector<PluginPtr> VectorPluginPtr;
   Ui::RqtMrtaWidget* ui_;
-  RqtMrtaArchitectureConfig* architecture_config_;
   RqtMrtaApplicationConfig* application_config_;
+  RqtMrtaArchitectureConfig* architecture_config_;
   utilities::MessageSubscriberRegistry* registry_;
   qt_gui_cpp::PluginContext context_;
   VectorPluginPtr external_plugins_;
@@ -62,8 +59,8 @@ private:
   mrta::System* system_;
 
 private:
-  void loadSystem();
   void clear();
+  void loadSystem(RqtMrtaApplicationConfig* application_config = NULL, RqtMrtaArchitectureConfig* architecture_config = NULL);
   void loadArchitecturePlugins();
   void loadRobots();
 

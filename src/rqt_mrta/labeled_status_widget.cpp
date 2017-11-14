@@ -33,11 +33,13 @@ LabeledStatusWidget::LabeledStatusWidget(QWidget* parent, mrta::Task* task) {}
 
 LabeledStatusWidget::~LabeledStatusWidget()
 {
+  ROS_INFO_STREAM("[~LabeledStatusWidget] before ...");
   if (ui_)
   {
     delete ui_;
     ui_ = NULL;
   }
+  ROS_INFO_STREAM("[~LabeledStatusWidget] after ...");
 }
 
 void LabeledStatusWidget::setGreen()

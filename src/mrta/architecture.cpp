@@ -38,7 +38,10 @@ Architecture::Architecture(QObject* parent, const QString& package,
   }
 }
 
-Architecture::~Architecture() {}
+Architecture::~Architecture()
+{
+  ROS_INFO_STREAM("[~Architecture]");
+}
 
 QString Architecture::getPackage() const { return package_; }
 

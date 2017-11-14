@@ -15,6 +15,7 @@ Widget::Widget(QObject *parent)
 
 Widget::~Widget()
 {
+  ROS_INFO("[~Widget]");
 }
 
 QString Widget::getPluginName() const

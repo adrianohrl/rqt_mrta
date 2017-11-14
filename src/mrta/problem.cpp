@@ -16,6 +16,7 @@ Problem::Problem(System* system, const QString& name,
 
 Problem::~Problem()
 {
+  ROS_INFO_STREAM("[~Problem] before");
   if (architecture_)
   {
     delete architecture_;
@@ -40,6 +41,7 @@ Problem::~Problem()
     }
   }
   tasks_.clear();
+  ROS_INFO_STREAM("[~Problem] after");
 }
 
 QString Problem::getName() const { return name_; }

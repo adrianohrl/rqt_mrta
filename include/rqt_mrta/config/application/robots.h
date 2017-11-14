@@ -47,8 +47,6 @@ signals:
   void tasksCleared(size_t robot_index);
 
 private:
-  typedef QVector<Robot*>::iterator iterator;
-  typedef QVector<Robot*>::const_iterator const_iterator;
   QVector<Robot*> robots_;
 
 private slots:

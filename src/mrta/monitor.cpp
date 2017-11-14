@@ -18,19 +18,17 @@ Monitor::Monitor(System* system, utilities::MessageSubscriberRegistry* registry,
 
 Monitor::~Monitor()
 {
+  ROS_INFO_STREAM("[~Monitor] before");
+  config_ = NULL;
   registry_ = NULL;
+  unsubscribe();
   if (subscriber_)
   {
     delete subscriber_;
     subscriber_ = NULL;
   }
-  config_ = NULL;
-  for (StateMonitorMap::iterator it(monitors_.begin()); it != monitors_.end();
-       it++)
-  {
-    monitors_[it.key()] = NULL;
-  }
   monitors_.clear();
+  ROS_INFO_STREAM("[~Monitor] after");
 }
 
 Monitor::Config* Monitor::getConfig() const { return config_; }

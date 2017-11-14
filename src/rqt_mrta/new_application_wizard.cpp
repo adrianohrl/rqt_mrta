@@ -7,6 +7,7 @@
 #include "rqt_mrta/define_robots_parameters_wizard_page.h"
 #include "rqt_mrta/new_application_wizard_page.h"
 #include <ros/console.h>
+#include <ros/package.h>
 #include "utilities/exception.h"
 
 namespace rqt_mrta
@@ -29,9 +30,13 @@ NewApplicationWizard::NewApplicationWizard(
         "The architecture configuration must not be null.");
   }
   setPage(DefineApplication, new DefineApplicationWizardPage(this));
+  ROS_INFO_STREAM("[NewApplicationWizard] after DefineApplication ...");
   setPage(DefineArchitecture, new DefineArchitectureWizardPage(this));
-  setPage(DefineRobots, new DefineRobotsWizardPage(this));
-  setPage(DefineRobotsParameters, new DefineRobotsParametersWizardPage(this));
+  ROS_INFO_STREAM("[NewApplicationWizard] after DefineArchitecture ...");
+  //setPage(DefineRobots, new DefineRobotsWizardPage(this));
+  //ROS_INFO_STREAM("[NewApplicationWizard] after DefineRobots ...");
+  //setPage(DefineRobotsParameters, new DefineRobotsParametersWizardPage(this));
+  //ROS_INFO_STREAM("[NewApplicationWizard] after DefineRobotsParameters ...");
   setWindowTitle("New Application");
   connect(this, SIGNAL(accepted()), this, SLOT(generate()));
   connect(this, SIGNAL(rejected()), this, SLOT(resetConfig()));
@@ -63,9 +68,11 @@ void NewApplicationWizard::generate()
 {
   if (metapackage_config_->createPackage())
   {
-    ROS_INFO_STREAM("Created package ["
-                    << metapackage_config_->getName().toStdString() << "] @ ["
-                    << metapackage_config_->getUrl().toStdString() << "].");
+    application_config_->setPackage(metapackage_config_->getName());
+    application_config_->getApplication()->setUrl(metapackage_config_->getUrl());
+    ROS_WARN_STREAM("Created package ["
+                    << application_config_->getPackage().toStdString() << "] @ ["
+                    << application_config_->getPackageUrl().toStdString() << "].");
     application_config_->save();
   }
 }

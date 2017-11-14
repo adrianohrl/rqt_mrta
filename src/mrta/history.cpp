@@ -7,6 +7,7 @@ History::History(QObject *parent) : QObject(parent) {}
 
 History::~History()
 {
+  ROS_INFO_STREAM("[~History] before");
   for (size_t index(0); index < logs_.count(); index++)
   {
     if (logs_[index])
@@ -16,6 +17,7 @@ History::~History()
     }
   }
   logs_.clear();
+  ROS_INFO_STREAM("[~History] after");
 }
 
 QList<Log*> History::getLogs() const { return logs_; }

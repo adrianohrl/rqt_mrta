@@ -13,9 +13,12 @@ ParamInterface::ParamInterface(const QString& group_name, Params* parent)
 {
 }
 
-void ParamInterface::paramChanged() { emit changed(); }
+ParamInterface::~ParamInterface()
+{
+  ROS_INFO("[~ParamInterface]");
+}
 
-ParamInterface::~ParamInterface() {}
+void ParamInterface::paramChanged() { emit changed(); }
 
 QString ParamInterface::getGroupName() const { return group_name_; }
 

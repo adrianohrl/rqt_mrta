@@ -3,6 +3,7 @@
 
 #include <QMap>
 #include <QObject>
+#include <QVector>
 #include "mrta/taxonomy.h"
 
 namespace utilities
@@ -33,6 +34,7 @@ typedef rqt_mrta::config::application::Robot RobotConfig;
 typedef rqt_mrta::config::application::RqtMrtaApplication ApplicationConfig;
 typedef rqt_mrta::config::architecture::RqtMrtaArchitecture ArchitectureConfig;
 class Allocation;
+class Monitor;
 class Problem;
 class Robot;
 class RobotMonitor;
@@ -66,8 +68,7 @@ private:
   Problem* problem_;
   ApplicationConfig* application_config_;
   ArchitectureConfig* architecture_config_;
-  RobotMonitor* busy_monitor_;
-  RobotMonitor* idle_monitor_;
+  QVector<Monitor*> monitors_;
   Robot* addRobot(RobotConfig* config);
 
 private slots:

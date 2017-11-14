@@ -15,11 +15,13 @@ BusyRobots::BusyRobots(QObject* parent)
 
 BusyRobots::~BusyRobots()
 {
+  ROS_INFO_STREAM("[~BusyRobots] before ...");
   if (topic_)
   {
     delete topic_;
     topic_ = NULL;
   }
+  ROS_INFO_STREAM("[~BusyRobots] after ...");
 }
 
 Topic* BusyRobots::getTopic() const

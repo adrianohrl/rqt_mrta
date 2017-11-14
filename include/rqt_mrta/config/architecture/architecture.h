@@ -21,8 +21,10 @@ public:
   virtual ~Architecture();
   Allocations* getAllocations() const;
   ArchitectureLaunch* getLaunch() const;
+  QString getName() const;
   Robots* getRobots() const;
   Tasks* getTasks() const;
+  void setName(const QString& name);
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
@@ -30,7 +32,11 @@ public:
   void read(QDataStream& stream);
   Architecture& operator=(const Architecture& config);
 
+signals:
+  void nameChanged(const QString& name);
+
 private:
+  QString name_;
   Allocations* allocations_;
   ArchitectureLaunch* launch_;
   Robots* robots_;

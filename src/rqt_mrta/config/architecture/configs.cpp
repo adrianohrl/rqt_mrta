@@ -9,7 +9,20 @@ namespace architecture
 {
 Configs::Configs(QObject* parent) : AbstractConfig(parent) {}
 
-Configs::~Configs() {}
+Configs::~Configs()
+{
+  ROS_INFO_STREAM("[~Configs] before ...");
+  for (size_t index(0); index < configs_.count(); index++)
+  {
+    if (configs_[index])
+    {
+      delete configs_[index];
+      configs_[index] = NULL;
+    }
+  }
+  configs_.clear();
+  ROS_INFO_STREAM("[~Configs] after ...");
+}
 
 Config* Configs::getConfig(size_t index) const
 {

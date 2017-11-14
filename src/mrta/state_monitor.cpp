@@ -1,5 +1,6 @@
 #include "mrta/sample_holder.h"
 #include "mrta/state_monitor.h"
+#include <ros/console.h>
 
 namespace mrta
 {
@@ -7,7 +8,6 @@ StateMonitor::StateMonitor(QObject* parent, const ros::Duration& timeout,
                            size_t count_states)
     : QObject(parent)
 {
-
   for (size_t index(0); index < count_states; index++)
   {
     SampleHolder* sample_holder = new SampleHolder(this, timeout);
@@ -19,6 +19,7 @@ StateMonitor::StateMonitor(QObject* parent, const ros::Duration& timeout,
 
 StateMonitor::~StateMonitor()
 {
+  ROS_INFO_STREAM("[~StateMonitor] before");
   for (size_t index(0); index < sample_holders_.count(); index++)
   {
     if (sample_holders_[index])
@@ -28,6 +29,7 @@ StateMonitor::~StateMonitor()
     }
   }
   sample_holders_.clear();
+  ROS_INFO_STREAM("[~StateMonitor] after");
 }
 
 SampleHolder* StateMonitor::getSampleHolder(size_t index) const

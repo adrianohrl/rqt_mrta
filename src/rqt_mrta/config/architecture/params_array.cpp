@@ -8,7 +8,10 @@ namespace architecture
 {
 ParamsArray::ParamsArray(Params* parent) : Params("array", parent) {}
 
-ParamsArray::~ParamsArray() {}
+ParamsArray::~ParamsArray()
+{
+  ROS_INFO("[~ParamsArray]");
+}
 
 ParamInterface* ParamsArray::clone() const
 {

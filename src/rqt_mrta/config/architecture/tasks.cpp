@@ -14,23 +14,22 @@ Tasks::Tasks(QObject* parent)
 
 Tasks::~Tasks()
 {
+  ROS_INFO_STREAM("[~Tasks] before ...");
   if (incoming_tasks_)
   {
     delete incoming_tasks_;
     incoming_tasks_ = NULL;
   }
+  ROS_INFO_STREAM("[~Tasks] after ...");
 }
 
-QString Tasks::getType() const
-{
-  return type_;
-}
+QString Tasks::getType() const { return type_; }
 
 IncomingTasks* Tasks::getIncomingTasks() const { return incoming_tasks_; }
 
-void Tasks::setType(const QString &type)
+void Tasks::setType(const QString& type)
 {
-  if (type != type)
+  if (type != type_)
   {
     type_ = type;
     emit typeChanged();
@@ -76,7 +75,7 @@ void Tasks::read(QDataStream& stream)
 
 Tasks& Tasks::operator=(const Tasks& config)
 {
-  type_ = config.type_;
+  setType(config.type_);
   *incoming_tasks_ = *config.incoming_tasks_;
   return *this;
 }

@@ -6,13 +6,9 @@ namespace config
 {
 namespace architecture
 {
-Topic::Topic(QObject* parent) : AbstractConfig(parent)
-{
-}
+Topic::Topic(QObject* parent) : AbstractConfig(parent) {}
 
-Topic::~Topic()
-{
-}
+Topic::~Topic() {}
 
 QString Topic::getName() const { return name_; }
 

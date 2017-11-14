@@ -16,7 +16,20 @@ Params::Params(const QString& group_name, Params* parent)
 {
 }
 
-Params::~Params() {}
+Params::~Params()
+{
+  ROS_INFO_STREAM("[~Params] before ...");
+  for (size_t index(0); index < params_.count(); index++)
+  {
+    if (params_[index])
+    {
+      delete params_[index];
+      params_[index] = NULL;
+    }
+  }
+  params_.clear();
+  ROS_INFO_STREAM("[~Params] after ...");
+}
 
 ParamInterface* Params::getParam(const QString& full_name) const
 {

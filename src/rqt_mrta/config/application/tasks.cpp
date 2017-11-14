@@ -11,6 +11,7 @@ Tasks::Tasks(QObject* parent) : AbstractConfig(parent) {}
 
 Tasks::~Tasks()
 {
+  ROS_INFO_STREAM("[~Tasks] before ...");
   for (size_t index(0); index < tasks_.count(); index++)
   {
     if (tasks_[index])
@@ -19,6 +20,8 @@ Tasks::~Tasks()
       tasks_[index] = NULL;
     }
   }
+  tasks_.clear();
+  ROS_INFO_STREAM("[~Tasks] after ...");
 }
 
 size_t Tasks::count() const { return tasks_.count(); }

@@ -17,7 +17,10 @@ Task::Task(const Task& task)
   setConfig(task.config_);
 }
 
-Task::~Task() {}
+Task::~Task() {
+  config_ = NULL;
+  ROS_INFO_STREAM("[~Task]");
+}
 
 Task::Config* Task::getConfig() const { return config_; }
 

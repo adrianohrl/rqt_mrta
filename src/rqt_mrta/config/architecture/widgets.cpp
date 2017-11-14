@@ -11,14 +11,17 @@ Widgets::Widgets(QObject* parent) : AbstractConfig(parent) {}
 
 Widgets::~Widgets()
 {
-  for (iterator it(widgets_.begin()); it != widgets_.end(); it++)
+  ROS_INFO_STREAM("[~Widgets] before ...");
+  for (size_t index(0); index < widgets_.count(); index++)
   {
-    if (*it)
+    if (widgets_[index])
     {
-      delete *it;
-      *it = NULL;
+      delete widgets_[index];
+      widgets_[index] = NULL;
     }
   }
+  widgets_.clear();
+  ROS_INFO_STREAM("[~Widgets] after ...");
 }
 
 size_t Widgets::count() const { return widgets_.count(); }

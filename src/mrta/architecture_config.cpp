@@ -9,8 +9,6 @@ ArchitectureConfig::ArchitectureConfig(QObject* parent)
 {
 }
 
-ArchitectureConfig::~ArchitectureConfig() {}
-
 Architecture* ArchitectureConfig::getArchitecture() const
 {
   return architecture_;
@@ -20,8 +18,6 @@ void ArchitectureConfig::setArchitecture(Architecture* architecture)
 {
   architecture_ = architecture;
 }
-
-void ArchitectureConfig::save(QSettings& settings) const {}
 
 void ArchitectureConfig::load(QSettings& settings)
 {
@@ -39,10 +35,4 @@ void ArchitectureConfig::load(QSettings& settings)
       settings.value("tasks/type", "").toString()));
   settings.endGroup();
 }
-
-void ArchitectureConfig::reset() {}
-
-void ArchitectureConfig::write(QDataStream& stream) const {}
-
-void ArchitectureConfig::read(QDataStream& stream) {}
 }

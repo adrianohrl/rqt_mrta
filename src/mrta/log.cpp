@@ -1,5 +1,6 @@
 #include "mrta/log.h"
 #include "mrta/history.h"
+#include <ros/console.h>
 
 namespace mrta
 {
@@ -16,7 +17,10 @@ Log::Log(const Log& log)
 {
 }
 
-Log::~Log() {}
+Log::~Log()
+{
+  ROS_INFO_STREAM("[~Log]");
+}
 
 ros::Time Log::getTimestamp() const { return timestamp_; }
 

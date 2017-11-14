@@ -18,8 +18,7 @@ System::System(QObject* parent, ApplicationConfig* application_config,
       architecture_config_(architecture_config),
       problem_(new Problem(this,
                            application_config->getApplication()->getName(),
-                           architecture_config)),
-      idle_monitor_(NULL)
+                           architecture_config))
 {
   if (!application_config_)
   {
@@ -31,15 +30,14 @@ System::System(QObject* parent, ApplicationConfig* application_config,
     throw utilities::Exception(
         "The architecture configuration must not be null.");
   }
-  ROS_ERROR_STREAM("[System] initing");
-  busy_monitor_ = new RobotMonitor(
+  monitors_.append(new RobotMonitor(
       this, registry,
       architecture_config->getArchitecture()->getRobots()->getBusyRobots()->getTopic(),
-      Robot::Busy);
-  idle_monitor_ = new RobotMonitor(
+      Robot::Busy));
+  monitors_.append(new RobotMonitor(
       this, registry,
       architecture_config->getArchitecture()->getRobots()->getIdleRobots()->getTopic(),
-      Robot::Idle);
+      Robot::Idle));
   connect(problem_, SIGNAL(taskStateChanged(const QString&, int)), this,
           SIGNAL(changed()));
   connect(problem_, SIGNAL(taskStateChanged(const QString&, int)), this,
@@ -58,8 +56,18 @@ System::System(QObject* parent, ApplicationConfig* application_config,
 
 System::~System()
 {
+  ROS_INFO_STREAM("[~System] before");
   application_config_ = NULL;
   architecture_config_ = NULL;
+  for (size_t index(0); index < monitors_.count(); index++)
+  {
+    if (monitors_[index])
+    {
+      delete monitors_[index];
+      monitors_[index] = NULL;
+    }
+  }
+  monitors_.clear();
   if (problem_)
   {
     delete problem_;
@@ -74,6 +82,7 @@ System::~System()
     }
   }
   robots_.clear();
+  ROS_INFO_STREAM("[~System] after");
 }
 
 Robot* System::getRobot(const QString& id)
@@ -99,8 +108,10 @@ QList<Allocation*> System::getAllocations() const
 
 void System::setRegistry(utilities::MessageSubscriberRegistry* registry)
 {
-  busy_monitor_->setRegistry(registry);
-  idle_monitor_->setRegistry(registry);
+  for (size_t index(0); index < monitors_.count(); index++)
+  {
+    monitors_[index]->setRegistry(registry);
+  }
 }
 
 Robot* System::addRobot(RobotConfig* config)

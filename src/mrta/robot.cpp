@@ -27,12 +27,20 @@ Robot::Robot(const Robot& robot)
 
 Robot::~Robot()
 {
+  ROS_INFO_STREAM("[~Robot] before");
   config_ = NULL;
   if (history_)
   {
     delete history_;
     history_ = NULL;
   }
+  if (monitor_)
+  {
+    delete monitor_;
+    monitor_ = NULL;
+  }
+  tasks_.clear();
+  ROS_INFO_STREAM("[~Robot] after");
 }
 
 Robot::Config* Robot::getConfig() const { return config_; }

@@ -42,6 +42,7 @@ private:
 
 private slots:
   void applicationChanged();
+  void setPackageUrl(const QString& url);
 };
 }
 }

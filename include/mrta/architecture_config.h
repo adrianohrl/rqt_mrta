@@ -13,14 +13,14 @@ class ArchitectureConfig : public utilities::AbstractConfig
   Q_OBJECT
 public:
   ArchitectureConfig(QObject* parent = NULL);
-  virtual ~ArchitectureConfig();
+  virtual ~ArchitectureConfig() {}
   Architecture* getArchitecture() const;
   void setArchitecture(Architecture* architecture);
-  virtual void save(QSettings& settings) const;
-  virtual void load(QSettings& settings);
-  virtual void reset();
-  virtual void write(QDataStream& stream) const;
-  virtual void read(QDataStream& stream);
+  void save(QSettings& settings) const {}
+  void load(QSettings& settings);
+  void reset() {}
+  void write(QDataStream& stream) const {}
+  void read(QDataStream& stream) {}
 
 private:
   Architecture* architecture_;

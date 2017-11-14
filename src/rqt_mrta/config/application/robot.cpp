@@ -18,11 +18,13 @@ Robot::Robot(QObject *parent)
 
 Robot::~Robot()
 {
+  ROS_INFO_STREAM("[~Robot] before ...");
   if (tasks_)
   {
     delete tasks_;
     tasks_ = NULL;
   }
+  ROS_INFO_STREAM("[~Robot] after ...");
 }
 
 QString Robot::getId() const

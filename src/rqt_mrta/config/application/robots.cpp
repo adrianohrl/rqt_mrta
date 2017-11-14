@@ -11,14 +11,17 @@ Robots::Robots(QObject* parent) : AbstractConfig(parent) {}
 
 Robots::~Robots()
 {
-  for (iterator it(robots_.begin()); it != robots_.end(); it++)
+  ROS_INFO_STREAM("[~Robots] before ...");
+  for (size_t index(0); index < robots_.count(); index++)
   {
-    if (*it)
+    if (robots_[index])
     {
-      delete *it;
-      *it = NULL;
+      delete robots_[index];
+      robots_[index] = NULL;
     }
   }
+  robots_.clear();
+  ROS_INFO_STREAM("[~Robots] after ...");
 }
 
 size_t Robots::count() const { return robots_.count(); }

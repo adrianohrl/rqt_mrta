@@ -1,5 +1,6 @@
 #include "mrta/sample_holder.h"
 #include "mrta/state_monitor.h"
+#include <ros/console.h>
 
 namespace mrta
 {
@@ -13,12 +14,14 @@ SampleHolder::SampleHolder(StateMonitor* monitor, const ros::Duration& timeout)
 
 SampleHolder::~SampleHolder()
 {
+  ROS_INFO_STREAM("[~SampleHolder] before");
   timer_->stop();
   if (timer_)
   {
     delete timer_;
     timer_ = NULL;
   }
+  ROS_INFO_STREAM("[~SampleHolder] after");
 }
 
 bool SampleHolder::isUpToDate() const { return up_to_date_; }

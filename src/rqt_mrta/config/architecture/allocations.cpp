@@ -14,11 +14,13 @@ Allocations::Allocations(QObject* parent)
 
 Allocations::~Allocations()
 {
+  ROS_INFO_STREAM("[~Allocations] before ...");
   if (allocated_tasks_)
   {
     delete allocated_tasks_;
     allocated_tasks_ = NULL;
   }
+  ROS_INFO_STREAM("[~Allocations] after ...");
 }
 
 QString Allocations::getType() const
@@ -79,7 +81,7 @@ void Allocations::read(QDataStream& stream)
 
 Allocations& Allocations::operator=(const Allocations& config)
 {
-  type_ = config.type_;
+  setType(config.type_);
   *allocated_tasks_ = *config.allocated_tasks_;
   return *this;
 }

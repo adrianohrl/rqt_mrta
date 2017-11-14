@@ -76,6 +76,10 @@ bool XmlSettings::read(QIODevice& device, QSettings::SettingsMap& map)
       groups.removeLast();
     }
   }
+  for (QSettings::SettingsMap::iterator it(map.begin()); it != map.end(); it++)
+  {
+    ROS_WARN_STREAM(it.key().toStdString() << ": " << it.value().toString().toStdString());
+  }
   return !xml_reader.hasError();
 }
 

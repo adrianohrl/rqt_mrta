@@ -38,8 +38,6 @@ signals:
   void widgetPluginNameChanged(size_t index, const QString& plugin_name);
 
 private:
-  typedef QVector<Widget*>::iterator iterator;
-  typedef QVector<Widget*>::const_iterator const_iterator;
   QVector<Widget*> widgets_;
 
 private slots:

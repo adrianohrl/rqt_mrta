@@ -29,8 +29,8 @@ public:
   Application& operator=(const Application& config);
 
 signals:
-  void nameChanged(const QString &name);
-  void urlChanged(const QString &url);
+  void nameChanged(const QString& name);
+  void urlChanged(const QString& url);
 
 private:
   QString name_;

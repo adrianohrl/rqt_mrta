@@ -13,6 +13,7 @@ Task::Task(QObject *parent)
 
 Task::~Task()
 {
+  ROS_INFO_STREAM("[~Task]");
 }
 
 QString Task::getId() const

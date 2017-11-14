@@ -15,11 +15,13 @@ IdleRobots::IdleRobots(QObject* parent)
 
 IdleRobots::~IdleRobots()
 {
+  ROS_INFO_STREAM("[~IdleRobots] before ...");
   if (topic_)
   {
     delete topic_;
     topic_ = NULL;
   }
+  ROS_INFO_STREAM("[~IdleRobots] after ...");
 }
 
 Topic* IdleRobots::getTopic() const

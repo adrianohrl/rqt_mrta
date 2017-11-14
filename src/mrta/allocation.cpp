@@ -18,8 +18,10 @@ Allocation::Allocation(Problem* problem, Task* task,
 
 Allocation::~Allocation()
 {
+  ROS_INFO_STREAM("[~Allocation] before");
   task_ = NULL;
   robots_.clear();
+  ROS_INFO_STREAM("[~Allocation] after");
 }
 
 QString Allocation::getId() const { return id_; }

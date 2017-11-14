@@ -20,7 +20,10 @@ RobotMonitor::RobotMonitor(System* system,
   connect(system, SIGNAL(added(const QString&)), this, SLOT(add(const QString&)));
 }
 
-RobotMonitor::~RobotMonitor() {}
+RobotMonitor::~RobotMonitor()
+{
+  ROS_INFO_STREAM("[~RobotMonitor]");
+}
 
 void RobotMonitor::update(const QString &id)
 {
