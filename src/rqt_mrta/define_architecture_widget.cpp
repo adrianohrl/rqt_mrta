@@ -128,7 +128,7 @@ void DefineArchitectureWidget::setFilterTaskType()
 void DefineArchitectureWidget::unknownAchitecture()
 {
   ui_->taxonomy_label->setText("");
-  application_config_->getApplication()->setUrl("");
+  application_config_->getApplication()->setArchitecturePackage("");
 }
 
 void DefineArchitectureWidget::currentArchitectureChanged(
@@ -136,7 +136,7 @@ void DefineArchitectureWidget::currentArchitectureChanged(
 {
   ui_->taxonomy_label->setText(
       architecture ? mrta::Taxonomy::toQString(*architecture) : "");
-  application_config_->getApplication()->setUrl(
-      architecture ? architecture->getConfigFilePath() : "");
+  application_config_->getApplication()->setArchitecturePackage(
+      architecture ? architecture->getPackage() : "");
 }
 }

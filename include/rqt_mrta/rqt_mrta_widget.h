@@ -1,6 +1,7 @@
 #ifndef _RQT_MRTA_MRTA_WIDGET_H_
 #define _RQT_MRTA_MRTA_WIDGET_H_
 
+#include <QMessageBox>
 #include <QVector>
 #include <QWidget>
 #include <pluginlib/class_loader.h>
@@ -60,9 +61,13 @@ private:
 
 private:
   void clear();
-  void loadSystem(RqtMrtaApplicationConfig* application_config = NULL, RqtMrtaArchitectureConfig* architecture_config = NULL);
-  void loadArchitecturePlugins();
+  void loadSystem(RqtMrtaApplicationConfig* application_config = NULL);
+  void loadApplication(const QString& url = "");
+  void loadArchitecture(const QString& url = "");
   void loadRobots();
+  QMap<QString, QString> findPlugins(const QString& attribute) const;
+  QString askItem(const char *label, const QStringList &items);
+  void showMessage(const QString &title, const QString& message = "", QMessageBox::Icon icon = QMessageBox::Critical) const;
 
 private slots:
   void newApplicationPushButtonClicked();

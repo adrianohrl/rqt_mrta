@@ -2,7 +2,7 @@
 #include <ros/console.h>
 #include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
 #include "utilities/exception.h"
-#include "utilities/xml_settings.h"
+#include "utilities/simple_xml_settings.h"
 
 namespace rqt_mrta
 {
@@ -56,7 +56,7 @@ void RqtMrtaArchitecture::save(const QString& url) const
   {
     return;
   }
-  QSettings settings(url, utilities::XmlSettings::format);
+  QSettings settings(url, utilities::SimpleXmlSettings::format);
   if (settings.isWritable())
   {
     settings.clear();
@@ -73,7 +73,7 @@ void RqtMrtaArchitecture::save(const QString& url) const
 void RqtMrtaArchitecture::save(QSettings& settings) const
 {
   settings.beginGroup("rqt_mrta");
-  settings.setValue("@format", "architecture");
+  //settings.setValue("@format", "architecture");
   architecture_->save(settings);
   configs_->save(settings);
   widgets_->save(settings);
@@ -87,10 +87,12 @@ void RqtMrtaArchitecture::load(const QString& url)
   {
     return;
   }
-  QSettings settings(url, utilities::XmlSettings::format);
+  QSettings settings(url, utilities::SimpleXmlSettings::format);
   if (settings.status() != QSettings::NoError)
   {
-    ROS_ERROR("The given file is not well formatted.");
+    ROS_ERROR_STREAM("The given file is not well formatted ["
+                     << url.toStdString() << "].");
+    return;
   }
   load(settings);
   ROS_INFO_STREAM("Loaded architecture configuration file ["
@@ -101,7 +103,7 @@ void RqtMrtaArchitecture::load(QSettings& settings)
 {
   settings.beginGroup("rqt_mrta");
   QString type(settings.value("@format").toString());
-  if (type.isEmpty())
+  /*if (type.isEmpty())
   {
     throw utilities::Exception("The <rqt_mrta> tag in the input xml file must "
                                "have an attribute named 'format'.");
@@ -112,7 +114,7 @@ void RqtMrtaArchitecture::load(QSettings& settings)
                                "the input xml file must be valued as "
                                "'architecture' to be loaded as an architecture "
                                "configuration file.");
-  }
+  }*/
   architecture_->load(settings);
   configs_->load(settings);
   widgets_->load(settings);

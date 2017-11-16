@@ -3,7 +3,7 @@
 
 #include <QWizard>
 #include "rqt_mrta/config/application/rqt_mrta_application.h"
-#include "rqt_mrta/config/application/rqt_mrta_metapackage.h"
+#include "rqt_mrta/config/application/rqt_mrta_package.h"
 #include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
 
 namespace Ui
@@ -14,7 +14,7 @@ class NewApplicationWizard;
 namespace rqt_mrta
 {
 typedef config::application::RqtMrtaApplication RqtMrtaApplicationConfig;
-typedef config::application::RqtMrtaApplicationMetapackage RqtMrtaApplicationMetapackageConfig;
+typedef config::application::RqtMrtaApplicationPackage RqtMrtaApplicationPackageConfig;
 typedef config::architecture::RqtMrtaArchitecture RqtMrtaArchitectureConfig;
 
 class NewApplicationWizard : public QWizard
@@ -30,16 +30,15 @@ public:
   };
   NewApplicationWizard(QWidget* parent,
                        RqtMrtaApplicationConfig* application_config,
-                       RqtMrtaArchitectureConfig* architecture_config,
                        Qt::WindowFlags flags = 0);
   virtual ~NewApplicationWizard();
   RqtMrtaApplicationConfig* getApplicationConfig() const;
-  RqtMrtaApplicationMetapackageConfig* getMetapackageConfig() const;
+  RqtMrtaApplicationPackageConfig* getMetapackageConfig() const;
   RqtMrtaArchitectureConfig* getArchitectureConfig() const;
 
 private:
   RqtMrtaApplicationConfig* application_config_;
-  RqtMrtaApplicationMetapackageConfig* metapackage_config_;
+  RqtMrtaApplicationPackageConfig* metapackage_config_;
   RqtMrtaArchitectureConfig* architecture_config_;
 
 private slots:

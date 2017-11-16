@@ -106,15 +106,12 @@ QString RobotTreeWidget::getCurrentId() const
 
 void RobotTreeWidget::setCurrentId(const QString& id)
 {
-  //QString previous_id;
   if (current_type_ == Robot)
   {
-    //previous_id = current_.robot_->getId();
     current_.robot_->setId(id);
   }
   else if (current_type_ == Task)
   {
-    //previous_id = current_.task_->getId();
     current_.task_->setId(id);
   }
 }

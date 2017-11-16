@@ -25,13 +25,15 @@ bool DefineArchitectureWizardPage::validatePage()
   {
     return false;
   }
-  architecture_config_->load(application_config_->getPackageUrl() +
+  architecture_config_->load(application_config_->getApplicationPackageUrl() +
                              "/rqt_mrta.xml");
   return true;
 }
 
 bool DefineArchitectureWizardPage::isComplete() const
 {
-  return !application_config_->getApplication()->getUrl().isEmpty();
+  return !application_config_->getApplication()
+              ->getArchitecturePackage()
+              .isEmpty();
 }
 }

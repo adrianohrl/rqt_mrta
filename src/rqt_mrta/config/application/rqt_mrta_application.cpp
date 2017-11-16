@@ -1,9 +1,8 @@
 #include <QFileInfo>
 #include <ros/console.h>
-#include <rospack/rospack.h>
 #include "rqt_mrta/config/application/rqt_mrta_application.h"
 #include "utilities/exception.h"
-#include "utilities/xml_settings.h"
+#include "utilities/simple_xml_settings.h"
 
 namespace rqt_mrta
 {
@@ -14,14 +13,8 @@ namespace application
 RqtMrtaApplication::RqtMrtaApplication(QObject* parent)
     : AbstractConfig(parent), application_(new Application(this))
 {
-  rp_.setQuiet(true);
-  std::vector<std::string> search_path;
-  rp_.getSearchPathFromEnv(search_path);
-  rp_.crawl(search_path, true);
   reset();
   connect(application_, SIGNAL(changed()), this, SLOT(applicationChanged()));
-  connect(application_, SIGNAL(urlChanged(const QString&)), this,
-          SLOT(setPackageUrl(const QString&)));
 }
 
 RqtMrtaApplication::~RqtMrtaApplication()
@@ -35,37 +28,46 @@ RqtMrtaApplication::~RqtMrtaApplication()
   ROS_INFO_STREAM("[~RqtMrtaApplication] after ...");
 }
 
-QString RqtMrtaApplication::getPackage() const { return package_; }
+QString RqtMrtaApplication::getApplicationPackage() const { return package_; }
 
-QString RqtMrtaApplication::getPackageUrl() const { return package_url_; }
+QString RqtMrtaApplication::getApplicationPackageUrl() const { return url_; }
 
 Application* RqtMrtaApplication::getApplication() const { return application_; }
 
-void RqtMrtaApplication::setPackage(const QString& package)
+void RqtMrtaApplication::setApplicationPackage(const QString& package)
 {
   if (package != package_)
   {
     package_ = package;
-    std::string url;
-    rp_.find(package.toStdString(), url);
-    package_url_ = QString::fromStdString(url);
-    emit packageChanged(package);
+    emit applicationPackageChanged(package);
     emit changed();
   }
+}
+
+void RqtMrtaApplication::setApplicationPackageUrl(const QString& url)
+{
+  if (url != url_)
+  {
+    ROS_ERROR_STREAM("[RqtMrtaApplication::setApplicationPackageUrl] url: " << url.toStdString());
+    url_ = url;
+    emit applicationPackageUrlChanged(url);
+    emit changed();
+  }
+
 }
 
 void RqtMrtaApplication::save() const { save("rqt_mrta.xml"); }
 
 void RqtMrtaApplication::save(const QString& filename) const
 {
-  if (package_url_.isEmpty() || filename.isEmpty())
+  if (url_.isEmpty() || filename.isEmpty())
   {
     ROS_ERROR(
         "[RqtMrtaApplication] unable to save application rqt_mrta.xml file.");
     return;
   }
-  QString url(package_url_ + "/" + filename);
-  QSettings settings(url, utilities::XmlSettings::format);
+  QString url(url_ + "/" + filename);
+  QSettings settings(url, utilities::SimpleXmlSettings::format);
   if (settings.isWritable())
   {
     settings.clear();
@@ -82,7 +84,7 @@ void RqtMrtaApplication::save(const QString& filename) const
 void RqtMrtaApplication::save(QSettings& settings) const
 {
   settings.beginGroup("rqt_mrta");
-  settings.setValue("@format", "application");
+  //settings.setValue("@format", "application");
   application_->save(settings);
   settings.endGroup();
 }
@@ -94,7 +96,7 @@ void RqtMrtaApplication::load(const QString& url)
   {
     return;
   }
-  QSettings settings(url, utilities::XmlSettings::format);
+  QSettings settings(url, utilities::SimpleXmlSettings::format);
   if (settings.status() == QSettings::NoError)
   {
     load(settings);
@@ -107,7 +109,7 @@ void RqtMrtaApplication::load(QSettings& settings)
 {
   settings.beginGroup("rqt_mrta");
   QString type(settings.value("@format").toString());
-  if (type.isEmpty())
+  /*if (type.isEmpty())
   {
     throw utilities::Exception("The <rqt_mrta> tag in the input xml file must "
                                "have an attribute named 'format'.");
@@ -119,14 +121,15 @@ void RqtMrtaApplication::load(QSettings& settings)
         "the input xml file must be valued as "
         "'application' to be loaded as an application "
         "configuration file.");
-  }
+  }*/
   application_->load(settings);
   settings.endGroup();
 }
 
 void RqtMrtaApplication::reset()
 {
-  setPackage("");
+  setApplicationPackage("");
+  setApplicationPackageUrl("");
   application_->reset();
 }
 
@@ -143,17 +146,13 @@ void RqtMrtaApplication::read(QDataStream& stream)
 RqtMrtaApplication& RqtMrtaApplication::
 operator=(const RqtMrtaApplication& config)
 {
-  setPackage(config.package_);
+  setApplicationPackage(config.package_);
+  setApplicationPackageUrl(config.url_);
   *application_ = *config.application_;
   return *this;
 }
 
 void RqtMrtaApplication::applicationChanged() { emit changed(); }
-
-void RqtMrtaApplication::setPackageUrl(const QString& url)
-{
-  package_url_ = url;
-}
 }
 }
 }

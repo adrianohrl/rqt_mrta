@@ -51,7 +51,7 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/config/application/robot.cpp
   src/rqt_mrta/config/application/robots.cpp
   src/rqt_mrta/config/application/rqt_mrta_application.cpp
-  src/rqt_mrta/config/application/rqt_mrta_metapackage.cpp
+  src/rqt_mrta/config/application/rqt_mrta_package.cpp
   src/rqt_mrta/config/application/task.cpp
   src/rqt_mrta/config/application/tasks.cpp
   src/rqt_mrta/config/architecture/allocated_tasks.cpp
@@ -99,6 +99,7 @@ set (rqt_mrta_SRCS
   src/utilities/message_subscriber.cpp
   src/utilities/message_subscriber_registry.cpp
   src/utilities/ros_package.cpp
+  src/utilities/simple_xml_settings.cpp
   src/utilities/xml_settings.cpp
 )
 
@@ -122,7 +123,7 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/config/application/robot.h
   include/rqt_mrta/config/application/robots.h
   include/rqt_mrta/config/application/rqt_mrta_application.h
-  include/rqt_mrta/config/application/rqt_mrta_metapackage.h
+  include/rqt_mrta/config/application/rqt_mrta_package.h
   include/rqt_mrta/config/application/task.h
   include/rqt_mrta/config/application/tasks.h
   include/rqt_mrta/config/architecture/allocated_tasks.h
@@ -171,6 +172,7 @@ set(rqt_mrta_HDRS
   include/utilities/message_subscriber.h
   include/utilities/message_subscriber_registry.h
   include/utilities/ros_package.h
+  include/utilities/simple_xml_settings.h
   include/utilities/xml_settings.h
 )
 

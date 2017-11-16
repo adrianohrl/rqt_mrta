@@ -1,7 +1,7 @@
 #include <QObject>
 #include <QDir>
 #include <ros/console.h>
-#include "rqt_mrta/config/application/rqt_mrta_metapackage.h"
+#include "rqt_mrta/config/application/rqt_mrta_package.h"
 
 namespace rqt_mrta
 {
@@ -9,15 +9,15 @@ namespace config
 {
 namespace application
 {
-RqtMrtaApplicationMetapackage::RqtMrtaApplicationMetapackage(QObject* parent)
+RqtMrtaApplicationPackage::RqtMrtaApplicationPackage(QObject* parent)
     : RosMetapackage(parent)
 {
   reset();
 }
 
-RqtMrtaApplicationMetapackage::~RqtMrtaApplicationMetapackage() {}
+RqtMrtaApplicationPackage::~RqtMrtaApplicationPackage() {}
 
-bool RqtMrtaApplicationMetapackage::createPackage()
+bool RqtMrtaApplicationPackage::createPackage()
 {
   addRunDepend("rqt_mrta");
   export_->add("rqt_mrta/@application", "{prefix}/rqt_mrta.xml");

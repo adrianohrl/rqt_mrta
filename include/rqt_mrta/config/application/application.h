@@ -17,10 +17,10 @@ public:
   Application(QObject* parent = NULL);
   virtual ~Application();
   QString getName() const;
-  QString getUrl() const;
+  QString getArchitecturePackage() const;
   Robots* getRobots() const;
   void setName(const QString& name);
-  void setUrl(const QString& url);
+  void setArchitecturePackage(const QString& package);
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
@@ -30,11 +30,11 @@ public:
 
 signals:
   void nameChanged(const QString& name);
-  void urlChanged(const QString& url);
+  void architecturePackageChanged(const QString& package);
 
 private:
   QString name_;
-  QString url_;
+  QString architecture_;
   Robots* robots_;
 
 private slots:

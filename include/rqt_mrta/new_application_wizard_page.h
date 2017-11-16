@@ -17,7 +17,7 @@ signals:
 
 protected:
   RqtMrtaApplicationConfig* application_config_;
-  RqtMrtaApplicationMetapackageConfig* metapackage_config_;
+  RqtMrtaApplicationPackageConfig* metapackage_config_;
   RqtMrtaArchitectureConfig* architecture_config_;
   QWidget* widget_;
   void setWidget(QWidget* widget);

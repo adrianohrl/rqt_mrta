@@ -16,13 +16,13 @@ namespace config
 namespace application
 {
 class RqtMrtaApplication;
-class RqtMrtaApplicationMetapackage;
+class RqtMrtaApplicationPackage;
 }
 }
 
 typedef config::application::RqtMrtaApplication RqtMrtaApplicationConfig;
-typedef config::application::RqtMrtaApplicationMetapackage
-    RqtMrtaApplicationMetapackageConfig;
+typedef config::application::RqtMrtaApplicationPackage
+    RqtMrtaApplicationPackageConfig;
 
 class DefineApplicationWidget : public QWidget
 {
@@ -30,12 +30,12 @@ class DefineApplicationWidget : public QWidget
   Q_OBJECT
 public:
   DefineApplicationWidget(QWidget* parent,
-                          RqtMrtaApplicationConfig* application_config, RqtMrtaApplicationMetapackageConfig *metapackage_config);
+                          RqtMrtaApplicationConfig* application_config, RqtMrtaApplicationPackageConfig *metapackage_config);
   virtual ~DefineApplicationWidget();
   RqtMrtaApplicationConfig* getApplicationConfig() const;
-  RqtMrtaApplicationMetapackageConfig* getMetapackageConfig() const;
+  RqtMrtaApplicationPackageConfig* getMetapackageConfig() const;
   void setApplicationConfig(RqtMrtaApplicationConfig* config);
-  void setMetapackageConfig(RqtMrtaApplicationMetapackageConfig* config);
+  void setMetapackageConfig(RqtMrtaApplicationPackageConfig* config);
   void createMetapackage();
 
 signals:
@@ -44,7 +44,7 @@ signals:
 private:
   Ui::DefineApplicationWidget* ui_;
   RqtMrtaApplicationConfig* application_config_;
-  RqtMrtaApplicationMetapackageConfig* metapackage_config_;
+  RqtMrtaApplicationPackageConfig* metapackage_config_;
   rospack::Rospack rp_;
 
 private slots:

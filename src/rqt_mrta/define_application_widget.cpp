@@ -5,7 +5,7 @@
 #include <ros/console.h>
 #include <ros/package.h>
 #include "rqt_mrta/config/application/rqt_mrta_application.h"
-#include "rqt_mrta/config/application/rqt_mrta_metapackage.h"
+#include "rqt_mrta/config/application/rqt_mrta_package.h"
 #include "rqt_mrta/define_application_widget.h"
 #include "rqt_mrta/ui_define_application_widget.h"
 #include "utilities/exception.h"
@@ -15,7 +15,7 @@ namespace rqt_mrta
 {
 DefineApplicationWidget::DefineApplicationWidget(
     QWidget* parent, RqtMrtaApplicationConfig* application_config,
-    RqtMrtaApplicationMetapackageConfig* metapackage_config)
+    RqtMrtaApplicationPackageConfig* metapackage_config)
     : QWidget(parent), ui_(new Ui::DefineApplicationWidget()),
       application_config_(NULL), metapackage_config_(NULL)
 {
@@ -75,7 +75,7 @@ RqtMrtaApplicationConfig* DefineApplicationWidget::getApplicationConfig() const
   return application_config_;
 }
 
-RqtMrtaApplicationMetapackageConfig*
+RqtMrtaApplicationPackageConfig*
 DefineApplicationWidget::getMetapackageConfig() const
 {
   return metapackage_config_;
@@ -90,7 +90,7 @@ void DefineApplicationWidget::setApplicationConfig(
     {
       disconnect(application_config_, SIGNAL(changed()), this,
                  SLOT(applicationConfigChanged()));
-      disconnect(application_config_, SIGNAL(packageChanged(const QString&)),
+      disconnect(application_config_, SIGNAL(applicationPackageChanged(const QString&)),
                  this, SLOT(configPackageChanged(const QString&)));
       disconnect(application_config_->getApplication(),
                  SIGNAL(nameChanged(const QString&)), this,
@@ -101,13 +101,13 @@ void DefineApplicationWidget::setApplicationConfig(
     {
       connect(application_config_, SIGNAL(changed()), this,
               SLOT(applicationConfigChanged()));
-      connect(application_config_, SIGNAL(packageChanged(const QString&)), this,
+      connect(application_config_, SIGNAL(applicationPackageChanged(const QString&)), this,
               SLOT(configPackageChanged(const QString&)));
       connect(application_config_->getApplication(),
               SIGNAL(nameChanged(const QString&)), this,
               SLOT(configNameChanged(const QString&)));
       configNameChanged(application_config_->getApplication()->getName());
-      configPackageChanged(application_config_->getPackage());
+      configPackageChanged(application_config_->getApplicationPackage());
       if (metapackage_config_ &&
           metapackage_config_->getDescription().isEmpty())
       {
@@ -119,7 +119,7 @@ void DefineApplicationWidget::setApplicationConfig(
 }
 
 void DefineApplicationWidget::setMetapackageConfig(
-    RqtMrtaApplicationMetapackageConfig* config)
+    RqtMrtaApplicationPackageConfig* config)
 {
   if (metapackage_config_ != config)
   {
@@ -323,7 +323,7 @@ void DefineApplicationWidget::packageChanged(const QString& package)
 {
   if (application_config_)
   {
-    application_config_->setPackage(package);
+    application_config_->setApplicationPackage(package);
   }
   if (metapackage_config_)
   {

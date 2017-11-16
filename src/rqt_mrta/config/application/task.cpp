@@ -74,6 +74,7 @@ QString Task::validate() const
   {
     return "The task id must not contain <space>.";
   }
+  return "";
 }
 }
 }

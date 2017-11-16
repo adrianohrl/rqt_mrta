@@ -1,5 +1,5 @@
 #include <QVBoxLayout>
-#include <rqt_mrta/config/application/rqt_mrta_metapackage.h>
+#include <rqt_mrta/config/application/rqt_mrta_package.h>
 #include "rqt_mrta/define_application_widget.h"
 #include "rqt_mrta/define_application_wizard_page.h"
 #include "rqt_mrta/ui_define_application_widget.h"

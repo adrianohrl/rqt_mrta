@@ -76,6 +76,7 @@ bool XmlSettings::read(QIODevice& device, QSettings::SettingsMap& map)
       groups.removeLast();
     }
   }
+  ROS_WARN("[XmlSettings] reading ...");
   for (QSettings::SettingsMap::iterator it(map.begin()); it != map.end(); it++)
   {
     ROS_WARN_STREAM(it.key().toStdString() << ": " << it.value().toString().toStdString());
@@ -85,6 +86,11 @@ bool XmlSettings::read(QIODevice& device, QSettings::SettingsMap& map)
 
 bool XmlSettings::write(QIODevice& device, const QSettings::SettingsMap& map)
 {
+  ROS_WARN("[XmlSettings] writing ...");
+  for (QSettings::SettingsMap::iterator it(map.begin()); it != map.end(); it++)
+  {
+    ROS_WARN_STREAM(it.key().toStdString() << ": " << it.value().toString().toStdString());
+  }
   struct NestedMap;
   typedef QSharedPointer<NestedMap> NestedQSharedPointer;
   struct NestedMap : QMap<QString, NestedQSharedPointer>
@@ -109,6 +115,7 @@ bool XmlSettings::write(QIODevice& device, const QSettings::SettingsMap& map)
   }
   QXmlStreamWriter xml_writer(&device);
   xml_writer.setAutoFormatting(true);
+  ROS_WARN_STREAM("[XmlSettings::write] writeStartDocument()");
   xml_writer.writeStartDocument();
   QStringList groups;
   QList<NestedQSharedPointer> nested_maps;
@@ -120,6 +127,7 @@ bool XmlSettings::write(QIODevice& device, const QSettings::SettingsMap& map)
   int value_index(0);
   while (!nested_maps.isEmpty())
   {
+    ROS_WARN_STREAM("[XmlSettings::write] groups: " << groups.join("/").toStdString());
     NestedQSharedPointer current_map(nested_maps.last());
     NestedMap::iterator it(nested_map_iterators.last());
     if (it != current_map->end())
@@ -131,6 +139,7 @@ bool XmlSettings::write(QIODevice& device, const QSettings::SettingsMap& map)
       }
       else
       {
+        ROS_WARN_STREAM("[XmlSettings::write] writeStartElement(" << it.key().toStdString() << ")");
         xml_writer.writeStartElement(it.key());
       }
       groups.append(it.key());
@@ -144,6 +153,8 @@ bool XmlSettings::write(QIODevice& device, const QSettings::SettingsMap& map)
         QString value(map[groups.join(GROUP_SEPARATOR)].toString());
         if (!attribute.isEmpty())
         {
+          ROS_WARN_STREAM("[XmlSettings::write] writeAttribute(" << attribute.toStdString()
+                          << "," << map[groups.join(GROUP_SEPARATOR)].toString().toStdString() << ")");
           xml_writer.writeAttribute(
               attribute, map[groups.join(GROUP_SEPARATOR)].toString());
           if (groups.isEmpty())
@@ -169,11 +180,14 @@ bool XmlSettings::write(QIODevice& device, const QSettings::SettingsMap& map)
         }
         if (!value.isEmpty())
         {
+          ROS_WARN_STREAM("[XmlSettings::write] writeCharacters(" << value.toStdString() << ")");
           xml_writer.writeCharacters(value);
         }
         if (value_index > 0)
         {
+          ROS_WARN_STREAM("[XmlSettings::write] writeEndElement()");
           xml_writer.writeEndElement();
+          ROS_WARN_STREAM("[XmlSettings::write] writeStartElement(" << tag.toStdString() << ")");
           xml_writer.writeStartElement(tag);
           continue;
         }
@@ -192,6 +206,7 @@ bool XmlSettings::write(QIODevice& device, const QSettings::SettingsMap& map)
         }
         attribute.clear();
       }
+      ROS_WARN_STREAM("[XmlSettings::write] writeEndElement()");
       xml_writer.writeEndElement();
       if (!groups.isEmpty())
       {
@@ -205,6 +220,7 @@ bool XmlSettings::write(QIODevice& device, const QSettings::SettingsMap& map)
       }
     }
   }
+  ROS_WARN_STREAM("[XmlSettings::write] writeEndDocument()");
   xml_writer.writeEndDocument();
   return true;
 }

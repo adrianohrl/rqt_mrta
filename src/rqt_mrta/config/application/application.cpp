@@ -28,9 +28,9 @@ QString Application::getName() const
   return name_;
 }
 
-QString Application::getUrl() const
+QString Application::getArchitecturePackage() const
 {
-  return url_;
+  return architecture_;
 }
 
 Robots *Application::getRobots() const
@@ -48,12 +48,13 @@ void Application::setName(const QString &name)
   }
 }
 
-void Application::setUrl(const QString &url)
+void Application::setArchitecturePackage(const QString &package)
 {
-  if (url != url_)
+  if (package != architecture_)
   {
-    url_ = url;
-    emit urlChanged(url);
+    ROS_ERROR_STREAM("[Application::setArchitecturePackageUrl] url: " << package.toStdString());
+    architecture_ = package;
+    emit architecturePackageChanged(package);
     emit changed();
   }
 }
@@ -62,7 +63,9 @@ void Application::save(QSettings &settings) const
 {
   settings.beginGroup("application");
   settings.setValue("name", name_);
-  settings.setValue("url", url_);
+  ROS_INFO_STREAM("[Application] saving name: " << name_.toStdString());
+  settings.setValue("architecture", architecture_);
+  ROS_INFO_STREAM("[Application] saving architecture: " << architecture_.toStdString());
   robots_->save(settings);
   settings.endGroup();
 }
@@ -71,7 +74,7 @@ void Application::load(QSettings &settings)
 {
   settings.beginGroup("application");
   setName(settings.value("name").toString());
-  setUrl(settings.value("url").toString());
+  setArchitecturePackage(settings.value("architecture").toString());
   robots_->load(settings);
   settings.endGroup();
 }
@@ -79,31 +82,31 @@ void Application::load(QSettings &settings)
 void Application::reset()
 {
   setName("");
-  setUrl("");
+  setArchitecturePackage("");
   robots_->reset();
 }
 
 void Application::write(QDataStream &stream) const
 {
   stream << name_;
-  stream << url_;
+  stream << architecture_;
   robots_->write(stream);
 }
 
 void Application::read(QDataStream &stream)
 {
-  QString name, url;
+  QString name, architecture;
   stream >> name;
   setName(name);
-  stream >> url;
-  setUrl(url);
+  stream >> architecture;
+  setArchitecturePackage(architecture);
   robots_->read(stream);
 }
 
 Application &Application::operator=(const Application &config)
 {
   setName(config.name_);
-  setUrl(config.url_);
+  setArchitecturePackage(config.architecture_);
   return *this;
 }
 

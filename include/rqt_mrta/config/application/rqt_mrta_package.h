@@ -9,12 +9,12 @@ namespace config
 {
 namespace application
 {
-class RqtMrtaApplicationMetapackage : public utilities::RosMetapackage
+class RqtMrtaApplicationPackage : public utilities::RosMetapackage
 {
   Q_OBJECT
 public:
-  RqtMrtaApplicationMetapackage(QObject* parent);
-  virtual ~RqtMrtaApplicationMetapackage();
+  RqtMrtaApplicationPackage(QObject* parent);
+  virtual ~RqtMrtaApplicationPackage();
   virtual bool createPackage();
 };
 }
