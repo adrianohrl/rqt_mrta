@@ -1,6 +1,7 @@
 #ifndef _MRTA_ROBOT_H_
 #define _MRTA_ROBOT_H_
 
+#include <QMap>
 #include <QVector>
 #include <QObject>
 #include "mrta/taxonomy.h"
@@ -9,6 +10,7 @@ namespace rqt_mrta
 {
 namespace config
 {
+class ParamsArray;
 namespace application
 {
 class Robot;

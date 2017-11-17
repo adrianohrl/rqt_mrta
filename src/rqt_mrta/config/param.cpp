@@ -1,19 +1,13 @@
-#include <ros/console.h>
-#include "rqt_mrta/config/architecture/param.h"
-#include "rqt_mrta/config/architecture/params.h"
+#include "rqt_mrta/config/param.h"
+#include "rqt_mrta/config/params.h"
 
 namespace rqt_mrta
 {
 namespace config
 {
-namespace architecture
-{
-Param::Param(Params *parent) : ParamInterface("param", parent) {}
+Param::Param(Params* parent) : ParamInterface("param", parent) {}
 
-Param::~Param()
-{
-  ROS_INFO("[~Param]");
-}
+Param::~Param() { ROS_INFO("[~Param]"); }
 
 QMetaType::Type Param::getType() const { return type_; }
 
@@ -90,10 +84,12 @@ void Param::setValue(const QString& value)
   }
 }
 
-void Param::setValue(const QVariant &value)
+void Param::setValue(const QVariant& value)
 {
   if (value != value_)
   {
+    ROS_INFO_STREAM("[Param] " << getFullName().toStdString() << ": "
+                               << value.toString().toStdString());
     value_ = value;
     emit valueChanged(getFullName(), value);
     emit changed();
@@ -143,6 +139,8 @@ QString Param::validate() const
   }
 }
 
+bool Param::isParam() const { return true; }
+
 void Param::save(QSettings& settings) const
 {
   ParamInterface::save(settings);
@@ -162,10 +160,7 @@ void Param::load(QSettings& settings)
   setToolTip(settings.value("tool_tip").toString());
 }
 
-void Param::reset()
-{
-  setValue(QString());
-}
+void Param::reset() { setValue(QString()); }
 
 void Param::write(QDataStream& stream) const
 {
@@ -207,7 +202,6 @@ Param* Param::clone() const
   Param* param = new Param();
   *param = *this;
   return param;
-}
 }
 }
 }

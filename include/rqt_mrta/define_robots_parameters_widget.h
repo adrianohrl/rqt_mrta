@@ -14,6 +14,8 @@ namespace config
 {
 namespace application
 {
+class Robot;
+class Robots;
 class RqtMrtaApplication;
 }
 
@@ -23,6 +25,8 @@ class RqtMrtaArchitecture;
 }
 }
 
+typedef config::application::Robot RobotConfig;
+typedef config::application::Robots RobotsConfig;
 typedef config::application::RqtMrtaApplication RqtMrtaApplicationConfig;
 typedef config::architecture::RqtMrtaArchitecture RqtMrtaArchitectureConfig;
 
@@ -39,6 +43,8 @@ public:
   RqtMrtaArchitectureConfig* getArchitectureConfig() const;
   void setApplicationConfig(RqtMrtaApplicationConfig* config);
   void setArchitectureConfig(RqtMrtaArchitectureConfig* config);
+  QString validate() const;
+  void loadTabs();
 
 signals:
   void changed();

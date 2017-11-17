@@ -1,12 +1,10 @@
-#include "rqt_mrta/config/architecture/param_interface.h"
-#include "rqt_mrta/config/architecture/params.h"
+#include "rqt_mrta/config/param_interface.h"
+#include "rqt_mrta/config/params.h"
 #include "utilities/exception.h"
 
 namespace rqt_mrta
 {
 namespace config
-{
-namespace architecture
 {
 ParamInterface::ParamInterface(const QString& group_name, Params* parent)
     : AbstractConfig(parent), group_name_(group_name)
@@ -15,7 +13,8 @@ ParamInterface::ParamInterface(const QString& group_name, Params* parent)
 
 ParamInterface::~ParamInterface()
 {
-  ROS_INFO("[~ParamInterface]");
+  setParent(NULL);
+  ROS_INFO_STREAM("[~ParamInterface]" << children().count());
 }
 
 void ParamInterface::paramChanged() { emit changed(); }
@@ -81,6 +80,12 @@ QString ParamInterface::validate() const
   }
 }
 
+bool ParamInterface::isParam() const { return false; }
+
+bool ParamInterface::isParams() const { return false; }
+
+bool ParamInterface::isArray() const { return false; }
+
 void ParamInterface::save(QSettings& settings) const
 {
   settings.setValue("name", name_);
@@ -134,7 +139,6 @@ void ParamInterface::paramToolTipChanged(const QString& full_name,
 {
   emit toolTipChanged(name_ + "/" + full_name, tool_tip);
   emit changed();
-}
 }
 }
 }

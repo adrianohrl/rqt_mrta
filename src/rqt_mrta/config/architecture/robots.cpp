@@ -41,6 +41,11 @@ QString Robots::getType() const
   return type_;
 }
 
+QString Robots::getConfigId() const
+{
+  return config_id_;
+}
+
 BusyRobots* Robots::getBusyRobots() const { return busy_robots_; }
 
 IdleRobots* Robots::getIdleRobots() const { return idle_robots_; }
@@ -52,7 +57,17 @@ void Robots::setType(const QString &type)
   if (type != type_)
   {
     type_ = type;
-    emit typeChanged();
+    emit typeChanged(type);
+    emit changed();
+  }
+}
+
+void Robots::setConfigId(const QString &config_id)
+{
+  if (config_id != config_id_)
+  {
+    config_id_ = config_id;
+    emit configIdChanged(config_id);
     emit changed();
   }
 }
@@ -61,6 +76,7 @@ void Robots::save(QSettings& settings) const
 {
   settings.beginGroup("robots");
   settings.setValue("type", type_);
+  settings.setValue("config_id", config_id_);
   busy_robots_->save(settings);
   idle_robots_->save(settings);
   launch_->save(settings);
@@ -71,6 +87,7 @@ void Robots::load(QSettings& settings)
 {
   settings.beginGroup("robots");
   setType(settings.value("type").toString());
+  setConfigId(settings.value("config_id").toString());
   busy_robots_->load(settings);
   idle_robots_->load(settings);
   launch_->load(settings);
@@ -80,6 +97,7 @@ void Robots::load(QSettings& settings)
 void Robots::reset()
 {
   setType("");
+  setConfigId("");
   busy_robots_->reset();
   idle_robots_->reset();
   launch_->reset();
@@ -88,6 +106,7 @@ void Robots::reset()
 void Robots::write(QDataStream& stream) const
 {
   stream << type_;
+  stream << config_id_;
   busy_robots_->write(stream);
   idle_robots_->write(stream);
   launch_->write(stream);
@@ -98,6 +117,9 @@ void Robots::read(QDataStream& stream)
   QString type;
   stream >> type;
   setType(type);
+  QString config_id;
+  stream >> config_id;
+  setConfigId(config_id);
   busy_robots_->read(stream);
   idle_robots_->read(stream);
   launch_->read(stream);
@@ -106,6 +128,7 @@ void Robots::read(QDataStream& stream)
 Robots& Robots::operator=(const Robots& config)
 {
   setType(config.type_);
+  setConfigId(config.config_id_);
   *busy_robots_ = *config.busy_robots_;
   *idle_robots_ = *config.idle_robots_;
   *launch_ = *config.launch_;

@@ -24,11 +24,10 @@ NewApplicationWizard::NewApplicationWizard(
     throw utilities::Exception(
         "The application configuration must not be null.");
   }
-  setPage(DefineApplication, new DefineApplicationWizardPage(this));
-  setPage(DefineArchitecture, new DefineArchitectureWizardPage(this));
+  //setPage(DefineApplication, new DefineApplicationWizardPage(this));
+  //setPage(DefineArchitecture, new DefineArchitectureWizardPage(this));
   setPage(DefineRobots, new DefineRobotsWizardPage(this));
-  // setPage(DefineRobotsParameters, new
-  // DefineRobotsParametersWizardPage(this));
+  setPage(DefineRobotsParameters, new DefineRobotsParametersWizardPage(this));
   // ROS_INFO_STREAM("[NewApplicationWizard] after DefineRobotsParameters ...");
   setWindowTitle("New Application");
   connect(this, SIGNAL(accepted()), this, SLOT(generate()));

@@ -19,10 +19,12 @@ public:
   Robots(QObject* parent = NULL);
   virtual ~Robots();
   QString getType() const;
+  QString getConfigId() const;
   BusyRobots* getBusyRobots() const;
   IdleRobots* getIdleRobots() const;
   RobotLaunch* getLaunch() const;
   void setType(const QString& type);
+  void setConfigId(const QString& config_id);
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
@@ -32,10 +34,12 @@ public:
 
 signals:
   void changed();
-  void typeChanged();
+  void typeChanged(const QString& type);
+  void configIdChanged(const QString& config_id);
 
 private:
   QString type_;
+  QString config_id_;
   BusyRobots* busy_robots_;
   IdleRobots* idle_robots_;
   RobotLaunch* launch_;

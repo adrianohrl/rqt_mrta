@@ -2,15 +2,13 @@
 #define _RQT_MRTA_ARCHITECTURE_CONFIG_PARAM_FACTORY_H_
 
 #include <ros/console.h>
-#include "rqt_mrta/config/architecture/param.h"
-#include "rqt_mrta/config/architecture/params.h"
-#include "rqt_mrta/config/architecture/params_array.h"
+#include "rqt_mrta/config/param.h"
+#include "rqt_mrta/config/params.h"
+#include "rqt_mrta/config/params_array.h"
 
 namespace rqt_mrta
 {
 namespace config
-{
-namespace architecture
 {
 class ParamFactory
 {
@@ -33,7 +31,6 @@ public:
     return param;
   }
 };
-}
 }
 }
 

@@ -1,18 +1,21 @@
 #include <QStringList>
-#include "rqt_mrta/config/architecture/config.h"
-#include "rqt_mrta/config/architecture/param_factory.h"
+#include "rqt_mrta/config/params.h"
+#include "rqt_mrta/config/param_factory.h"
 
 namespace rqt_mrta
 {
 namespace config
 {
-namespace architecture
-{
-Config::Config(QObject* parent) : AbstractConfig(parent) {}
+Params::Params(Params* parent) : ParamInterface("params", parent) {}
 
-Config::~Config()
+Params::Params(const QString& group_name, Params* parent)
+    : ParamInterface(group_name, parent)
 {
-  ROS_INFO_STREAM("[~Config] before ...");
+}
+
+Params::~Params()
+{
+  ROS_INFO_STREAM("[~Params] before ...");
   for (size_t index(0); index < params_.count(); index++)
   {
     if (params_[index])
@@ -22,24 +25,16 @@ Config::~Config()
     }
   }
   params_.clear();
-  ROS_INFO_STREAM("[~Config] after ...");
+  ROS_INFO_STREAM("[~Params] after ...");
 }
 
-QString Config::getId() const { return id_; }
+QVector<ParamInterface*> Params::getChildren() const { return params_; }
 
-void Config::setId(const QString& id)
-{
-  if (id != id_)
-  {
-    id_ = id;
-    emit idChanged(id);
-    emit changed();
-  }
-}
+ParamInterface* Params::getChild(size_t index) const { return params_[index]; }
 
-ParamInterface* Config::getParam(const QString& full_name) const
+ParamInterface* Params::getParam(const QString& relative_name) const
 {
-  QStringList names(full_name.split("/"));
+  QStringList names(relative_name.split("/"));
   QString root_name(names[0]);
   if (root_name.isEmpty())
   {
@@ -57,8 +52,9 @@ ParamInterface* Config::getParam(const QString& full_name) const
   return NULL;
 }
 
-void Config::addParam(ParamInterface* param)
+void Params::addParam(ParamInterface* param)
 {
+  param->setParent(this);
   params_.append(param);
   connect(param, SIGNAL(changed()), this, SLOT(paramChanged()));
   connect(param, SIGNAL(nameChanged(const QString&, const QString&)), this,
@@ -67,9 +63,8 @@ void Config::addParam(ParamInterface* param)
           this, SIGNAL(typeChanged(const QString&, const QMetaType::Type&)));
   connect(param, SIGNAL(valueChanged(const QString&, const QVariant&)), this,
           SIGNAL(valueChanged(const QString&, const QVariant&)));
-  connect(
-      param, SIGNAL(defaultValueChanged(const QString&, const QVariant&)),
-      this, SIGNAL(defaultValueChanged(const QString&, const QVariant&)));
+  connect(param, SIGNAL(defaultValueChanged(const QString&, const QVariant&)),
+          this, SIGNAL(defaultValueChanged(const QString&, const QVariant&)));
   connect(param, SIGNAL(toolTipChanged(const QString&, const QString&)), this,
           SIGNAL(toolTipChanged(const QString&, const QString&)));
   connect(param, SIGNAL(added(const QString&)), this,
@@ -83,7 +78,7 @@ void Config::addParam(ParamInterface* param)
   emit changed();
 }
 
-void Config::removeParam(const QString& full_name)
+void Params::removeParam(const QString& full_name)
 {
   ParamInterface* param = getParam(full_name);
   if (param)
@@ -100,7 +95,7 @@ void Config::removeParam(const QString& full_name)
       {
         return;
       }
-      ROS_INFO_STREAM("[Config] removing param "
+      ROS_INFO_STREAM("[Params] removing param "
                       << (params_[index] ? params_[index]->getFullName() : "-")
                              .toStdString() << " at " << index);
       if (params_[index])
@@ -109,13 +104,13 @@ void Config::removeParam(const QString& full_name)
         params_[index] = NULL;
       }
       params_.remove(index);
+      emit removed(full_name);
+      emit changed();
     }
-    emit removed(full_name);
-    emit changed();
   }
 }
 
-void Config::clearParams()
+void Params::clearParams()
 {
   if (!params_.isEmpty())
   {
@@ -128,25 +123,12 @@ void Config::clearParams()
       }
     }
     params_.clear();
-    emit cleared("");
+    emit cleared(getFullName());
     emit changed();
   }
 }
 
-void Config::clearParams(const QString &full_name)
-{
-  if (!full_name.isEmpty())
-  {
-    ParamInterface* param = getParam(full_name);
-    param->clearParams();
-  }
-  else if (!params_.isEmpty())
-  {
-    clearParams();
-  }
-}
-
-bool Config::contains(const QString& full_name) const
+bool Params::contains(const QString& full_name) const
 {
   QStringList names(full_name.split("/"));
   for (size_t index(0); index < params_.count(); index++)
@@ -160,52 +142,30 @@ bool Config::contains(const QString& full_name) const
   return false;
 }
 
-size_t Config::count() const
-{
-  return params_.count();
-}
+size_t Params::count() const { return params_.count(); }
 
-size_t Config::count(const QString &full_name) const
-{
-  if (full_name.isEmpty())
-  {
-    return params_.count();
-  }
-  ParamInterface* param = getParam(full_name);
-  return param->count();
-}
+bool Params::isEmpty() const { return params_.isEmpty(); }
 
-bool Config::isEmpty() const { return params_.isEmpty(); }
-
-bool Config::isEmpty(const QString &full_name) const
+void Params::save(QSettings& settings) const
 {
-  if (full_name.isEmpty())
-  {
-    return params_.isEmpty();
-  }
-  ParamInterface* param = getParam(full_name);
-  return param->isEmpty();
-}
-
-void Config::save(QSettings& settings) const
-{
-  settings.setValue("id", id_);
+  ParamInterface::save(settings);
   for (size_t index(0); index < params_.count(); ++index)
   {
-    settings.beginGroup(params_[index]->getGroupName() + "_" + QString::number(index));
+    settings.beginGroup(params_[index]->getGroupName() + "_" +
+                        QString::number(index));
     params_[index]->save(settings);
     settings.endGroup();
   }
 }
 
-void Config::load(QSettings& settings)
+void Params::load(QSettings& settings)
 {
-  setId(settings.value("id").toString());
+  ParamInterface::load(settings);
   QStringList groups(Params::sortGroups(settings.childGroups()));
   clearParams();
   for (size_t index(0); index < groups.count(); index++)
   {
-    ParamInterface* param = ParamFactory::newInstance(groups[index]);
+    ParamInterface* param = ParamFactory::newInstance(groups[index], this);
     addParam(param);
     settings.beginGroup(param->getGroupName() + "_" + QString::number(index));
     param->load(settings);
@@ -213,7 +173,7 @@ void Config::load(QSettings& settings)
   }
 }
 
-void Config::reset()
+void Params::reset()
 {
   for (size_t index(0); index < params_.count(); index++)
   {
@@ -221,9 +181,9 @@ void Config::reset()
   }
 }
 
-void Config::write(QDataStream& stream) const
+void Params::write(QDataStream& stream) const
 {
-  stream << id_;
+  ParamInterface::write(stream);
   stream << params_.count();
   for (size_t index(0); index < params_.count(); ++index)
   {
@@ -231,12 +191,10 @@ void Config::write(QDataStream& stream) const
   }
 }
 
-void Config::read(QDataStream& stream)
+void Params::read(QDataStream& stream)
 {
   quint64 count;
-  QString id;
-  stream >> id;
-  setId(id);
+  ParamInterface::read(stream);
   stream >> count;
   clearParams();
   for (size_t index(0); index < count; ++index)
@@ -245,9 +203,9 @@ void Config::read(QDataStream& stream)
   }
 }
 
-Config& Config::operator=(const Config& config)
+Params& Params::operator=(const Params& config)
 {
-  setId(config.id_);
+  ParamInterface::operator=(config);
   clearParams();
   for (size_t index(0); index < config.params_.count(); index++)
   {
@@ -256,19 +214,18 @@ Config& Config::operator=(const Config& config)
   return *this;
 }
 
-QString Config::validate() const
+ParamInterface* Params::clone() const
 {
-  if (id_.isEmpty())
-  {
-    return "The config name must not be empty.";
-  }
-  if (id_.contains(' '))
-  {
-    return "The config name must not contain <space>.";
-  }
+  Params* params = new Params();
+  *params = *this;
+  return params;
+}
+
+QString Params::validate() const
+{
   if (params_.isEmpty())
   {
-    return "Enter the config parameters.";
+    return "Enter the params parameters.";
   }
   QString validation;
   for (size_t i(0); i < params_.count(); i++)
@@ -282,12 +239,63 @@ QString Config::validate() const
   return validation;
 }
 
-void Config::paramChanged()
-{
-  emit changed();
-}
+bool Params::isParams() const { return true; }
 
-void Config::paramDestroyed()
+/*
+
+ void Params::paramAdded(const QString& full_name)
+ {
+   emit added(full_name);
+   emit changed();
+ }
+
+ void Params::paramRemoved(const QString& full_name)
+ {
+   emit removed(full_name);
+   emit changed();
+ }
+
+ void Params::paramCleared(const QString& full_name)
+ {
+   emit cleared(full_name);
+   emit changed();
+ }
+
+ void Params::paramNameChanged(const QString& previous_full_name,
+                               const QString& name)
+ {
+   emit paramNameChanged(previous_full_name, name);
+   emit changed();
+ }
+
+ void Params::paramTypeChanged(const QString& full_name,
+                               const QMetaType::Type& type)
+ {
+   emit paramTypeChanged(full_name, type);
+   emit changed();
+ }
+
+ void Params::paramValueChanged(const QString& full_name, const QVariant& value)
+ {
+   emit paramValueChanged(full_name, value);
+   emit changed();
+ }
+
+ void Params::paramDefaultValueChanged(const QString& full_name,
+                                       const QVariant& default_value)
+ {
+   emit paramDefaultValueChanged(full_name, default_value);
+   emit changed();
+ }
+
+ void Params::paramToolTipChanged(const QString& full_name,
+                                  const QString& tool_tip)
+ {
+   emit paramToolTipChanged(full_name, tool_tip);
+   emit changed();
+ }*/
+
+void Params::paramDestroyed()
 {
   ParamInterface* param = static_cast<ParamInterface*>(sender());
   int index(params_.indexOf(param));
@@ -299,6 +307,21 @@ void Config::paramDestroyed()
     emit changed();
   }
 }
+
+QStringList Params::sortGroups(const QStringList& groups)
+{
+  QStringList sorted_groups;
+  for (size_t index(0); index < groups.count(); index++)
+  {
+    QString group(groups.filter("_" + QString::number(index)).first());
+    if (group.isEmpty())
+    {
+      ROS_ERROR("Invalid param index.");
+      return sorted_groups;
+    }
+    sorted_groups.append(group);
+  }
+  return sorted_groups;
 }
 }
 }

@@ -2,28 +2,34 @@
 #define _RQT_MRTA_ARCHITECTURE_CONFIG_PARAMS_H_
 
 #include <QVector>
-#include "utilities/abstract_config.h"
-#include "rqt_mrta/config/architecture/param_interface.h"
+#include "rqt_mrta/config/param_interface.h"
 
 namespace rqt_mrta
 {
 namespace config
 {
-namespace architecture
+namespace application
 {
+class Robot;
+}
 class Params : public ParamInterface
 {
   Q_OBJECT
 public:
+  friend class application::Robot;
   Params(Params* parent = NULL);
   virtual ~Params();
-  ParamInterface* getParam(const QString& full_name) const;
+  QVector<ParamInterface*> getChildren() const;
+  ParamInterface* getChild(size_t index) const;
+  ParamInterface* getParam(const QString& relative_name) const;
   void addParam(ParamInterface* param);
   void removeParam(const QString& full_name);
   void clearParams();
   bool contains(const QString& full_name) const;
   size_t count() const;
   bool isEmpty() const;
+  QString validate() const;
+  virtual bool isParams() const;
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
@@ -31,19 +37,15 @@ public:
   void read(QDataStream& stream);
   Params& operator=(const Params& config);
   ParamInterface* clone() const;
-  QString validate() const;
   static QStringList sortGroups(const QStringList& groups);
 
 protected:
-  Params(const QString& group_name, Params* parent = NULL);
-
-private:
   QVector<ParamInterface*> params_;
+  Params(const QString& group_name, Params* parent = NULL);
 
 private slots:
   void paramDestroyed();
 };
-}
 }
 }
 

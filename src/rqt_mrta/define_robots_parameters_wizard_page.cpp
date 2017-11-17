@@ -7,32 +7,32 @@ namespace rqt_mrta
 {
 DefineRobotsParametersWizardPage::DefineRobotsParametersWizardPage(
     NewApplicationWizard* parent)
-    : NewApplicationWizardPage(parent, "Define the Application Robots and Tasks")
+    : NewApplicationWizardPage(parent,
+                               "Define the Application Robots and Tasks")
 {
-  DefineRobotsParametersWidget* widget = new DefineRobotsParametersWidget(this, application_config_,
-                                       architecture_config_);
+  architecture_config_->load("/home/adrianohrl/ros_ws/mrta_ws/src/alliance/alliance/rqt_mrta.xml");
+  application_config_->load("/home/adrianohrl/ros_ws/mrta_ws/src/alliance_test/rqt_mrta.xml");
+  DefineRobotsParametersWidget* widget = new DefineRobotsParametersWidget(
+      this, application_config_, architecture_config_);
+  connect(application_config_, SIGNAL(changed()), this, SLOT(updateComplete()));
   setWidget(widget);
 }
 
-DefineRobotsParametersWizardPage::~DefineRobotsParametersWizardPage()
-{
-}
+DefineRobotsParametersWizardPage::~DefineRobotsParametersWizardPage() {}
 
 void DefineRobotsParametersWizardPage::initializePage()
 {
+  static_cast<DefineRobotsParametersWidget*>(widget_)->loadTabs();
 }
 
-void DefineRobotsParametersWizardPage::cleanupPage()
-{
-}
+void DefineRobotsParametersWizardPage::cleanupPage() {}
 
 bool DefineRobotsParametersWizardPage::validatePage()
 {
-  return true;
 }
 
 bool DefineRobotsParametersWizardPage::isComplete() const
 {
-  return true;
+  return static_cast<DefineRobotsParametersWidget*>(widget_)->validate().isEmpty();
 }
 }

@@ -10,7 +10,7 @@ DefineArchitectureWizardPage::DefineArchitectureWizardPage(
     : NewApplicationWizardPage(parent, "Define the Architecture")
 {
   DefineArchitectureWidget* widget = new DefineArchitectureWidget(
-      this, parent->getApplicationConfig(), parent->getArchitectureConfig());
+      this, application_config_, architecture_config_);
   registerField("architecture*", widget->ui_->architectures_combo_box);
   connect(widget->ui_->architectures_combo_box, SIGNAL(changed()), this,
           SLOT(updateComplete()));

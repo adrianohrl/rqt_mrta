@@ -7,8 +7,6 @@ namespace rqt_mrta
 {
 namespace config
 {
-namespace architecture
-{
 class Params;
 
 class ParamInterface : public utilities::AbstractConfig
@@ -19,7 +17,7 @@ public:
   QString getGroupName() const;
   QString getName() const;
   QString getFullName() const;
-  ParamInterface* getParentParam() const;
+  virtual ParamInterface* getParentParam() const;
   virtual void setName(const QString& name);
   virtual ParamInterface* getParam(const QString& full_name) const;
   virtual void addParam(ParamInterface* param);
@@ -29,6 +27,9 @@ public:
   virtual size_t count() const;
   virtual bool isEmpty() const;
   virtual QString validate() const;
+  virtual bool isParam() const;
+  virtual bool isParams() const;
+  virtual bool isArray() const;
   virtual void save(QSettings& settings) const;
   virtual void load(QSettings& settings);
   virtual void reset();
@@ -59,7 +60,6 @@ protected slots:
   void paramDefaultValueChanged(const QString &full_name, const QVariant& default_value);
   void paramToolTipChanged(const QString &full_name, const QString& tool_tip);
 };
-}
 }
 }
 

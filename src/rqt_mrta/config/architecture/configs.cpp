@@ -29,6 +29,20 @@ Config* Configs::getConfig(size_t index) const
   return index < configs_.count() ? configs_[index] : NULL;
 }
 
+Config *Configs::getConfig(const QString &id) const
+{
+  ROS_WARN_STREAM("[Configs::getConfig] count: " << configs_.count());
+  for (size_t index(0); index < configs_.count(); index)
+  {
+    ROS_WARN_STREAM("[Configs::getConfig] id: " << configs_[index]->getId().toStdString());
+    if (configs_[index]->getId() == id)
+    {
+      return configs_[index];
+    }
+  }
+  return NULL;
+}
+
 Config* Configs::addConfig()
 {
   Config* config = new Config(this);
@@ -196,12 +210,12 @@ QString Configs::validate() const
 
 void Configs::configChanged() { emit changed(); }
 
-void Configs::configIdChanged(const QString& condig_id)
+void Configs::configIdChanged(const QString& config_id)
 {
   int index(configs_.indexOf(static_cast<Config*>(sender())));
   if (index != -1)
   {
-    emit configIdChanged(index, condig_id);
+    emit configIdChanged(index, config_id);
     emit changed();
   }
 }

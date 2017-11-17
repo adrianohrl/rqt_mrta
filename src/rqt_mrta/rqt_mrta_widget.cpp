@@ -1,4 +1,3 @@
-#include <QFileDialog>
 #include <QInputDialog>
 #include "mrta/system.h"
 #include <ros/package.h>
@@ -45,9 +44,7 @@ RqtMrtaWidget::RqtMrtaWidget(QWidget* parent,
   connect(ui_->open_architecture_push_button, SIGNAL(clicked()), this,
           SLOT(openArchitecturePushButtonClicked()));
 
-  /*application_config_->load(
-      "/home/adrianohrl/ros_ws/mrta_ws/src/alliance_test/rqt_mrta.xml");
-  loadSystem();*/
+  //loadApplication("/home/adrianohrl/ros_ws/mrta_ws/src/alliance_test/rqt_mrta.xml");
 }
 
 RqtMrtaWidget::~RqtMrtaWidget()

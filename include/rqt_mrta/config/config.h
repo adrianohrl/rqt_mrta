@@ -2,14 +2,11 @@
 #define _RQT_MRTA_ARCHITECTURE_CONFIG_CONFIG_H_
 
 #include <QVector>
-#include "utilities/abstract_config.h"
-#include "rqt_mrta/config/architecture/param_interface.h"
+#include "rqt_mrta/config/param_interface.h"
 
 namespace rqt_mrta
 {
 namespace config
-{
-namespace architecture
 {
 class ParamInterface;
 
@@ -21,7 +18,9 @@ public:
   virtual ~Config();
   QString getId() const;
   void setId(const QString& id);
-  ParamInterface* getParam(const QString& full_name) const;
+  QVector<ParamInterface*> getChildren() const;
+  ParamInterface* getChild(size_t index) const;
+  ParamInterface* getParam(const QString& relative_name) const;
   void addParam(ParamInterface* param);
   void removeParam(const QString& full_name);
   void clearParams();
@@ -40,7 +39,7 @@ public:
   QString validate() const;
 
 signals:
-  void idChanged(const QString& name);
+  void idChanged(const QString& id);
   void added(const QString& full_name);
   void removed(const QString& full_name);
   void cleared(const QString& full_name);
@@ -58,7 +57,6 @@ private slots:
   void paramChanged();
   void paramDestroyed();
 };
-}
 }
 }
 

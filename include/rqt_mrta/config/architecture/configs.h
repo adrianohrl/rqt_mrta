@@ -3,7 +3,7 @@
 
 #include <QVector>
 #include "utilities/abstract_config.h"
-#include "rqt_mrta/config/architecture/config.h"
+#include "rqt_mrta/config/config.h"
 
 namespace rqt_mrta
 {
@@ -18,6 +18,7 @@ public:
   Configs(QObject* parent = NULL);
   virtual ~Configs();
   Config* getConfig(size_t index) const;
+  Config* getConfig(const QString& id) const;
   Config* addConfig();
   void removeConfig(Config* config);
   void removeConfig(size_t index);
@@ -53,7 +54,7 @@ private:
 
 private slots:
   void configChanged();
-  void configIdChanged(const QString& condig_id);
+  void configIdChanged(const QString& config_id);
   void configAdded(const QString& full_name);
   void configRemoved(const QString& full_name);
   void configCleared(const QString& full_name);

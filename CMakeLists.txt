@@ -59,14 +59,9 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/config/architecture/architecture.cpp
   src/rqt_mrta/config/architecture/architecture_launch.cpp
   src/rqt_mrta/config/architecture/busy_robots.cpp
-  src/rqt_mrta/config/architecture/config.cpp
   src/rqt_mrta/config/architecture/configs.cpp
   src/rqt_mrta/config/architecture/idle_robots.cpp
   src/rqt_mrta/config/architecture/incoming_tasks.cpp
-  src/rqt_mrta/config/architecture/param.cpp
-  src/rqt_mrta/config/architecture/param_interface.cpp
-  src/rqt_mrta/config/architecture/params.cpp
-  src/rqt_mrta/config/architecture/params_array.cpp
   src/rqt_mrta/config/architecture/robot_launch.cpp
   src/rqt_mrta/config/architecture/robots.cpp
   src/rqt_mrta/config/architecture/rqt_mrta_architecture.cpp
@@ -74,6 +69,11 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/config/architecture/topic.cpp
   src/rqt_mrta/config/architecture/widget.cpp
   src/rqt_mrta/config/architecture/widgets.cpp
+  src/rqt_mrta/config/config.cpp
+  src/rqt_mrta/config/param.cpp
+  src/rqt_mrta/config/param_interface.cpp
+  src/rqt_mrta/config/params.cpp
+  src/rqt_mrta/config/params_array.cpp
   src/rqt_mrta/define_application_widget.cpp
   src/rqt_mrta/define_application_wizard_page.cpp
   src/rqt_mrta/define_architecture_widget.cpp
@@ -83,11 +83,14 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/define_robots_parameters_widget.cpp
   src/rqt_mrta/define_robots_parameters_wizard_page.cpp
   src/rqt_mrta/labeled_status_widget.cpp
-  src/rqt_mrta/rqt_mrta_plugin.cpp
-  src/rqt_mrta/rqt_mrta_widget.cpp
-  src/rqt_mrta/robot_tree_widget.cpp
   src/rqt_mrta/new_application_wizard.cpp
   src/rqt_mrta/new_application_wizard_page.cpp
+  src/rqt_mrta/param_item.cpp
+  src/rqt_mrta/param_item_model.cpp
+  src/rqt_mrta/param_tree_widget.cpp
+  src/rqt_mrta/robot_tree_widget.cpp
+  src/rqt_mrta/rqt_mrta_plugin.cpp
+  src/rqt_mrta/rqt_mrta_widget.cpp
   src/rqt_mrta/status_widget.cpp
   src/utilities/abstract_config.cpp
   src/utilities/exception.cpp
@@ -131,15 +134,9 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/config/architecture/architecture.h
   include/rqt_mrta/config/architecture/architecture_launch.h
   include/rqt_mrta/config/architecture/busy_robots.h
-  include/rqt_mrta/config/architecture/config.h
   include/rqt_mrta/config/architecture/configs.h
   include/rqt_mrta/config/architecture/idle_robots.h
   include/rqt_mrta/config/architecture/incoming_tasks.h
-  include/rqt_mrta/config/architecture/param.h
-  include/rqt_mrta/config/architecture/param_factory.h
-  include/rqt_mrta/config/architecture/param_interface.h
-  include/rqt_mrta/config/architecture/params.h
-  include/rqt_mrta/config/architecture/params_array.h
   include/rqt_mrta/config/architecture/robot_launch.h
   include/rqt_mrta/config/architecture/robots.h
   include/rqt_mrta/config/architecture/rqt_mrta_architecture.h
@@ -147,6 +144,12 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/config/architecture/topic.h
   include/rqt_mrta/config/architecture/widget.h
   include/rqt_mrta/config/architecture/widgets.h
+  include/rqt_mrta/config/config.h
+  include/rqt_mrta/config/param.h
+  include/rqt_mrta/config/param_factory.h
+  include/rqt_mrta/config/param_interface.h
+  include/rqt_mrta/config/params.h
+  include/rqt_mrta/config/params_array.h
   include/rqt_mrta/define_application_widget.h
   include/rqt_mrta/define_application_wizard_page.h
   include/rqt_mrta/define_architecture_widget.h
@@ -156,11 +159,14 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/define_robots_parameters_widget.h
   include/rqt_mrta/define_robots_parameters_wizard_page.h
   include/rqt_mrta/labeled_status_widget.h
-  include/rqt_mrta/rqt_mrta_plugin.h
-  include/rqt_mrta/rqt_mrta_widget.h
-  include/rqt_mrta/robot_tree_widget.h
   include/rqt_mrta/new_application_wizard.h
   include/rqt_mrta/new_application_wizard_page.h
+  include/rqt_mrta/param_item.h
+  include/rqt_mrta/param_item_model.h
+  include/rqt_mrta/param_tree_widget.h
+  include/rqt_mrta/robot_tree_widget.h
+  include/rqt_mrta/rqt_mrta_plugin.h
+  include/rqt_mrta/rqt_mrta_widget.h
   include/rqt_mrta/status_widget.h
   include/utilities/abstract_config.h
   include/utilities/exception.h

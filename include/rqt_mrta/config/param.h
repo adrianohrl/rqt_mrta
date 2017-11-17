@@ -1,13 +1,11 @@
 #ifndef _RQT_MRTA_ARCHITECTURE_CONFIG_PARAM_H_
 #define _RQT_MRTA_ARCHITECTURE_CONFIG_PARAM_H_
 
-#include "rqt_mrta/config/architecture/param_interface.h"
+#include "rqt_mrta/config/param_interface.h"
 
 namespace rqt_mrta
 {
 namespace config
-{
-namespace architecture
 {
 class Param : public ParamInterface
 {
@@ -28,6 +26,7 @@ public:
   void setDefaultValue(const QString& value);
   void setDefaultValue(const QVariant& default_value);
   QString validate() const;
+  bool isParam() const;
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
@@ -49,7 +48,6 @@ private:
   QVariant value_;
   QVariant default_value_;
 };
-}
 }
 }
 
