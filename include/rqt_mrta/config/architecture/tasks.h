@@ -28,7 +28,7 @@ public:
 
 signals:
   void changed();
-  void typeChanged();
+  void typeChanged(const QString& type);
 
 private:
   QString type_;

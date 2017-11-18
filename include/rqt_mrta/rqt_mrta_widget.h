@@ -66,7 +66,7 @@ private:
   void loadArchitecture(const QString& url = "");
   void loadRobots();
   QMap<QString, QString> findPlugins(const QString& attribute) const;
-  QString askItem(const char *label, const QStringList &items);
+  QString askItem(const char* title, const char *label, const QStringList &items);
   void showMessage(const QString &title, const QString& message = "", QMessageBox::Icon icon = QMessageBox::Critical) const;
 
 private slots:

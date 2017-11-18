@@ -41,6 +41,17 @@ RqtMrtaArchitecture::~RqtMrtaArchitecture()
   ROS_INFO_STREAM("[~RqtMrtaArchitecture] after ...");
 }
 
+QString RqtMrtaArchitecture::getArchitecturePackage() const
+{
+  ROS_INFO_STREAM("[RqtMrtaArchitecture] getArchitecturePackage ...");
+  return package_;
+}
+
+QString RqtMrtaArchitecture::getArchitecturePackageUrl() const
+{
+  return url_;
+}
+
 Architecture* RqtMrtaArchitecture::getArchitecture() const
 {
   return architecture_;
@@ -49,6 +60,26 @@ Architecture* RqtMrtaArchitecture::getArchitecture() const
 Configs* RqtMrtaArchitecture::getConfigs() const { return configs_; }
 
 Widgets* RqtMrtaArchitecture::getWidgets() const { return widgets_; }
+
+void RqtMrtaArchitecture::setArchitecturePackage(const QString &package)
+{
+  if (package != package_)
+  {
+    package_ = package;
+    emit architecturePackageChanged(package);
+    emit changed();
+  }
+}
+
+void RqtMrtaArchitecture::setArchitecturePackageUrl(const QString &url)
+{
+  if (url != url_)
+  {
+    url_ = url;
+    emit architecturePackageUrlChanged(url);
+    emit changed();
+  }
+}
 
 void RqtMrtaArchitecture::save(const QString& url) const
 {
@@ -145,6 +176,8 @@ void RqtMrtaArchitecture::read(QDataStream& stream)
 RqtMrtaArchitecture& RqtMrtaArchitecture::
 operator=(const RqtMrtaArchitecture& config)
 {
+  setArchitecturePackage(config.package_);
+  setArchitecturePackageUrl(config.url_);
   *architecture_ = *config.architecture_;
   *configs_ = *config.configs_;
   *widgets_ = *config.widgets_;

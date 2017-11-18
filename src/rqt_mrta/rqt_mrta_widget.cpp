@@ -6,6 +6,7 @@
 #include "rqt_mrta/config/application/rqt_mrta_application.h"
 #include "rqt_mrta/labeled_status_widget.h"
 #include "rqt_mrta/new_application_wizard.h"
+#include "rqt_mrta/new_architecture_wizard.h"
 #include "rqt_mrta/rqt_mrta_widget.h"
 #include "rqt_mrta/ui_rqt_mrta_widget.h"
 #include "utilities/exception.h"
@@ -44,7 +45,7 @@ RqtMrtaWidget::RqtMrtaWidget(QWidget* parent,
   connect(ui_->open_architecture_push_button, SIGNAL(clicked()), this,
           SLOT(openArchitecturePushButtonClicked()));
 
-  //loadApplication("/home/adrianohrl/ros_ws/mrta_ws/src/alliance_test/rqt_mrta.xml");
+  // loadApplication("/home/adrianohrl/ros_ws/mrta_ws/src/alliance_test/rqt_mrta.xml");
 }
 
 RqtMrtaWidget::~RqtMrtaWidget()
@@ -81,11 +82,11 @@ RqtMrtaWidget::~RqtMrtaWidget()
 
 void RqtMrtaWidget::newApplicationPushButtonClicked()
 {
-  RqtMrtaApplicationConfig application_config(this);
-  NewApplicationWizard wizard(this, &application_config);
+  RqtMrtaApplicationConfig config;
+  NewApplicationWizard wizard(NULL, &config);
   if (wizard.exec() == QWizard::Accepted)
   {
-    loadSystem(&application_config);
+    loadSystem(&config);
   }
 }
 
@@ -98,7 +99,8 @@ void RqtMrtaWidget::openApplicationPushButtonClicked()
                 "There isn't any application registered yet.");
     return;
   }
-  QString package(askItem("Application:", applications.keys()));
+  QString package(
+      askItem("Opening application ...", "Application:", applications.keys()));
   if (package.isEmpty())
   {
     return;
@@ -106,7 +108,17 @@ void RqtMrtaWidget::openApplicationPushButtonClicked()
   loadApplication(applications[package]);
 }
 
-void RqtMrtaWidget::newArchitecturePushButtonClicked() {}
+void RqtMrtaWidget::newArchitecturePushButtonClicked()
+{
+  RqtMrtaArchitectureConfig config;
+  NewArchitectureWizard wizard(NULL, &config);
+  if (wizard.exec() == QWizard::Accepted)
+  {
+    std::string url(
+        ros::package::getPath(config.getArchitecturePackage().toStdString()));
+    loadArchitecture(QString::fromStdString(url));
+  }
+}
 
 void RqtMrtaWidget::openArchitecturePushButtonClicked()
 {
@@ -117,7 +129,8 @@ void RqtMrtaWidget::openArchitecturePushButtonClicked()
                 "There isn't any architecture registered yet.");
     return;
   }
-  QString package(askItem("Architecture:", architectures.keys()));
+  QString package(askItem("Opening architecture ...", "Architecture:",
+                          architectures.keys()));
   if (package.isEmpty())
   {
     return;
@@ -125,7 +138,7 @@ void RqtMrtaWidget::openArchitecturePushButtonClicked()
   loadArchitecture(architectures[package]);
 }
 
-void RqtMrtaWidget::loadApplication(const QString &url)
+void RqtMrtaWidget::loadApplication(const QString& url)
 {
   RqtMrtaApplicationConfig application_config(this);
   try
@@ -144,8 +157,8 @@ void RqtMrtaWidget::loadArchitecture(const QString& url)
   QString architecture_url(url);
   if (architecture_url.isEmpty())
   {
-    QString package(application_config_->getApplication()
-                            ->getArchitecturePackage());
+    QString package(
+        application_config_->getApplication()->getArchitecturePackage());
     if (package.isEmpty())
     {
       showMessage("Error while loading architecture ...",
@@ -192,7 +205,8 @@ void RqtMrtaWidget::loadArchitecture(const QString& url)
     catch (pluginlib::PluginlibException& e)
     {
       showMessage("Error while loading architecture ...",
-                  "The " + plugin_name + " plugin failed to load for some reason. Error: " +
+                  "The " + plugin_name +
+                      " plugin failed to load for some reason. Error: " +
                       e.what());
     }
   }
@@ -262,7 +276,8 @@ void RqtMrtaWidget::showMessage(const QString& title, const QString& message,
   msg_box.exec();
 }
 
-QMap<QString, QString> RqtMrtaWidget::findPlugins(const QString &attribute) const
+QMap<QString, QString>
+RqtMrtaWidget::findPlugins(const QString& attribute) const
 {
   typedef std::map<std::string, std::string> StdMap;
   StdMap map;
@@ -270,17 +285,20 @@ QMap<QString, QString> RqtMrtaWidget::findPlugins(const QString &attribute) cons
   QMap<QString, QString> applications;
   for (StdMap::const_iterator it(map.begin()); it != map.end(); it++)
   {
-    ROS_WARN_STREAM("[RqtMrtaWidget::findPlugins] " << it->first << ": " << it->second);
-    applications[QString::fromStdString(it->first)] = QString::fromStdString(it->second);
+    ROS_WARN_STREAM("[RqtMrtaWidget::findPlugins] " << it->first << ": "
+                                                    << it->second);
+    applications[QString::fromStdString(it->first)] =
+        QString::fromStdString(it->second);
   }
   return applications;
 }
 
-QString RqtMrtaWidget::askItem(const char* label, const QStringList& items)
+QString RqtMrtaWidget::askItem(const char* title, const char* label,
+                               const QStringList& items)
 {
   bool ok(false);
-  QString item(QInputDialog::getItem(this, tr("QInputDialog::getItem()"),
-                                       tr(label), items, 0, false, &ok));
+  QString item(
+      QInputDialog::getItem(this, tr(title), tr(label), items, 0, false, &ok));
   return ok ? item : "";
 }
 }

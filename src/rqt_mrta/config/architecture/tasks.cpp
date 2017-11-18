@@ -32,7 +32,7 @@ void Tasks::setType(const QString& type)
   if (type != type_)
   {
     type_ = type;
-    emit typeChanged();
+    emit typeChanged(type);
     emit changed();
   }
 }

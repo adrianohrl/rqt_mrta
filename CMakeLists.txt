@@ -85,9 +85,13 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/labeled_status_widget.cpp
   src/rqt_mrta/new_application_wizard.cpp
   src/rqt_mrta/new_application_wizard_page.cpp
+  src/rqt_mrta/new_architecture_wizard.cpp
+  src/rqt_mrta/new_architecture_wizard_page.cpp
   src/rqt_mrta/param_item.cpp
   src/rqt_mrta/param_item_model.cpp
   src/rqt_mrta/param_tree_widget.cpp
+  src/rqt_mrta/register_architecture_widget.cpp
+  src/rqt_mrta/register_architecture_wizard_page.cpp
   src/rqt_mrta/robot_tree_widget.cpp
   src/rqt_mrta/rqt_mrta_plugin.cpp
   src/rqt_mrta/rqt_mrta_widget.cpp
@@ -161,9 +165,13 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/labeled_status_widget.h
   include/rqt_mrta/new_application_wizard.h
   include/rqt_mrta/new_application_wizard_page.h
+  include/rqt_mrta/new_architecture_wizard.h
+  include/rqt_mrta/new_architecture_wizard_page.h
   include/rqt_mrta/param_item.h
   include/rqt_mrta/param_item_model.h
   include/rqt_mrta/param_tree_widget.h
+  include/rqt_mrta/register_architecture_widget.h
+  include/rqt_mrta/register_architecture_wizard_page.h
   include/rqt_mrta/robot_tree_widget.h
   include/rqt_mrta/rqt_mrta_plugin.h
   include/rqt_mrta/rqt_mrta_widget.h
@@ -188,6 +196,7 @@ set(rqt_mrta_UIS
   src/Ui/define_robots_widget.ui
   src/Ui/define_robots_parameters_widget.ui
   src/Ui/labeled_status_widget.ui
+  src/Ui/register_architecture_widget.ui
   src/Ui/rqt_mrta_widget.ui
 )
 

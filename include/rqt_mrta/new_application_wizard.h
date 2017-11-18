@@ -6,11 +6,6 @@
 #include "rqt_mrta/config/application/rqt_mrta_package.h"
 #include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
 
-namespace Ui
-{
-class NewApplicationWizard;
-}
-
 namespace rqt_mrta
 {
 typedef config::application::RqtMrtaApplication RqtMrtaApplicationConfig;

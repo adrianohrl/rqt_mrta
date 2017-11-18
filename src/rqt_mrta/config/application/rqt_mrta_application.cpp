@@ -53,7 +53,6 @@ void RqtMrtaApplication::setApplicationPackageUrl(const QString& url)
     emit applicationPackageUrlChanged(url);
     emit changed();
   }
-
 }
 
 void RqtMrtaApplication::save() const { save("rqt_mrta.xml"); }

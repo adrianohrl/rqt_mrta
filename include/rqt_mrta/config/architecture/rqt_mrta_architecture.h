@@ -18,9 +18,13 @@ class RqtMrtaArchitecture : public utilities::AbstractConfig
 public:
   RqtMrtaArchitecture(QObject* parent = NULL);
   virtual ~RqtMrtaArchitecture();
+  QString getArchitecturePackage() const;
+  QString getArchitecturePackageUrl() const;
   Architecture* getArchitecture() const;
   Configs* getConfigs() const;
   Widgets* getWidgets() const;
+  void setArchitecturePackage(const QString& package);
+  void setArchitecturePackageUrl(const QString &url);
   void save(const QString& url) const;
   void load(const QString& url);
   void reset();
@@ -28,7 +32,13 @@ public:
   void read(QDataStream& stream);
   RqtMrtaArchitecture& operator=(const RqtMrtaArchitecture& config);
 
+signals:
+  void architecturePackageChanged(const QString &package);
+  void architecturePackageUrlChanged(const QString& url);
+
 private:
+  QString package_;
+  QString url_;
   Architecture* architecture_;
   Configs* configs_;
   Widgets* widgets_;
