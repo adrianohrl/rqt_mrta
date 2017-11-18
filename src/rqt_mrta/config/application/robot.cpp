@@ -192,6 +192,8 @@ void Robot::arraySizeChanged(const QString& full_name, const QVariant& value)
                    << ", value: " << value.toString().toStdString());
   Param* size = static_cast<Param*>(sender());
   ParamsArray* array = arrays_[size];
+  Params* parent = array->getParentParam();
+
   array->createParams(value.toInt());
 }
 }

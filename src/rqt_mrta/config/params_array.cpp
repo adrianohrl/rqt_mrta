@@ -22,16 +22,21 @@ ParamInterface* ParamsArray::clone() const
 
 bool ParamsArray::isArray() const { return true; }
 
-void ParamsArray::createParams(size_t size) const
+void ParamsArray::createParams(size_t size)
 {
   Params* parent = getParentParam();
+  for (size_t index(0); index < names_.count(); index++)
+  {
+    ROS_INFO_STREAM("[ParamsArray::createParams] removing " << names_[index].toStdString());
+    parent->removeParam(names_[index]);
+  }
+  names_.clear();
   for (size_t i(0); i < size; i++)
   {
     QString name(name_);
     Params* params = new Params(parent);
     params->setName(name.replace("@index@", QString::number(i)));
-    ROS_WARN_STREAM(
-        "[ParamsArray] params name: " << params->getName().toStdString());
+    names_.append(name);
     for (size_t j(0); j < params_.count(); j++)
     {
       params->addParam(params_[j]->clone());

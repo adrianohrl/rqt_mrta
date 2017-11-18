@@ -23,7 +23,7 @@ public:
   ParamInterface* getChild(size_t index) const;
   ParamInterface* getParam(const QString& relative_name) const;
   void addParam(ParamInterface* param);
-  void removeParam(const QString& full_name);
+  void removeParam(const QString& relative_name);
   void clearParams();
   bool contains(const QString& full_name) const;
   size_t count() const;

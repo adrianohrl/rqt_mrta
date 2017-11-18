@@ -78,18 +78,21 @@ void Params::addParam(ParamInterface* param)
   emit changed();
 }
 
-void Params::removeParam(const QString& full_name)
+void Params::removeParam(const QString& relative_name)
 {
-  ParamInterface* param = getParam(full_name);
+  ROS_WARN_STREAM("[Params::removeParam] removing: " << relative_name.toStdString());
+  ParamInterface* param = getParam(relative_name);
   if (param)
   {
     ParamInterface* parent = param->getParentParam();
-    if (parent)
+    if (parent && parent != this)
     {
+      ROS_WARN_STREAM("[Params::removeParam] removing 2: " << parent->getName().toStdString());
       parent->removeParam(param->getName());
     }
     else
     {
+      ROS_WARN_STREAM("[Params::removeParam] removing 2: " << relative_name.toStdString());
       size_t index(params_.indexOf(param));
       if (index == -1)
       {
@@ -104,7 +107,7 @@ void Params::removeParam(const QString& full_name)
         params_[index] = NULL;
       }
       params_.remove(index);
-      emit removed(full_name);
+      emit removed(relative_name);
       emit changed();
     }
   }

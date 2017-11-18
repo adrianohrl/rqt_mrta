@@ -84,9 +84,10 @@ void Config::addParam(ParamInterface* param)
   emit changed();
 }
 
-void Config::removeParam(const QString& relative_name)
+void Config::removeParam(const QString& full_name)
 {
-  ParamInterface* param = getParam(relative_name);
+  ROS_WARN_STREAM("[Config::removeParam] removing: " << full_name.toStdString());
+  ParamInterface* param = getParam(full_name);
   if (param)
   {
     ParamInterface* parent = param->getParentParam();
@@ -110,7 +111,7 @@ void Config::removeParam(const QString& relative_name)
         params_[index] = NULL;
       }
       params_.remove(index);
-      emit removed(relative_name);
+      emit removed(full_name);
       emit changed();
     }
   }
