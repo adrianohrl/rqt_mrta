@@ -9,7 +9,7 @@ namespace application
 Application::Application(QObject *parent)
   : AbstractConfig(parent), robots_(new Robots(this))
 {
-  connect(robots_, SIGNAL(changed()), this, SLOT(robotsChanged()));
+  connect(robots_, SIGNAL(changed()), this, SIGNAL(changed()));
 }
 
 Application::~Application()
@@ -108,11 +108,6 @@ Application &Application::operator=(const Application &config)
   setName(config.name_);
   setArchitecturePackage(config.architecture_);
   return *this;
-}
-
-void Application::robotsChanged()
-{
-  emit changed();
 }
 }
 }

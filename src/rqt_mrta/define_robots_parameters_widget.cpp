@@ -75,6 +75,7 @@ QString DefineRobotsParametersWidget::validate() const
       return validation;
     }
   }
+  ROS_WARN_STREAM("[DefineRobotsParametersWidget] validate: " << validation.toStdString());
   return validation;
 }
 

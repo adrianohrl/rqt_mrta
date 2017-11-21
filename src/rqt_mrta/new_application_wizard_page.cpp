@@ -31,6 +31,4 @@ void NewApplicationWizardPage::setWidget(QWidget* widget)
     setted_ = true;
   }
 }
-
-void NewApplicationWizardPage::updateComplete() { emit completeChanged(); }
 }

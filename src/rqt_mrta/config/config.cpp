@@ -11,14 +11,14 @@ Config::Config(QObject* parent) : AbstractConfig(parent) {}
 Config::~Config()
 {
   ROS_INFO_STREAM("[~Config] before ...");
-  for (size_t index(0); index < params_.count(); index++)
+  /*for (size_t index(0); index < params_.count(); index++)
   {
     if (params_[index])
     {
       delete params_[index];
       params_[index] = NULL;
     }
-  }
+  }*/
   params_.clear();
   ROS_INFO_STREAM("[~Config] after ...");
 }
@@ -62,7 +62,7 @@ ParamInterface* Config::getParam(const QString& relative_name) const
 void Config::addParam(ParamInterface* param)
 {
   params_.append(param);
-  connect(param, SIGNAL(changed()), this, SLOT(paramChanged()));
+  connect(param, SIGNAL(changed()), this, SIGNAL(changed()));
   connect(param, SIGNAL(nameChanged(const QString&, const QString&)), this,
           SIGNAL(nameChanged(const QString&, const QString&)));
   connect(param, SIGNAL(typeChanged(const QString&, const QMetaType::Type&)),
@@ -105,11 +105,11 @@ void Config::removeParam(const QString& full_name)
       ROS_INFO_STREAM("[Config] removing param "
                       << (params_[index] ? params_[index]->getFullName() : "-")
                              .toStdString() << " at " << index);
-      if (params_[index])
+      /*if (params_[index])
       {
         delete params_[index];
         params_[index] = NULL;
-      }
+      }*/
       params_.remove(index);
       emit removed(full_name);
       emit changed();
@@ -264,6 +264,7 @@ Config& Config::operator=(const Config& config)
 
 QString Config::validate() const
 {
+  ROS_WARN_STREAM("[Config] validating ...");
   if (id_.isEmpty())
   {
     return "The config name must not be empty.";
@@ -285,10 +286,9 @@ QString Config::validate() const
       break;
     }
   }
+  ROS_WARN_STREAM("[Config] validated: " << validation.toStdString());
   return validation;
 }
-
-void Config::paramChanged() { emit changed(); }
 
 void Config::paramDestroyed()
 {

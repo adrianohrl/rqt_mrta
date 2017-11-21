@@ -22,9 +22,6 @@ protected:
   QWidget* widget_;
   void setWidget(QWidget* widget);
 
-protected slots:
-  void updateComplete();
-
 private:
   bool setted_;
 

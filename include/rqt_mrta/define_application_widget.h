@@ -48,8 +48,6 @@ private:
   rospack::Rospack rp_;
 
 private slots:
-  void applicationConfigChanged();
-  void metapackageConfigChanged();
   void configNameChanged(const QString& name);
   void configPackageChanged(const QString& package);
   void configWorkspaceUrlChanged(const QString& url);

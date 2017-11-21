@@ -88,8 +88,7 @@ void DefineApplicationWidget::setApplicationConfig(
   {
     if (application_config_)
     {
-      disconnect(application_config_, SIGNAL(changed()), this,
-                 SLOT(applicationConfigChanged()));
+      disconnect(application_config_, SIGNAL(changed()), this, SIGNAL(changed()));
       disconnect(application_config_, SIGNAL(applicationPackageChanged(const QString&)),
                  this, SLOT(configPackageChanged(const QString&)));
       disconnect(application_config_->getApplication(),
@@ -99,8 +98,7 @@ void DefineApplicationWidget::setApplicationConfig(
     application_config_ = config;
     if (application_config_)
     {
-      connect(application_config_, SIGNAL(changed()), this,
-              SLOT(applicationConfigChanged()));
+      connect(application_config_, SIGNAL(changed()), this, SIGNAL(changed()));
       connect(application_config_, SIGNAL(applicationPackageChanged(const QString&)), this,
               SLOT(configPackageChanged(const QString&)));
       connect(application_config_->getApplication(),
@@ -125,8 +123,7 @@ void DefineApplicationWidget::setMetapackageConfig(
   {
     if (metapackage_config_)
     {
-      disconnect(metapackage_config_, SIGNAL(changed()), this,
-                 SLOT(metapackageConfigChanged()));
+      disconnect(metapackage_config_, SIGNAL(changed()), this, SIGNAL(changed()));
       disconnect(metapackage_config_,
                  SIGNAL(workspaceUrlChanged(const QString&)), this,
                  SLOT(configWorkspaceUrlChanged(const QString&)));
@@ -151,8 +148,7 @@ void DefineApplicationWidget::setMetapackageConfig(
     metapackage_config_ = config;
     if (metapackage_config_)
     {
-      connect(metapackage_config_, SIGNAL(changed()), this,
-              SLOT(metapackageConfigChanged()));
+      connect(metapackage_config_, SIGNAL(changed()), this, SIGNAL(changed()));
       connect(metapackage_config_, SIGNAL(workspaceUrlChanged(const QString&)),
               this, SLOT(configWorkspaceUrlChanged(const QString&)));
       connect(metapackage_config_, SIGNAL(nameChanged(const QString&)), this,
@@ -183,10 +179,6 @@ void DefineApplicationWidget::setMetapackageConfig(
   }
   ui_->workspace_push_button->setEnabled(metapackage_config_);
 }
-
-void DefineApplicationWidget::applicationConfigChanged() { emit changed(); }
-
-void DefineApplicationWidget::metapackageConfigChanged() { emit changed(); }
 
 void DefineApplicationWidget::configWorkspaceUrlChanged(const QString& url)
 {

@@ -30,6 +30,7 @@ void ParamsArray::createParams(size_t size)
     ROS_INFO_STREAM("[ParamsArray::createParams] removing " << names_[index].toStdString());
     parent->removeParam(names_[index]);
   }
+  ROS_WARN_STREAM("[ParamsArray::createParams] size after removal: " << parent->count());
   names_.clear();
   for (size_t i(0); i < size; i++)
   {

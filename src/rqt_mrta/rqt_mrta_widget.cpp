@@ -83,7 +83,7 @@ RqtMrtaWidget::~RqtMrtaWidget()
 void RqtMrtaWidget::newApplicationPushButtonClicked()
 {
   RqtMrtaApplicationConfig config;
-  NewApplicationWizard wizard(NULL, &config);
+  NewApplicationWizard wizard(this, &config);
   if (wizard.exec() == QWizard::Accepted)
   {
     loadSystem(&config);
@@ -111,7 +111,7 @@ void RqtMrtaWidget::openApplicationPushButtonClicked()
 void RqtMrtaWidget::newArchitecturePushButtonClicked()
 {
   RqtMrtaArchitectureConfig config;
-  NewArchitectureWizard wizard(NULL, &config);
+  NewArchitectureWizard wizard(this, &config);
   if (wizard.exec() == QWizard::Accepted)
   {
     std::string url(

@@ -14,7 +14,7 @@ RqtMrtaApplication::RqtMrtaApplication(QObject* parent)
     : AbstractConfig(parent), application_(new Application(this))
 {
   reset();
-  connect(application_, SIGNAL(changed()), this, SLOT(applicationChanged()));
+  connect(application_, SIGNAL(changed()), this, SIGNAL(changed()));
 }
 
 RqtMrtaApplication::~RqtMrtaApplication()
@@ -150,8 +150,6 @@ operator=(const RqtMrtaApplication& config)
   *application_ = *config.application_;
   return *this;
 }
-
-void RqtMrtaApplication::applicationChanged() { emit changed(); }
 }
 }
 }

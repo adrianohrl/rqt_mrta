@@ -35,6 +35,7 @@ Robot* Robots::addRobot()
 {
   Robot* robot = new Robot(this);
   robots_.append(robot);
+  connect(robot, SIGNAL(changed()), this, SIGNAL(changed()));
   connect(robot, SIGNAL(idChanged(const QString&)), this,
           SLOT(robotIdChanged(const QString&)));
   connect(robot, SIGNAL(taskIdChanged(size_t, const QString&)), this,

@@ -68,14 +68,12 @@ void DefineArchitectureWidget::setArchitectureConfig(
   {
     if (architecture_config_)
     {
-      disconnect(architecture_config_, SIGNAL(changed()), this,
-                 SLOT(architectureConfigChanged()));
+      disconnect(architecture_config_, SIGNAL(changed()), this, SIGNAL(changed()));
     }
     architecture_config_ = config;
     if (architecture_config_)
     {
-      connect(config, SIGNAL(changed()), this,
-              SLOT(architectureConfigChanged()));
+      connect(config, SIGNAL(changed()), this, SIGNAL(changed()));
     }
   }
 }
@@ -87,21 +85,15 @@ void DefineArchitectureWidget::setApplicationConfig(
   {
     if (application_config_)
     {
-      disconnect(application_config_, SIGNAL(changed()), this,
-                 SLOT(applicationConfigChanged()));
+      disconnect(application_config_, SIGNAL(changed()), this, SIGNAL(changed()));
     }
     application_config_ = config;
     if (application_config_)
     {
-      connect(config, SIGNAL(changed()), this,
-              SLOT(applicationConfigChanged()));
+      connect(config, SIGNAL(changed()), this, SIGNAL(changed()));
     }
   }
 }
-
-void DefineArchitectureWidget::architectureConfigChanged() { emit changed(); }
-
-void DefineArchitectureWidget::applicationConfigChanged() { emit changed(); }
 
 void DefineArchitectureWidget::setFilterAllocationType()
 {

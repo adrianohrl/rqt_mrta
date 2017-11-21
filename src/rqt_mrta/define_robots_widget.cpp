@@ -65,8 +65,7 @@ void DefineRobotsWidget::setApplicationConfig(RqtMrtaApplicationConfig* config)
   {
     if (application_config_)
     {
-      disconnect(application_config_, SIGNAL(changed()), this,
-                 SLOT(applicationConfigChanged()));
+      disconnect(application_config_, SIGNAL(changed()), this, SIGNAL(changed()));
       ui_->robot_tree_widget->setConfig(NULL);
       ui_->new_robot_command_link_button->setEnabled(false);
       ui_->new_robot_command_link_button->setEnabled(false);
@@ -74,8 +73,7 @@ void DefineRobotsWidget::setApplicationConfig(RqtMrtaApplicationConfig* config)
     application_config_ = config;
     if (application_config_)
     {
-      connect(application_config_, SIGNAL(changed()), this,
-              SLOT(applicationConfigChanged()));
+      connect(application_config_, SIGNAL(changed()), this, SIGNAL(changed()));
       ui_->robot_tree_widget->setConfig(application_config_->getApplication()->getRobots());
       ui_->new_robot_command_link_button->setEnabled(true);
     }
@@ -88,8 +86,6 @@ QString DefineRobotsWidget::validate() const
   ui_->robot_tree_widget->setToolTip(tip);
   return tip;
 }
-
-void DefineRobotsWidget::applicationConfigChanged() { emit changed(); }
 
 void DefineRobotsWidget::idChanged(const QString &id)
 {

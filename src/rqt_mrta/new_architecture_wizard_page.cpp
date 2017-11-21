@@ -24,6 +24,4 @@ void NewArchitectureWizardPage::setWidget(QWidget* widget)
     setted_ = true;
   }
 }
-
-void NewArchitectureWizardPage::updateComplete() { emit completeChanged(); }
 }

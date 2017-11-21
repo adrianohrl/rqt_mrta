@@ -72,15 +72,18 @@ void Param::setValue(const QString& value)
   }
   else if (type_ == QMetaType::Int)
   {
-    setValue(QVariant::fromValue<int>(value.toInt()));
+    int v(value.toInt());
+    setValue(v != 0 ? QVariant::fromValue<int>(v) : QVariant());
   }
   else if (type_ == QMetaType::Double)
   {
-    setValue(QVariant::fromValue<double>(value.toDouble()));
+    double v(value.toDouble());
+    setValue(v != 0.0 ? QVariant::fromValue<double>(v) : QVariant());
   }
   else
   {
-    setValue(QVariant::fromValue<QString>(value));
+    ROS_ERROR_STREAM("[Param] setting value: " << value.toStdString());
+    setValue(!value.isEmpty() ? QVariant::fromValue<QString>(value) : QVariant());
   }
 }
 
@@ -88,9 +91,9 @@ void Param::setValue(const QVariant& value)
 {
   if (value != value_)
   {
-    ROS_INFO_STREAM("[Param] " << getFullName().toStdString() << ": "
-                               << value.toString().toStdString());
     value_ = value;
+    ROS_INFO_STREAM("[Param] " << getFullName().toStdString() << ": "
+                               << value_.toString().toStdString());
     emit valueChanged(getFullName(), value);
     emit changed();
   }
@@ -104,15 +107,18 @@ void Param::setDefaultValue(const QString& value)
   }
   else if (type_ == QMetaType::Int)
   {
-    setDefaultValue(QVariant::fromValue<int>(value.toInt()));
+    int v(value.toInt());
+    setDefaultValue(v != 0 ? QVariant::fromValue<int>(v) : QVariant());
   }
   else if (type_ == QMetaType::Double)
   {
-    setDefaultValue(QVariant::fromValue<double>(value.toDouble()));
+    double v(value.toDouble());
+    setDefaultValue(v != 0.0 ? QVariant::fromValue<double>(v) : QVariant());
   }
   else
   {
-    setDefaultValue(QVariant::fromValue<QString>(value));
+    ROS_ERROR_STREAM("[Param] setting value: " << value.toStdString());
+    setDefaultValue(!value.isEmpty() ? QVariant::fromValue<QString>(value) : QVariant());
   }
 }
 
@@ -120,6 +126,7 @@ void Param::setDefaultValue(const QVariant& default_value)
 {
   if (default_value != default_value_)
   {
+    ROS_WARN_STREAM("[Param] default: " << QString::number(default_value_.toDouble()).toStdString());
     default_value_ = default_value;
     emit defaultValueChanged(getFullName(), default_value);
     emit changed();
@@ -128,15 +135,17 @@ void Param::setDefaultValue(const QVariant& default_value)
 
 QString Param::validate() const
 {
+  ROS_INFO_STREAM("[Param] validating");
   if (isMandatory() && value_.isNull())
   {
-    return "The param value must be given, because it is mandatory.";
+    return "The " + name_ + " parameter value must be given, because it is mandatory.";
   }
   if (tool_tip_.isEmpty())
   {
     return "The param tool tip must must be given. It helps the architecture "
            "users.";
   }
+  return ParamInterface::validate();
 }
 
 bool Param::isParam() const { return true; }
@@ -156,7 +165,7 @@ void Param::load(QSettings& settings)
   ParamInterface::load(settings);
   setType(settings.value("type").toString());
   setValue(settings.value("value").toString());
-  setDefaultValue(settings.value("value").toString());
+  setDefaultValue(settings.value("default").toString());
   setToolTip(settings.value("tool_tip").toString());
 }
 

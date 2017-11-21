@@ -54,8 +54,6 @@ private:
   RqtMrtaArchitectureConfig* architecture_config_;
 
 private slots:
-  void architectureConfigChanged();
-  void applicationConfigChanged();
   void architectureChanged();
   void setFilterAllocationType();
   void setFilterRobotType();

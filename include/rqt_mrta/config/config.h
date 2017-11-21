@@ -54,7 +54,6 @@ private:
   QVector<ParamInterface*> params_;
 
 private slots:
-  void paramChanged();
   void paramDestroyed();
 };
 }

@@ -36,9 +36,6 @@ private:
   QString name_;
   QString architecture_;
   Robots* robots_;
-
-private slots:
-  void robotsChanged();
 };
 }
 }

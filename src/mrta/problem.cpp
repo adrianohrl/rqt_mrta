@@ -16,6 +16,7 @@ Problem::Problem(System* system, const QString& name,
 
 Problem::~Problem()
 {
+  setParent(NULL);
   ROS_INFO_STREAM("[~Problem] before");
   if (architecture_)
   {

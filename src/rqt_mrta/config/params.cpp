@@ -18,11 +18,11 @@ Params::~Params()
   ROS_INFO_STREAM("[~Params] before ...");
   for (size_t index(0); index < params_.count(); index++)
   {
-    if (params_[index])
+    /*if (params_[index])
     {
       delete params_[index];
       params_[index] = NULL;
-    }
+    }*/
   }
   params_.clear();
   ROS_INFO_STREAM("[~Params] after ...");
@@ -56,7 +56,7 @@ void Params::addParam(ParamInterface* param)
 {
   param->setParent(this);
   params_.append(param);
-  connect(param, SIGNAL(changed()), this, SLOT(paramChanged()));
+  connect(param, SIGNAL(changed()), this, SIGNAL(changed()));
   connect(param, SIGNAL(nameChanged(const QString&, const QString&)), this,
           SIGNAL(nameChanged(const QString&, const QString&)));
   connect(param, SIGNAL(typeChanged(const QString&, const QMetaType::Type&)),
@@ -92,22 +92,23 @@ void Params::removeParam(const QString& relative_name)
     }
     else
     {
-      ROS_WARN_STREAM("[Params::removeParam] removing 2: " << relative_name.toStdString());
+      ROS_WARN_STREAM("[Params::removeParam] removing 3: " << relative_name.toStdString());
       size_t index(params_.indexOf(param));
       if (index == -1)
       {
         return;
       }
+      QString full_name(params_[index]->getFullName());
       ROS_INFO_STREAM("[Params] removing param "
                       << (params_[index] ? params_[index]->getFullName() : "-")
                              .toStdString() << " at " << index);
-      if (params_[index])
+      /*if (params_[index])
       {
         delete params_[index];
         params_[index] = NULL;
-      }
+      }*/
       params_.remove(index);
-      emit removed(relative_name);
+      emit removed(full_name);
       emit changed();
     }
   }
@@ -226,11 +227,16 @@ ParamInterface* Params::clone() const
 
 QString Params::validate() const
 {
+  ROS_WARN_STREAM("[Params] validating ...");
   if (params_.isEmpty())
   {
     return "Enter the params parameters.";
   }
-  QString validation;
+  QString validation(ParamInterface::validate());
+  if (!validation.isEmpty())
+  {
+    return validation;
+  }
   for (size_t i(0); i < params_.count(); i++)
   {
     validation = params_[i]->validate();
@@ -239,64 +245,11 @@ QString Params::validate() const
       break;
     }
   }
+  ROS_WARN_STREAM("[Params] validated: " << validation.toStdString());
   return validation;
 }
 
 bool Params::isParams() const { return true; }
-
-/*
-
- void Params::paramAdded(const QString& full_name)
- {
-   emit added(full_name);
-   emit changed();
- }
-
- void Params::paramRemoved(const QString& full_name)
- {
-   emit removed(full_name);
-   emit changed();
- }
-
- void Params::paramCleared(const QString& full_name)
- {
-   emit cleared(full_name);
-   emit changed();
- }
-
- void Params::paramNameChanged(const QString& previous_full_name,
-                               const QString& name)
- {
-   emit paramNameChanged(previous_full_name, name);
-   emit changed();
- }
-
- void Params::paramTypeChanged(const QString& full_name,
-                               const QMetaType::Type& type)
- {
-   emit paramTypeChanged(full_name, type);
-   emit changed();
- }
-
- void Params::paramValueChanged(const QString& full_name, const QVariant& value)
- {
-   emit paramValueChanged(full_name, value);
-   emit changed();
- }
-
- void Params::paramDefaultValueChanged(const QString& full_name,
-                                       const QVariant& default_value)
- {
-   emit paramDefaultValueChanged(full_name, default_value);
-   emit changed();
- }
-
- void Params::paramToolTipChanged(const QString& full_name,
-                                  const QString& tool_tip)
- {
-   emit paramToolTipChanged(full_name, tool_tip);
-   emit changed();
- }*/
 
 void Params::paramDestroyed()
 {

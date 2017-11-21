@@ -17,8 +17,6 @@ ParamInterface::~ParamInterface()
   ROS_INFO_STREAM("[~ParamInterface]" << children().count());
 }
 
-void ParamInterface::paramChanged() { emit changed(); }
-
 QString ParamInterface::getGroupName() const { return group_name_; }
 
 QString ParamInterface::getName() const { return name_; }
@@ -78,6 +76,7 @@ QString ParamInterface::validate() const
   {
     return "The ParamInterface name must not contain <space>.";
   }
+  return "";
 }
 
 bool ParamInterface::isParam() const { return false; }

@@ -22,24 +22,7 @@ DefineApplicationWizardPage::DefineApplicationWizardPage(
   registerField("maintainer_email*", widget->ui_->maintainer_email_line_edit);
   registerField("license*", widget->ui_->license_line_edit);
   registerField("run_depends", widget->ui_->run_depends_plain_text_edit);
-  connect(widget->ui_->name_line_edit, SIGNAL(textChanged(const QString&)),
-          this, SLOT(updateComplete()));
-  connect(widget->ui_->package_line_edit, SIGNAL(textChanged(const QString&)),
-          this, SLOT(updateComplete()));
-  connect(widget->ui_->workspace_package_line_edit,
-          SIGNAL(textChanged(const QString&)), this, SLOT(updateComplete()));
-  connect(widget->ui_->version_line_edit, SIGNAL(textChanged(const QString&)),
-          this, SLOT(updateComplete()));
-  connect(widget->ui_->description_plain_text_edit, SIGNAL(textChanged()), this,
-          SLOT(updateComplete()));
-  connect(widget->ui_->maintainer_line_edit,
-          SIGNAL(textChanged(const QString&)), this, SLOT(updateComplete()));
-  connect(widget->ui_->maintainer_email_line_edit,
-          SIGNAL(textChanged(const QString&)), this, SLOT(updateComplete()));
-  connect(widget->ui_->license_line_edit, SIGNAL(textChanged(const QString&)),
-          this, SLOT(updateComplete()));
-  connect(widget->ui_->run_depends_plain_text_edit, SIGNAL(textChanged()), this,
-          SLOT(updateComplete()));
+  connect(widget, SIGNAL(changed()), this, SIGNAL(completeChanged()));
   setWidget(widget);
 }
 

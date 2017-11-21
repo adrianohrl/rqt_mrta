@@ -24,6 +24,7 @@ public:
   QString validate(QTreeWidgetItem* parent = NULL) const;
 
 signals:
+  void changed();
   void paramAdded(const QString& full_name);
 
 private:
@@ -43,7 +44,7 @@ private slots:
   void configNameChanged(const QString& previous_name, const QString& name);
   void configValueChanged(const QString& name, const QVariant& value);
   void configToolTipChanged(const QString& name, const QString& tool_tip);
-  void configDestroyed();
+  void paramDestroyed();
 
 };
 }

@@ -30,6 +30,7 @@ void ParamTreeWidget::setConfig(config::Config* config)
   {
     if (config_)
     {
+      disconnect(config_, SIGNAL(changed()), this, SIGNAL(changed()));
       disconnect(config_, SIGNAL(idChanged(const QString&)), this,
                  SLOT(configIdChanged(const QString&)));
       disconnect(config_, SIGNAL(added(const QString&)), this,
@@ -46,11 +47,13 @@ void ParamTreeWidget::setConfig(config::Config* config)
       disconnect(config_,
                  SIGNAL(toolTipChanged(const QString&, const QString&)), this,
                  SLOT(configToolTipChanged(const QString&, const QString&)));
-      disconnect(config_, SIGNAL(destroyed()), this, SLOT(configDestroyed()));
+      // disconnect(config_, SIGNAL(destroyed()), this,
+      // SLOT(configDestroyed()));
     }
     config_ = config;
     if (config_)
     {
+      connect(config_, SIGNAL(changed()), this, SIGNAL(changed()));
       connect(config_, SIGNAL(idChanged(const QString&)), this,
               SLOT(configIdChanged(const QString&)));
       connect(config_, SIGNAL(added(const QString&)), this,
@@ -65,11 +68,12 @@ void ParamTreeWidget::setConfig(config::Config* config)
               this, SLOT(configValueChanged(const QString&, const QVariant&)));
       connect(config_, SIGNAL(toolTipChanged(const QString&, const QString&)),
               this, SLOT(configToolTipChanged(const QString&, const QString&)));
-      connect(config_, SIGNAL(destroyed()), this, SLOT(configDestroyed()));
+      // connect(config_, SIGNAL(destroyed()), this, SLOT(configDestroyed()));
       for (size_t index(0); index < config_->count(); index++)
       {
         config::ParamInterface* param = config_->getChild(index);
-        if (param->isEmpty())
+        connect(param, SIGNAL(destroyed()), this, SLOT(paramDestroyed()));
+        if (param->isParam())
         {
           addParam(static_cast<ParamConfig*>(param), invisibleRootItem());
         }
@@ -155,9 +159,7 @@ QTreeWidgetItem* ParamTreeWidget::getItem(const QString& full_name,
   for (size_t index(0); index < parent->childCount(); index++)
   {
     QTreeWidgetItem* item = parent->child(index);
-    config::ParamInterface* param =
-        item->data(0, Qt::UserRole).value<config::ParamInterface*>();
-    if (param->getName() == name)
+    if (item->text(0) == name)
     {
       return names.isEmpty() ? item : getItem(names.join("/"), item);
     }
@@ -212,11 +214,10 @@ void ParamTreeWidget::configAdded(const QString& full_name)
 
 void ParamTreeWidget::configRemoved(const QString& full_name)
 {
-  ROS_ERROR_STREAM("[ParamTreeWidget::configRemoved] full name: " << full_name.toStdString());
   QTreeWidgetItem* item = getItem(full_name);
   if (item)
   {
-    takeTopLevelItem(indexOfTopLevelItem(item));
+    delete item;
   }
 }
 
@@ -225,24 +226,36 @@ void ParamTreeWidget::configCleared(const QString& full_name) {}
 void ParamTreeWidget::configNameChanged(const QString& previous_name,
                                         const QString& name)
 {
-  QTreeWidgetItem* item = getItem(name);
-  item->setText(0, name);
+  QTreeWidgetItem* item = getItem(previous_name);
+  if (item)
+  {
+    item->setText(0, name);
+  }
 }
 
 void ParamTreeWidget::configValueChanged(const QString& name,
                                          const QVariant& value)
 {
   QTreeWidgetItem* item = getItem(name);
-  item->setText(1, value.toString());
+  if (item)
+  {
+    item->setText(1, value.toString());
+  }
 }
 
 void ParamTreeWidget::configToolTipChanged(const QString& name,
                                            const QString& tool_tip)
 {
   QTreeWidgetItem* item = getItem(name);
-  item->setToolTip(0, tool_tip);
-  item->setToolTip(1, tool_tip);
+  if (item)
+  {
+    item->setToolTip(0, tool_tip);
+    item->setToolTip(1, tool_tip);
+  }
 }
 
-void ParamTreeWidget::configDestroyed() {}
+void ParamTreeWidget::paramDestroyed()
+{
+  ROS_INFO_STREAM("[ParamTreeWidget::paramDestroyed]");
+}
 }

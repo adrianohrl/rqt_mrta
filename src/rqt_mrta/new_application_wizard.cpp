@@ -24,12 +24,13 @@ NewApplicationWizard::NewApplicationWizard(
     throw utilities::Exception(
         "The application configuration must not be null.");
   }
+  application_config_->load("/home/adrianohrl/ros_ws/mrta_ws/src/alliance_test/rqt_mrta.xml");
+  architecture_config_->load("/home/adrianohrl/ros_ws/mrta_ws/src/alliance/alliance/rqt_mrta.xml");
   //setPage(DefineApplication, new DefineApplicationWizardPage(this));
   //setPage(DefineArchitecture, new DefineArchitectureWizardPage(this));
-  setPage(DefineRobots, new DefineRobotsWizardPage(this));
+  //setPage(DefineRobots, new DefineRobotsWizardPage(this));
   setPage(DefineRobotsParameters, new DefineRobotsParametersWizardPage(this));
-  // ROS_INFO_STREAM("[NewApplicationWizard] after DefineRobotsParameters ...");
-  setWindowTitle("New Application");
+  setWindowTitle("New application ...");
   connect(this, SIGNAL(accepted()), this, SLOT(generate()));
   connect(this, SIGNAL(rejected()), this, SLOT(resetConfig()));
 }

@@ -10,11 +10,9 @@ DefineRobotsParametersWizardPage::DefineRobotsParametersWizardPage(
     : NewApplicationWizardPage(parent,
                                "Define the Application Robots and Tasks")
 {
-  architecture_config_->load("/home/adrianohrl/ros_ws/mrta_ws/src/alliance/alliance/rqt_mrta.xml");
-  application_config_->load("/home/adrianohrl/ros_ws/mrta_ws/src/alliance_test/rqt_mrta.xml");
   DefineRobotsParametersWidget* widget = new DefineRobotsParametersWidget(
       this, application_config_, architecture_config_);
-  connect(application_config_, SIGNAL(changed()), this, SLOT(updateComplete()));
+  connect(application_config_, SIGNAL(changed()), this, SIGNAL(completeChanged()));
   setWidget(widget);
 }
 

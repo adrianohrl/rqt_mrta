@@ -42,7 +42,6 @@ private:
   QStringListModel* tasks_model_;
 
 private slots:
-  void applicationConfigChanged();
   void idChanged(const QString& id);
   void newRobotButtonClicked();
   void newTaskButtonClicked();

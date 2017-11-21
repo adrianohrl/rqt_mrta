@@ -39,9 +39,6 @@ private:
   Application* application_;
   void save(QSettings& settings) const;
   void load(QSettings& settings);
-
-private slots:
-  void applicationChanged();
 };
 }
 }

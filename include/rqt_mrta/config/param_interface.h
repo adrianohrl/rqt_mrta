@@ -54,7 +54,6 @@ protected:
   const QString group_name_;
 
 protected slots:
-  void paramChanged();
   void paramTypeChanged(const QString &full_name, const QMetaType::Type& type);
   void paramValueChanged(const QString& full_name, const QVariant& value);
   void paramDefaultValueChanged(const QString &full_name, const QVariant& default_value);

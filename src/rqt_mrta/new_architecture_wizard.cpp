@@ -15,7 +15,7 @@ NewArchitectureWizard::NewArchitectureWizard(QWidget* parent, Config* config,
         "The architecture configuration must not be null.");
   }
   setPage(RegisterArchitecture, new RegisterArchitectureWizardPage(this));
-  setWindowTitle("New Architecture");
+  setWindowTitle("New architecture ...");
   connect(this, SIGNAL(accepted()), this, SLOT(generate()));
   connect(this, SIGNAL(rejected()), this, SLOT(resetConfig()));
 }

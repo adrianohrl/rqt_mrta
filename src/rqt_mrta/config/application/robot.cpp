@@ -136,26 +136,32 @@ QString Robot::validate() const
   {
     return "The robot id must not contain <space>.";
   }
-  return tasks_->validate();//validation.isEmpty() ? config_->validate() : validation;
+  return tasks_->validate();
 }
 
 void Robot::findArrays(Params* parent)
 {
+  ROS_WARN_STREAM("[Robot::findArrays] parent: " << parent->getFullName().toStdString());
   for (size_t index(0); index < parent->count(); index++)
   {
+    ROS_WARN_STREAM("[Robot::findArrays] child: " << parent->getChild(index)->getFullName().toStdString());
     if (parent->getChild(index)->isArray())
     {
-      ParamsArray* array = static_cast<ParamsArray*>(parent->getChild(index));
-      parent->params_.remove(parent->params_.indexOf(array));
       ParamInterface* size = parent->getParam("size");
       if (!size || !size->isParam())
       {
         throw utilities::Exception("The ParamsArray's parent must have a Param named size.");
       }
+      ParamsArray* array = static_cast<ParamsArray*>(parent->getChild(index));
+      ROS_WARN_STREAM("[Robot::findArrays] found array not removed yet: " << parent->params_.count());
+      //parent->params_.remove(parent->params_.indexOf(array));
+      parent->removeParam(array->getName());
+      ROS_WARN_STREAM("[Robot::findArrays] found array removed: " << parent->params_.count());
+      ROS_WARN_STREAM("[Robot::findArrays] found array: " << parent->getFullName().toStdString());
       connect(size, SIGNAL(valueChanged(const QString&, const QVariant&)), this,
               SLOT(arraySizeChanged(const QString&, const QVariant&)));
       arrays_.insert(static_cast<Param*>(size), array);
-      findArrays(array);
+      //findArrays(array);
     }
     else if (parent->getChild(index)->isParams())
     {
@@ -191,10 +197,11 @@ void Robot::arraySizeChanged(const QString& full_name, const QVariant& value)
                    << full_name.toStdString()
                    << ", value: " << value.toString().toStdString());
   Param* size = static_cast<Param*>(sender());
+  ROS_ERROR_STREAM("[Robot::arraySizeChanged] size.");
   ParamsArray* array = arrays_[size];
-  Params* parent = array->getParentParam();
-
   array->createParams(value.toInt());
+  findArrays(array->getParentParam());
+  ROS_ERROR_STREAM("[Robot::arraySizeChanged] ended.");
 }
 }
 }
