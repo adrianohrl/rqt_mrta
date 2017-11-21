@@ -5,7 +5,7 @@
 
 namespace Ui
 {
-class DefineRobotsParametersWidget;
+class DefineParametersWidget;
 }
 
 namespace rqt_mrta
@@ -30,15 +30,15 @@ typedef config::application::Robots RobotsConfig;
 typedef config::application::RqtMrtaApplication RqtMrtaApplicationConfig;
 typedef config::architecture::RqtMrtaArchitecture RqtMrtaArchitectureConfig;
 
-class DefineRobotsParametersWidget : public QWidget
+class DefineParametersWidget : public QWidget
 {
-  friend class DefineRobotsParametersWizardPage;
+  friend class DefineParametersWizardPage;
   Q_OBJECT
 public:
-  DefineRobotsParametersWidget(
+  DefineParametersWidget(
       QWidget* parent, RqtMrtaApplicationConfig* application_config = NULL,
       RqtMrtaArchitectureConfig* architecture_config = NULL);
-  virtual ~DefineRobotsParametersWidget();
+  virtual ~DefineParametersWidget();
   RqtMrtaApplicationConfig* getApplicationConfig() const;
   RqtMrtaArchitectureConfig* getArchitectureConfig() const;
   void setApplicationConfig(RqtMrtaApplicationConfig* config);
@@ -50,13 +50,9 @@ signals:
   void changed();
 
 private:
-  Ui::DefineRobotsParametersWidget* ui_;
+  Ui::DefineParametersWidget* ui_;
   RqtMrtaApplicationConfig* application_config_;
   RqtMrtaArchitectureConfig* architecture_config_;
-
-private slots:
-  void architectureConfigChanged();
-  void applicationConfigChanged();
 };
 }
 

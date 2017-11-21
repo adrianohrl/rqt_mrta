@@ -37,6 +37,7 @@ public:
   virtual void read(QDataStream& stream);
   virtual ParamInterface& operator=(const ParamInterface& config);
   virtual ParamInterface* clone() const = 0;
+  virtual QString toYaml(const QString& prefix = "") const;
 
 signals:
   void nameChanged(const QString &previous_full_name, const QString &name);

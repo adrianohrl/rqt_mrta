@@ -1,6 +1,7 @@
 #ifndef _RQT_MRTA_ARCHITECTURE_CONFIG_CONFIG_H_
 #define _RQT_MRTA_ARCHITECTURE_CONFIG_CONFIG_H_
 
+#include <QMap>
 #include <QVector>
 #include "rqt_mrta/config/param_interface.h"
 
@@ -8,7 +9,10 @@ namespace rqt_mrta
 {
 namespace config
 {
+class Param;
 class ParamInterface;
+class Params;
+class ParamsArray;
 
 class Config : public utilities::AbstractConfig
 {
@@ -37,6 +41,8 @@ public:
   void read(QDataStream& stream);
   Config& operator=(const Config& config);
   QString validate() const;
+  QString toYaml() const;
+  void hideArrays();
 
 signals:
   void idChanged(const QString& id);
@@ -50,11 +56,18 @@ signals:
   void toolTipChanged(const QString& name, const QString& tool_tip);
 
 private:
+  typedef QMap<Param*, ParamsArray*> ArrayMap;
+  typedef ArrayMap::iterator iterator;
+  typedef ArrayMap::const_iterator const_iterator;
   QString id_;
   QVector<ParamInterface*> params_;
+  ArrayMap arrays_;
+  void findArrays(Params *parent);
+  void clearArrays();
 
 private slots:
   void paramDestroyed();
+  void arraySizeChanged(const QString& full_name, const QVariant& value);
 };
 }
 }

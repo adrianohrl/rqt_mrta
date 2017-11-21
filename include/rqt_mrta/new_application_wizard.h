@@ -21,7 +21,7 @@ public:
     DefineApplication,
     DefineArchitecture,
     DefineRobots,
-    DefineRobotsParameters
+    DefineParameters
   };
   NewApplicationWizard(QWidget* parent,
                        RqtMrtaApplicationConfig* application_config,

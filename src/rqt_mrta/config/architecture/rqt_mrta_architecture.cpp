@@ -15,9 +15,9 @@ RqtMrtaArchitecture::RqtMrtaArchitecture(QObject* parent)
       configs_(new Configs(this)), widgets_(new Widgets(this))
 {
   reset();
-  connect(architecture_, SIGNAL(changed()), this, SLOT(architectureChanged()));
-  connect(configs_, SIGNAL(changed()), this, SLOT(configsChanged()));
-  connect(widgets_, SIGNAL(changed()), this, SLOT(widgetsChanged()));
+  connect(architecture_, SIGNAL(changed()), this, SIGNAL(changed()));
+  connect(configs_, SIGNAL(changed()), this, SIGNAL(changed()));
+  connect(widgets_, SIGNAL(changed()), this, SIGNAL(changed()));
 }
 
 RqtMrtaArchitecture::~RqtMrtaArchitecture()
@@ -154,6 +154,8 @@ void RqtMrtaArchitecture::load(QSettings& settings)
 
 void RqtMrtaArchitecture::reset()
 {
+  setArchitecturePackage("");
+  setArchitecturePackageUrl("");
   architecture_->reset();
   configs_->reset();
   widgets_->reset();
@@ -183,12 +185,6 @@ operator=(const RqtMrtaArchitecture& config)
   *widgets_ = *config.widgets_;
   return *this;
 }
-
-void RqtMrtaArchitecture::architectureChanged() { emit changed(); }
-
-void RqtMrtaArchitecture::configsChanged() { emit changed(); }
-
-void RqtMrtaArchitecture::widgetsChanged() { emit changed(); }
 }
 }
 }

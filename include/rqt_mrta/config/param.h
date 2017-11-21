@@ -34,6 +34,7 @@ public:
   void read(QDataStream& stream);
   Param& operator=(const Param& config);
   Param* clone() const;
+  QString toYaml(const QString &prefix) const;
 
 signals:
   void typeChanged(const QString& full_name, const QMetaType::Type& type);

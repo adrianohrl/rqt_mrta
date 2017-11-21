@@ -5,14 +5,14 @@
 
 namespace rqt_mrta
 {
-class DefineRobotsParametersWidget;
+class DefineParametersWidget;
 
-class DefineRobotsParametersWizardPage : public NewApplicationWizardPage
+class DefineParametersWizardPage : public NewApplicationWizardPage
 {
   Q_OBJECT
 public:
-  DefineRobotsParametersWizardPage(NewApplicationWizard* parent);
-  virtual ~DefineRobotsParametersWizardPage();
+  DefineParametersWizardPage(NewApplicationWizard* parent);
+  virtual ~DefineParametersWizardPage();
   void initializePage();
   void cleanupPage();
   bool validatePage();

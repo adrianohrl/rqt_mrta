@@ -4,7 +4,7 @@
 #include "rqt_mrta/define_application_wizard_page.h"
 #include "rqt_mrta/define_architecture_wizard_page.h"
 #include "rqt_mrta/define_robots_wizard_page.h"
-#include "rqt_mrta/define_robots_parameters_wizard_page.h"
+#include "rqt_mrta/define_parameters_wizard_page.h"
 #include "rqt_mrta/new_application_wizard_page.h"
 #include <ros/console.h>
 #include <ros/package.h>
@@ -29,7 +29,7 @@ NewApplicationWizard::NewApplicationWizard(
   //setPage(DefineApplication, new DefineApplicationWizardPage(this));
   //setPage(DefineArchitecture, new DefineArchitectureWizardPage(this));
   //setPage(DefineRobots, new DefineRobotsWizardPage(this));
-  setPage(DefineRobotsParameters, new DefineRobotsParametersWizardPage(this));
+  setPage(DefineParameters, new DefineParametersWizardPage(this));
   setWindowTitle("New application ...");
   connect(this, SIGNAL(accepted()), this, SLOT(generate()));
   connect(this, SIGNAL(rejected()), this, SLOT(resetConfig()));
@@ -78,6 +78,7 @@ void NewApplicationWizard::generate()
         << application_config_->getApplicationPackage().toStdString() << "] @ ["
         << application_config_->getApplicationPackageUrl().toStdString() << "].");
     application_config_->save();
+
   }
 }
 

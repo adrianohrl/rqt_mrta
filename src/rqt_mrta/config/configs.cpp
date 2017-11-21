@@ -1,11 +1,9 @@
 #include <QStringList>
-#include "rqt_mrta/config/architecture/configs.h"
+#include "rqt_mrta/config/configs.h"
 
 namespace rqt_mrta
 {
 namespace config
-{
-namespace architecture
 {
 Configs::Configs(QObject* parent) : AbstractConfig(parent) {}
 
@@ -314,7 +312,6 @@ void Configs::configDestroyed()
     emit removed(config_id);
     emit changed();
   }
-}
 }
 }
 }

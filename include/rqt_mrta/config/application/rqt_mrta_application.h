@@ -1,8 +1,8 @@
 #ifndef _RQT_MRTA_APPLICATION_CONFIG_H_
 #define _RQT_MRTA_APPLICATION_CONFIG_H_
 
-#include "utilities/abstract_config.h"
 #include "rqt_mrta/config/application/application.h"
+#include "rqt_mrta/config/configs.h"
 
 namespace rqt_mrta
 {
@@ -19,6 +19,7 @@ public:
   QString getApplicationPackage() const;
   QString getApplicationPackageUrl() const;
   Application* getApplication() const;
+  Configs* getConfigs() const;
   void setApplicationPackage(const QString& package);
   void setApplicationPackageUrl(const QString &url);
   void save() const;
@@ -37,6 +38,7 @@ private:
   QString package_;
   QString url_;
   Application* application_;
+  Configs* configs_;
   void save(QSettings& settings) const;
   void load(QSettings& settings);
 };

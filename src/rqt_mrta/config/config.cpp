@@ -1,6 +1,7 @@
 #include <QStringList>
 #include "rqt_mrta/config/config.h"
 #include "rqt_mrta/config/param_factory.h"
+#include "utilities/exception.h"
 
 namespace rqt_mrta
 {
@@ -20,6 +21,7 @@ Config::~Config()
     }
   }*/
   params_.clear();
+  clearArrays();
   ROS_INFO_STREAM("[~Config] after ...");
 }
 
@@ -123,10 +125,8 @@ void Config::clearParams()
   {
     for (size_t index(0); index < params_.count(); index++)
     {
-      ROS_WARN_STREAM("[Config::clearParams] index: " << index);
       if (params_[index])
       {
-        ROS_WARN_STREAM("[Config::clearParams] name: " << params_[index]->getFullName().toStdString());
         delete params_[index];
         params_[index] = NULL;
       }
@@ -249,22 +249,17 @@ void Config::read(QDataStream& stream)
 
 Config& Config::operator=(const Config& config)
 {
-  ROS_ERROR_STREAM("[Config::operator=] 1");
   setId(config.id_);
-  ROS_ERROR_STREAM("[Config::operator=] 2");
   clearParams();
-  ROS_ERROR_STREAM("[Config::operator=] 3");
   for (size_t index(0); index < config.params_.count(); index++)
   {
     addParam(config.params_[index]->clone());
-    ROS_ERROR_STREAM("[Config::operator=] " << index + 4);
   }
   return *this;
 }
 
 QString Config::validate() const
 {
-  ROS_WARN_STREAM("[Config] validating ...");
   if (id_.isEmpty())
   {
     return "The config name must not be empty.";
@@ -286,24 +281,87 @@ QString Config::validate() const
       break;
     }
   }
-  ROS_WARN_STREAM("[Config] validated: " << validation.toStdString());
   return validation;
+}
+
+QString Config::toYaml() const
+{
+  QString yaml;
+  for (size_t i(0); i < params_.count(); i++)
+  {
+    yaml += params_[i]->toYaml() + "\n";
+  }
+  return yaml;
+}
+
+void Config::hideArrays()
+{
+  for (size_t index(0); index < params_.count(); index++)
+  {
+    if (params_[index]->isArray())
+    {
+      throw utilities::Exception("ParamArrays must have a Params parent.");
+    }
+    else if (params_[index]->isParams())
+    {
+      findArrays(static_cast<Params*>(params_[index]));
+    }
+  }
 }
 
 void Config::paramDestroyed()
 {
-  ROS_ERROR("[Config::paramDestroyed()] 1");
   ParamInterface* param = static_cast<ParamInterface*>(sender());
-  ROS_ERROR("[Config::paramDestroyed()] 2");
   int index(params_.indexOf(param));
   if (index != -1)
   {
-    ROS_ERROR_STREAM("[Config::paramDestroyed()] 3 index: " << index);
     QString full_name(param->getFullName());
     params_.remove(index);
     emit removed(full_name);
     emit changed();
   }
+}
+
+void Config::findArrays(Params* parent)
+{
+  for (size_t index(0); index < parent->count(); index++)
+  {
+    if (parent->getChild(index)->isArray())
+    {
+      ParamInterface* size = parent->getParam("size");
+      if (!size || !size->isParam())
+      {
+        throw utilities::Exception("The ParamsArray's parent must have a Param named size.");
+      }
+      ParamsArray* array = static_cast<ParamsArray*>(parent->getChild(index));
+      parent->removeParam(array->getName());
+      connect(size, SIGNAL(valueChanged(const QString&, const QVariant&)), this,
+              SLOT(arraySizeChanged(const QString&, const QVariant&)));
+      arrays_.insert(static_cast<Param*>(size), array);
+    }
+    else if (parent->getChild(index)->isParams())
+    {
+      findArrays(static_cast<Params*>(parent->getChild(index)));
+    }
+  }
+}
+
+void Config::clearArrays()
+{
+  for (iterator it(arrays_.begin()); it != arrays_.end(); it++)
+  {
+    arrays_[it.key()]  = NULL;
+    arrays_.remove(it.key());
+  }
+  arrays_.clear();
+}
+
+void Config::arraySizeChanged(const QString& full_name, const QVariant& value)
+{
+  Param* size = static_cast<Param*>(sender());
+  ParamsArray* array = arrays_[size];
+  array->createParams(value.toInt());
+  findArrays(array->getParentParam());
 }
 }
 }

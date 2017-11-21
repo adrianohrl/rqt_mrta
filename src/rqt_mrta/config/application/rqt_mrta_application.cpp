@@ -11,10 +11,12 @@ namespace config
 namespace application
 {
 RqtMrtaApplication::RqtMrtaApplication(QObject* parent)
-    : AbstractConfig(parent), application_(new Application(this))
+    : AbstractConfig(parent), application_(new Application(this)),
+      configs_(new Configs(this))
 {
   reset();
   connect(application_, SIGNAL(changed()), this, SIGNAL(changed()));
+  connect(configs_, SIGNAL(changed()), this, SIGNAL(changed()));
 }
 
 RqtMrtaApplication::~RqtMrtaApplication()
@@ -25,6 +27,11 @@ RqtMrtaApplication::~RqtMrtaApplication()
     delete application_;
     application_ = NULL;
   }
+  if (configs_)
+  {
+    delete configs_;
+    configs_ = NULL;
+  }
   ROS_INFO_STREAM("[~RqtMrtaApplication] after ...");
 }
 
@@ -33,6 +40,8 @@ QString RqtMrtaApplication::getApplicationPackage() const { return package_; }
 QString RqtMrtaApplication::getApplicationPackageUrl() const { return url_; }
 
 Application* RqtMrtaApplication::getApplication() const { return application_; }
+
+Configs* RqtMrtaApplication::getConfigs() const { return configs_; }
 
 void RqtMrtaApplication::setApplicationPackage(const QString& package)
 {
@@ -85,6 +94,7 @@ void RqtMrtaApplication::save(QSettings& settings) const
   settings.beginGroup("rqt_mrta");
   //settings.setValue("@format", "application");
   application_->save(settings);
+  configs_->save(settings);
   settings.endGroup();
 }
 
@@ -122,6 +132,7 @@ void RqtMrtaApplication::load(QSettings& settings)
         "configuration file.");
   }*/
   application_->load(settings);
+  configs_->load(settings);
   settings.endGroup();
 }
 
@@ -130,16 +141,19 @@ void RqtMrtaApplication::reset()
   setApplicationPackage("");
   setApplicationPackageUrl("");
   application_->reset();
+  configs_->reset();
 }
 
 void RqtMrtaApplication::write(QDataStream& stream) const
 {
   application_->write(stream);
+  configs_->write(stream);
 }
 
 void RqtMrtaApplication::read(QDataStream& stream)
 {
   application_->read(stream);
+  configs_->read(stream);
 }
 
 RqtMrtaApplication& RqtMrtaApplication::
@@ -148,6 +162,7 @@ operator=(const RqtMrtaApplication& config)
   setApplicationPackage(config.package_);
   setApplicationPackageUrl(config.url_);
   *application_ = *config.application_;
+  *configs_ = *config.configs_;
   return *this;
 }
 }

@@ -38,6 +38,7 @@ public:
   Params& operator=(const Params& config);
   ParamInterface* clone() const;
   static QStringList sortGroups(const QStringList& groups);
+  QString toYaml(const QString &prefix) const;
 
 protected:
   QVector<ParamInterface*> params_;

@@ -59,7 +59,6 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/config/architecture/architecture.cpp
   src/rqt_mrta/config/architecture/architecture_launch.cpp
   src/rqt_mrta/config/architecture/busy_robots.cpp
-  src/rqt_mrta/config/architecture/configs.cpp
   src/rqt_mrta/config/architecture/idle_robots.cpp
   src/rqt_mrta/config/architecture/incoming_tasks.cpp
   src/rqt_mrta/config/architecture/robot_launch.cpp
@@ -70,6 +69,7 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/config/architecture/widget.cpp
   src/rqt_mrta/config/architecture/widgets.cpp
   src/rqt_mrta/config/config.cpp
+  src/rqt_mrta/config/configs.cpp
   src/rqt_mrta/config/param.cpp
   src/rqt_mrta/config/param_interface.cpp
   src/rqt_mrta/config/params.cpp
@@ -78,10 +78,10 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/define_application_wizard_page.cpp
   src/rqt_mrta/define_architecture_widget.cpp
   src/rqt_mrta/define_architecture_wizard_page.cpp
+  src/rqt_mrta/define_parameters_widget.cpp
+  src/rqt_mrta/define_parameters_wizard_page.cpp
   src/rqt_mrta/define_robots_widget.cpp
   src/rqt_mrta/define_robots_wizard_page.cpp
-  src/rqt_mrta/define_robots_parameters_widget.cpp
-  src/rqt_mrta/define_robots_parameters_wizard_page.cpp
   src/rqt_mrta/labeled_status_widget.cpp
   src/rqt_mrta/new_application_wizard.cpp
   src/rqt_mrta/new_application_wizard_page.cpp
@@ -138,7 +138,6 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/config/architecture/architecture.h
   include/rqt_mrta/config/architecture/architecture_launch.h
   include/rqt_mrta/config/architecture/busy_robots.h
-  include/rqt_mrta/config/architecture/configs.h
   include/rqt_mrta/config/architecture/idle_robots.h
   include/rqt_mrta/config/architecture/incoming_tasks.h
   include/rqt_mrta/config/architecture/robot_launch.h
@@ -148,6 +147,7 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/config/architecture/topic.h
   include/rqt_mrta/config/architecture/widget.h
   include/rqt_mrta/config/architecture/widgets.h
+  include/rqt_mrta/config/configs.h
   include/rqt_mrta/config/config.h
   include/rqt_mrta/config/param.h
   include/rqt_mrta/config/param_factory.h
@@ -158,10 +158,10 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/define_application_wizard_page.h
   include/rqt_mrta/define_architecture_widget.h
   include/rqt_mrta/define_architecture_wizard_page.h
+  include/rqt_mrta/define_parameters_widget.h
+  include/rqt_mrta/define_parameters_wizard_page.h
   include/rqt_mrta/define_robots_widget.h
   include/rqt_mrta/define_robots_wizard_page.h
-  include/rqt_mrta/define_robots_parameters_widget.h
-  include/rqt_mrta/define_robots_parameters_wizard_page.h
   include/rqt_mrta/labeled_status_widget.h
   include/rqt_mrta/new_application_wizard.h
   include/rqt_mrta/new_application_wizard_page.h
@@ -193,8 +193,8 @@ set(rqt_mrta_HDRS
 set(rqt_mrta_UIS
   src/Ui/define_application_widget.ui
   src/Ui/define_architecture_widget.ui
+  src/Ui/define_parameters_widget.ui
   src/Ui/define_robots_widget.ui
-  src/Ui/define_robots_parameters_widget.ui
   src/Ui/labeled_status_widget.ui
   src/Ui/register_architecture_widget.ui
   src/Ui/rqt_mrta_widget.ui

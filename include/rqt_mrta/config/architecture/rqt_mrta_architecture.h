@@ -3,7 +3,7 @@
 
 #include "utilities/abstract_config.h"
 #include "rqt_mrta/config/architecture/architecture.h"
-#include "rqt_mrta/config/architecture/configs.h"
+#include "rqt_mrta/config/configs.h"
 #include "rqt_mrta/config/architecture/widgets.h"
 
 namespace rqt_mrta
@@ -44,11 +44,6 @@ private:
   Widgets* widgets_;
   void save(QSettings& settings) const;
   void load(QSettings& settings);
-
-private slots:
-  void architectureChanged();
-  void configsChanged();
-  void widgetsChanged();
 };
 }
 }

@@ -9,8 +9,6 @@ namespace rqt_mrta
 {
 namespace config
 {
-namespace architecture
-{
 class Configs : public utilities::AbstractConfig
 {
   Q_OBJECT
@@ -65,7 +63,6 @@ private slots:
   void configToolTipChanged(const QString& name, const QString& tool_tip);
   void configDestroyed();
 };
-}
 }
 }
 

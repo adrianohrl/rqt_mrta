@@ -279,5 +279,15 @@ QStringList Params::sortGroups(const QStringList& groups)
   }
   return sorted_groups;
 }
+
+QString Params::toYaml(const QString &prefix) const
+{
+  QString yaml(ParamInterface::toYaml(prefix));
+  for (size_t index(0); index < params_.count(); index++)
+  {
+    yaml += params_[index]->toYaml(prefix + "\t") + "\n";
+  }
+  return yaml;
+}
 }
 }

@@ -212,5 +212,10 @@ Param* Param::clone() const
   *param = *this;
   return param;
 }
+
+QString Param::toYaml(const QString &prefix) const
+{
+  return ParamInterface::toYaml(prefix) + value_.toString();
+}
 }
 }

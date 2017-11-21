@@ -2,16 +2,16 @@
 #include "rqt_mrta/config/application/robots.h"
 #include "rqt_mrta/config/application/rqt_mrta_application.h"
 #include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
-#include "rqt_mrta/define_robots_parameters_widget.h"
+#include "rqt_mrta/define_parameters_widget.h"
 #include "rqt_mrta/param_tree_widget.h"
-#include "rqt_mrta/ui_define_robots_parameters_widget.h"
+#include "rqt_mrta/ui_define_parameters_widget.h"
 
 namespace rqt_mrta
 {
-DefineRobotsParametersWidget::DefineRobotsParametersWidget(
+DefineParametersWidget::DefineParametersWidget(
     QWidget* parent, RqtMrtaApplicationConfig* application_config,
     RqtMrtaArchitectureConfig* architecture_config)
-    : QWidget(parent), ui_(new Ui::DefineRobotsParametersWidget()),
+    : QWidget(parent), ui_(new Ui::DefineParametersWidget()),
       application_config_(NULL), architecture_config_(NULL)
 {
   ui_->setupUi(this);
@@ -20,7 +20,7 @@ DefineRobotsParametersWidget::DefineRobotsParametersWidget(
   setApplicationConfig(application_config);
 }
 
-DefineRobotsParametersWidget::~DefineRobotsParametersWidget()
+DefineParametersWidget::~DefineParametersWidget()
 {
   architecture_config_ = NULL;
   application_config_ = NULL;
@@ -31,19 +31,17 @@ DefineRobotsParametersWidget::~DefineRobotsParametersWidget()
   }
 }
 
-RqtMrtaArchitectureConfig*
-DefineRobotsParametersWidget::getArchitectureConfig() const
+RqtMrtaArchitectureConfig* DefineParametersWidget::getArchitectureConfig() const
 {
   return architecture_config_;
 }
 
-RqtMrtaApplicationConfig*
-DefineRobotsParametersWidget::getApplicationConfig() const
+RqtMrtaApplicationConfig* DefineParametersWidget::getApplicationConfig() const
 {
   return application_config_;
 }
 
-void DefineRobotsParametersWidget::setArchitectureConfig(
+void DefineParametersWidget::setArchitectureConfig(
     RqtMrtaArchitectureConfig* config)
 {
   if (config != architecture_config_)
@@ -51,18 +49,17 @@ void DefineRobotsParametersWidget::setArchitectureConfig(
     if (architecture_config_)
     {
       disconnect(architecture_config_, SIGNAL(changed()), this,
-                 SLOT(architectureConfigChanged()));
+                 SIGNAL(changed()));
     }
     architecture_config_ = config;
     if (architecture_config_)
     {
-      connect(config, SIGNAL(changed()), this,
-              SLOT(architectureConfigChanged()));
+      connect(config, SIGNAL(changed()), this, SIGNAL(changed()));
     }
   }
 }
 
-QString DefineRobotsParametersWidget::validate() const
+QString DefineParametersWidget::validate() const
 {
   QString validation;
   for (size_t index(0); index < ui_->parameters_tab_widget->count(); index++)
@@ -75,11 +72,10 @@ QString DefineRobotsParametersWidget::validate() const
       return validation;
     }
   }
-  ROS_WARN_STREAM("[DefineRobotsParametersWidget] validate: " << validation.toStdString());
   return validation;
 }
 
-void DefineRobotsParametersWidget::setApplicationConfig(
+void DefineParametersWidget::setApplicationConfig(
     RqtMrtaApplicationConfig* config)
 {
   if (config != application_config_)
@@ -87,41 +83,34 @@ void DefineRobotsParametersWidget::setApplicationConfig(
     if (application_config_)
     {
       disconnect(application_config_, SIGNAL(changed()), this,
-                 SLOT(applicationConfigChanged()));
+                 SIGNAL(changed()));
       ui_->parameters_tab_widget->clear();
     }
     application_config_ = config;
     if (application_config_)
     {
-      connect(application_config_, SIGNAL(changed()), this,
-              SLOT(applicationConfigChanged()));
+      connect(application_config_, SIGNAL(changed()), this, SIGNAL(changed()));
     }
   }
 }
 
-void DefineRobotsParametersWidget::loadTabs()
+void DefineParametersWidget::loadTabs()
 {
   ui_->parameters_tab_widget->clear();
   RobotsConfig* robots = application_config_->getApplication()->getRobots();
-  config::Config* config = architecture_config_->getConfigs()->getConfig(
+  config::Config* template_config = architecture_config_->getConfigs()->getConfig(
       architecture_config_->getArchitecture()->getRobots()->getConfigId());
+  config::Configs* configs = application_config_->getConfigs();
   for (size_t index(0); index < robots->count(); index++)
   {
+    config::Config* config = configs->addConfig();
+    *config = *template_config;
+    config->hideArrays();
     RobotConfig* robot = robots->getRobot(index);
-    robot->setConfig(config);
+    config->setId(robot->getId() + "_" + config->getId());
     ParamTreeWidget* tree = new ParamTreeWidget(ui_->parameters_tab_widget);
-    tree->setConfig(robot->getConfig());
+    tree->setConfig(config);
     ui_->parameters_tab_widget->addTab(tree, robot->getId());
   }
-}
-
-void DefineRobotsParametersWidget::architectureConfigChanged()
-{
-  emit changed();
-}
-
-void DefineRobotsParametersWidget::applicationConfigChanged()
-{
-  emit changed();
 }
 }
