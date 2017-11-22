@@ -57,19 +57,23 @@ set (rqt_mrta_SRCS
   src/rqt_mrta/config/architecture/allocated_tasks.cpp
   src/rqt_mrta/config/architecture/allocations.cpp
   src/rqt_mrta/config/architecture/architecture.cpp
-  src/rqt_mrta/config/architecture/architecture_launch.cpp
   src/rqt_mrta/config/architecture/busy_robots.cpp
   src/rqt_mrta/config/architecture/idle_robots.cpp
   src/rqt_mrta/config/architecture/incoming_tasks.cpp
-  src/rqt_mrta/config/architecture/robot_launch.cpp
   src/rqt_mrta/config/architecture/robots.cpp
   src/rqt_mrta/config/architecture/rqt_mrta_architecture.cpp
   src/rqt_mrta/config/architecture/tasks.cpp
   src/rqt_mrta/config/architecture/topic.cpp
   src/rqt_mrta/config/architecture/widget.cpp
   src/rqt_mrta/config/architecture/widgets.cpp
+  src/rqt_mrta/config/arg.cpp
+  src/rqt_mrta/config/args.cpp
   src/rqt_mrta/config/config.cpp
   src/rqt_mrta/config/configs.cpp
+  src/rqt_mrta/config/include.cpp
+  src/rqt_mrta/config/includes.cpp
+  src/rqt_mrta/config/launch.cpp
+  src/rqt_mrta/config/launches.cpp
   src/rqt_mrta/config/param.cpp
   src/rqt_mrta/config/param_interface.cpp
   src/rqt_mrta/config/params.cpp
@@ -136,19 +140,23 @@ set(rqt_mrta_HDRS
   include/rqt_mrta/config/architecture/allocated_tasks.h
   include/rqt_mrta/config/architecture/allocations.h
   include/rqt_mrta/config/architecture/architecture.h
-  include/rqt_mrta/config/architecture/architecture_launch.h
   include/rqt_mrta/config/architecture/busy_robots.h
   include/rqt_mrta/config/architecture/idle_robots.h
   include/rqt_mrta/config/architecture/incoming_tasks.h
-  include/rqt_mrta/config/architecture/robot_launch.h
   include/rqt_mrta/config/architecture/robots.h
   include/rqt_mrta/config/architecture/rqt_mrta_architecture.h
   include/rqt_mrta/config/architecture/tasks.h
   include/rqt_mrta/config/architecture/topic.h
   include/rqt_mrta/config/architecture/widget.h
   include/rqt_mrta/config/architecture/widgets.h
+  include/rqt_mrta/config/arg.h
+  include/rqt_mrta/config/args.h
   include/rqt_mrta/config/configs.h
   include/rqt_mrta/config/config.h
+  include/rqt_mrta/config/include.h
+  include/rqt_mrta/config/includes.h
+  include/rqt_mrta/config/launch.h
+  include/rqt_mrta/config/launches.h
   include/rqt_mrta/config/param.h
   include/rqt_mrta/config/param_factory.h
   include/rqt_mrta/config/param_interface.h

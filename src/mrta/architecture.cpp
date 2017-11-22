@@ -2,7 +2,7 @@
 #include "mrta/architecture_config.h"
 #include <QFileInfo>
 #include "rqt_mrta/config/architecture/rqt_mrta_architecture.h"
-#include "utilities/xml_settings.h"
+#include "utilities/simple_xml_settings.h"
 
 namespace mrta
 {
@@ -27,7 +27,7 @@ Architecture::Architecture(QObject* parent, const QString& package,
     QFileInfo file_info(config_file_path);
     if (file_info.isReadable())
     {
-      QSettings settings(config_file_path, utilities::XmlSettings::format);
+      QSettings settings(config_file_path, utilities::SimpleXmlSettings::format);
       if (settings.status() == QSettings::NoError)
       {
         settings.beginGroup("rqt_mrta");

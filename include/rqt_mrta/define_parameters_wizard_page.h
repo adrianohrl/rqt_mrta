@@ -14,8 +14,6 @@ public:
   DefineParametersWizardPage(NewApplicationWizard* parent);
   virtual ~DefineParametersWizardPage();
   void initializePage();
-  void cleanupPage();
-  bool validatePage();
   bool isComplete() const;
 };
 }

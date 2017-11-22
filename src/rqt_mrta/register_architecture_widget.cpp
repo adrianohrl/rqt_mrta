@@ -72,32 +72,26 @@ void RegisterArchitectureWidget::setConfig(Config* config)
 
 QString RegisterArchitectureWidget::validate() const
 {
-  ROS_ERROR_STREAM("[RegisterArchitectureWidget] estou aki 1...");
   if (!config_)
   {
     return "The ArchitectureConfig must be given.";
   }
-  ROS_ERROR_STREAM("[RegisterArchitectureWidget] estou aki 2...");
   if (config_->getArchitecturePackage().isEmpty())
   {
     return "The architecture package must be given.";
   }
-  ROS_ERROR_STREAM("[RegisterArchitectureWidget] estou aki 3...");
   if (config_->getArchitecture()->getRobots()->getType().isEmpty())
   {
     return "The robots type must be selected.";
   }
-  ROS_ERROR_STREAM("[RegisterArchitectureWidget] estou aki 4...");
   if (config_->getArchitecture()->getTasks()->getType().isEmpty())
   {
     return "The tasks type must be selected.";
   }
-  ROS_ERROR_STREAM("[RegisterArchitectureWidget] estou aki 5...");
   if (config_->getArchitecture()->getAllocations()->getType().isEmpty())
   {
     return "The allocations type must be selected.";
   }
-  ROS_ERROR_STREAM("[RegisterArchitectureWidget] estou aki 6...");
   return "";
 }
 

@@ -52,7 +52,6 @@ void Application::setArchitecturePackage(const QString &package)
 {
   if (package != architecture_)
   {
-    ROS_ERROR_STREAM("[Application::setArchitecturePackageUrl] url: " << package.toStdString());
     architecture_ = package;
     emit architecturePackageChanged(package);
     emit changed();
@@ -63,9 +62,7 @@ void Application::save(QSettings &settings) const
 {
   settings.beginGroup("application");
   settings.setValue("name", name_);
-  ROS_INFO_STREAM("[Application] saving name: " << name_.toStdString());
   settings.setValue("architecture", architecture_);
-  ROS_INFO_STREAM("[Application] saving architecture: " << architecture_.toStdString());
   robots_->save(settings);
   settings.endGroup();
 }

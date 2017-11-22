@@ -3,7 +3,6 @@
 
 #include "utilities/abstract_config.h"
 #include "rqt_mrta/config/architecture/allocations.h"
-#include "rqt_mrta/config/architecture/architecture_launch.h"
 #include "rqt_mrta/config/architecture/robots.h"
 #include "rqt_mrta/config/architecture/tasks.h"
 
@@ -20,7 +19,6 @@ public:
   Architecture(QObject* parent = NULL);
   virtual ~Architecture();
   Allocations* getAllocations() const;
-  ArchitectureLaunch* getLaunch() const;
   QString getName() const;
   Robots* getRobots() const;
   Tasks* getTasks() const;
@@ -38,15 +36,8 @@ signals:
 private:
   QString name_;
   Allocations* allocations_;
-  ArchitectureLaunch* launch_;
   Robots* robots_;
   Tasks* tasks_;
-
-private slots:
-  void allocationsChanged();
-  void launchChanged();
-  void robotsChanged();
-  void tasksChanged();
 };
 }
 }

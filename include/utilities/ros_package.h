@@ -55,7 +55,6 @@ public:
   void clearBuildDepends();
   void clearRunDepends();
   QString validate() const;
-  bool isValid() const;
   bool isValidPackageName() const;
   virtual bool createPackage();
   bool createManifest();
@@ -118,7 +117,6 @@ protected:
 
 private slots:
   void setUrl();
-  void exportChanged();
 };
 
 class Export : public AbstractConfig

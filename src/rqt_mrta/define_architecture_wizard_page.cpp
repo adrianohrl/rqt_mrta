@@ -1,4 +1,5 @@
 #include <QVBoxLayout>
+#include <ros/package.h>
 #include "rqt_mrta/define_architecture_widget.h"
 #include "rqt_mrta/define_architecture_wizard_page.h"
 #include "rqt_mrta/ui_define_architecture_widget.h"
@@ -12,8 +13,7 @@ DefineArchitectureWizardPage::DefineArchitectureWizardPage(
   DefineArchitectureWidget* widget = new DefineArchitectureWidget(
       this, application_config_, architecture_config_);
   registerField("architecture*", widget->ui_->architectures_combo_box);
-  connect(widget, SIGNAL(changed()), this,
-          SIGNAL(completeChanged()));
+  connect(widget, SIGNAL(changed()), this, SIGNAL(completeChanged()));
   setWidget(widget);
 }
 
@@ -25,8 +25,9 @@ bool DefineArchitectureWizardPage::validatePage()
   {
     return false;
   }
-  architecture_config_->load(application_config_->getApplicationPackageUrl() +
-                             "/rqt_mrta.xml");
+  QString package(application_config_->getApplication()->getArchitecturePackage());
+  QString url(QString::fromStdString(ros::package::getPath(package.toStdString())));
+  architecture_config_->load(url + "/rqt_mrta.xml");
   return true;
 }
 

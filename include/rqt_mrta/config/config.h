@@ -1,5 +1,5 @@
-#ifndef _RQT_MRTA_ARCHITECTURE_CONFIG_CONFIG_H_
-#define _RQT_MRTA_ARCHITECTURE_CONFIG_CONFIG_H_
+#ifndef _RQT_MRTA_CONFIG_CONFIG_H_
+#define _RQT_MRTA_CONFIG_CONFIG_H_
 
 #include <QMap>
 #include <QVector>
@@ -41,7 +41,7 @@ public:
   void read(QDataStream& stream);
   Config& operator=(const Config& config);
   QString validate() const;
-  QString toYaml() const;
+  void saveAsYaml(const QString& url) const;
   void hideArrays();
 
 signals:
@@ -64,6 +64,7 @@ private:
   ArrayMap arrays_;
   void findArrays(Params *parent);
   void clearArrays();
+  QString toYaml() const;
 
 private slots:
   void paramDestroyed();
@@ -72,4 +73,4 @@ private slots:
 }
 }
 
-#endif // _RQT_MRTA_ARCHITECTURE_CONFIG_CONFIG_H_
+#endif // _RQT_MRTA_CONFIG_CONFIG_H_

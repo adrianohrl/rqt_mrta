@@ -1,5 +1,8 @@
+#include <QDir>
 #include <QStringList>
 #include "rqt_mrta/config/configs.h"
+#include "rqt_mrta/config/application/robots.h"
+#include "utilities/exception.h"
 
 namespace rqt_mrta
 {
@@ -27,12 +30,10 @@ Config* Configs::getConfig(size_t index) const
   return index < configs_.count() ? configs_[index] : NULL;
 }
 
-Config *Configs::getConfig(const QString &id) const
+Config* Configs::getConfig(const QString& id) const
 {
-  ROS_WARN_STREAM("[Configs::getConfig] count: " << configs_.count());
   for (size_t index(0); index < configs_.count(); index)
   {
-    ROS_WARN_STREAM("[Configs::getConfig] id: " << configs_[index]->getId().toStdString());
     if (configs_[index]->getId() == id)
     {
       return configs_[index];
@@ -188,6 +189,30 @@ Configs& Configs::operator=(const Configs& config)
   return *this;
 }
 
+void Configs::setConfigs(const Configs& configs,
+                         const application::Robots& robots,
+                         const QString& robots_config_id)
+{
+  clearConfigs();
+  Config* robots_config = configs.getConfig(robots_config_id);
+  for (size_t i(0); i < configs.count(); i++)
+  {
+    Config* template_config = configs.getConfig(i);
+    bool is_robot_template = robots_config && template_config == robots_config;
+    size_t count = is_robot_template ? robots.count() : 1;
+    for (size_t j(0); j < count; j++)
+    {
+      Config* config = addConfig();
+      *config = *template_config;
+      config->hideArrays();
+      if (is_robot_template)
+      {
+        config->setId(robots.getRobot(j)->getId() + "_" + config->getId());
+      }
+    }
+  }
+}
+
 QString Configs::validate() const
 {
   if (configs_.isEmpty())
@@ -204,6 +229,44 @@ QString Configs::validate() const
     }
   }
   return validation;
+}
+
+QStringList Configs::willBeGenerated() const
+{
+  QStringList list;
+  for (size_t index(0); index < configs_.count(); index++)
+  {
+    list.append("config/" + configs_[index]->getId() + ".yaml");
+  }
+  return list;
+}
+
+void Configs::saveAsYaml(const QString& package_url) const
+{
+  QDir folder(package_url + "/config");
+  if (!folder.exists())
+  {
+    folder.cd("..");
+    if (!folder.exists())
+    {
+      throw utilities::Exception("Inexistent package.");
+    }
+    if (!folder.mkdir("config"))
+    {
+      throw utilities::Exception("Unable to create the config folder.");
+    }
+    folder.cd("config");
+  }
+  for (size_t index(0); index < configs_.count(); index++)
+  {
+    QString validation(configs_[index]->validate());
+    if (!validation.isEmpty())
+    {
+      ROS_ERROR("%s", validation.toStdString().c_str());
+      continue;
+    }
+    configs_[index]->saveAsYaml(folder.path() + "/" + configs_[index]->getId());
+  }
 }
 
 void Configs::configChanged() { emit changed(); }

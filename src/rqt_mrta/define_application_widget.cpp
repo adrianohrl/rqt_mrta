@@ -17,7 +17,7 @@ DefineApplicationWidget::DefineApplicationWidget(
     QWidget* parent, RqtMrtaApplicationConfig* application_config,
     RqtMrtaApplicationPackageConfig* metapackage_config)
     : QWidget(parent), ui_(new Ui::DefineApplicationWidget()),
-      application_config_(NULL), metapackage_config_(NULL)
+      application_config_(NULL), package_config_(NULL)
 {
   if (!application_config)
   {
@@ -62,7 +62,7 @@ DefineApplicationWidget::DefineApplicationWidget(
 DefineApplicationWidget::~DefineApplicationWidget()
 {
   application_config_ = NULL;
-  metapackage_config_ = NULL;
+  package_config_ = NULL;
   if (ui_)
   {
     delete ui_;
@@ -78,7 +78,7 @@ RqtMrtaApplicationConfig* DefineApplicationWidget::getApplicationConfig() const
 RqtMrtaApplicationPackageConfig*
 DefineApplicationWidget::getMetapackageConfig() const
 {
-  return metapackage_config_;
+  return package_config_;
 }
 
 void DefineApplicationWidget::setApplicationConfig(
@@ -106,8 +106,8 @@ void DefineApplicationWidget::setApplicationConfig(
               SLOT(configNameChanged(const QString&)));
       configNameChanged(application_config_->getApplication()->getName());
       configPackageChanged(application_config_->getApplicationPackage());
-      if (metapackage_config_ &&
-          metapackage_config_->getDescription().isEmpty())
+      if (package_config_ &&
+          package_config_->getDescription().isEmpty())
       {
         configDescriptionChanged(
             application_config_->getApplication()->getName());
@@ -119,65 +119,65 @@ void DefineApplicationWidget::setApplicationConfig(
 void DefineApplicationWidget::setMetapackageConfig(
     RqtMrtaApplicationPackageConfig* config)
 {
-  if (metapackage_config_ != config)
+  if (package_config_ != config)
   {
-    if (metapackage_config_)
+    if (package_config_)
     {
-      disconnect(metapackage_config_, SIGNAL(changed()), this, SIGNAL(changed()));
-      disconnect(metapackage_config_,
+      disconnect(package_config_, SIGNAL(changed()), this, SIGNAL(changed()));
+      disconnect(package_config_,
                  SIGNAL(workspaceUrlChanged(const QString&)), this,
                  SLOT(configWorkspaceUrlChanged(const QString&)));
-      disconnect(metapackage_config_, SIGNAL(nameChanged(const QString&)), this,
+      disconnect(package_config_, SIGNAL(nameChanged(const QString&)), this,
                  SLOT(configPackageChanged(const QString&)));
-      disconnect(metapackage_config_, SIGNAL(versionChanged(const QString&)),
+      disconnect(package_config_, SIGNAL(versionChanged(const QString&)),
                  this, SLOT(configVersionChanged(const QString&)));
-      disconnect(metapackage_config_,
+      disconnect(package_config_,
                  SIGNAL(descriptionChanged(const QString&)), this,
                  SLOT(configDescriptionChanged(const QString&)));
-      disconnect(metapackage_config_, SIGNAL(maintainerChanged(const QString&)),
+      disconnect(package_config_, SIGNAL(maintainerChanged(const QString&)),
                  this, SLOT(configMaintainerChanged(const QString&)));
-      disconnect(metapackage_config_,
+      disconnect(package_config_,
                  SIGNAL(maintainerEmailChanged(const QString&)), this,
                  SLOT(configMaintainerEmailChanged(const QString&)));
-      disconnect(metapackage_config_, SIGNAL(licenseChanged(const QString&)),
+      disconnect(package_config_, SIGNAL(licenseChanged(const QString&)),
                  this, SLOT(configLicenseChanged(const QString&)));
-      disconnect(metapackage_config_,
+      disconnect(package_config_,
                  SIGNAL(runDependsChanged(const QStringList&)), this,
                  SLOT(configRunDependsChanged(const QStringList&)));
     }
-    metapackage_config_ = config;
-    if (metapackage_config_)
+    package_config_ = config;
+    if (package_config_)
     {
-      connect(metapackage_config_, SIGNAL(changed()), this, SIGNAL(changed()));
-      connect(metapackage_config_, SIGNAL(workspaceUrlChanged(const QString&)),
+      connect(package_config_, SIGNAL(changed()), this, SIGNAL(changed()));
+      connect(package_config_, SIGNAL(workspaceUrlChanged(const QString&)),
               this, SLOT(configWorkspaceUrlChanged(const QString&)));
-      connect(metapackage_config_, SIGNAL(nameChanged(const QString&)), this,
+      connect(package_config_, SIGNAL(nameChanged(const QString&)), this,
               SLOT(configPackageChanged(const QString&)));
-      connect(metapackage_config_, SIGNAL(versionChanged(const QString&)), this,
+      connect(package_config_, SIGNAL(versionChanged(const QString&)), this,
               SLOT(configVersionChanged(const QString&)));
-      connect(metapackage_config_, SIGNAL(descriptionChanged(const QString&)),
+      connect(package_config_, SIGNAL(descriptionChanged(const QString&)),
               this, SLOT(configDescriptionChanged(const QString&)));
-      connect(metapackage_config_, SIGNAL(maintainerChanged(const QString&)),
+      connect(package_config_, SIGNAL(maintainerChanged(const QString&)),
               this, SLOT(configMaintainerChanged(const QString&)));
-      connect(metapackage_config_,
+      connect(package_config_,
               SIGNAL(maintainerEmailChanged(const QString&)), this,
               SLOT(configMaintainerEmailChanged(const QString&)));
-      connect(metapackage_config_, SIGNAL(licenseChanged(const QString&)), this,
+      connect(package_config_, SIGNAL(licenseChanged(const QString&)), this,
               SLOT(configLicenseChanged(const QString&)));
-      connect(metapackage_config_,
+      connect(package_config_,
               SIGNAL(runDependsChanged(const QStringList&)), this,
               SLOT(configRunDependsChanged(const QStringList&)));
-      configPackageChanged(metapackage_config_->getName());
-      configWorkspaceUrlChanged(metapackage_config_->getWorkspaceUrl());
-      configVersionChanged(metapackage_config_->getVersion());
-      configDescriptionChanged(metapackage_config_->getDescription());
-      configMaintainerChanged(metapackage_config_->getMaintainer());
-      configMaintainerEmailChanged(metapackage_config_->getMaintainerEmail());
-      configLicenseChanged(metapackage_config_->getLicense());
-      configRunDependsChanged(metapackage_config_->getRunDepends());
+      configPackageChanged(package_config_->getName());
+      configWorkspaceUrlChanged(package_config_->getWorkspaceUrl());
+      configVersionChanged(package_config_->getVersion());
+      configDescriptionChanged(package_config_->getDescription());
+      configMaintainerChanged(package_config_->getMaintainer());
+      configMaintainerEmailChanged(package_config_->getMaintainerEmail());
+      configLicenseChanged(package_config_->getLicense());
+      configRunDependsChanged(package_config_->getRunDepends());
     }
   }
-  ui_->workspace_push_button->setEnabled(metapackage_config_);
+  ui_->workspace_push_button->setEnabled(package_config_);
 }
 
 void DefineApplicationWidget::configWorkspaceUrlChanged(const QString& url)
@@ -188,7 +188,7 @@ void DefineApplicationWidget::configWorkspaceUrlChanged(const QString& url)
     ui_->workspace_status_widget->setCurrentRole(
         StatusWidget::Error, "The workspace must be given.");
   }
-  else if (metapackage_config_->workspaceExists())
+  else if (package_config_->workspaceExists())
   {
     ui_->workspace_status_widget->setCurrentRole(StatusWidget::Okay);
   }
@@ -291,15 +291,15 @@ void DefineApplicationWidget::workspaceBrowserButtonClicked()
   dialog.setLabelText(QFileDialog::Accept, "Choose");
   if (dialog.exec() == QDialog::Accepted)
   {
-    metapackage_config_->setWorkspaceUrl(dialog.selectedFiles().first());
+    package_config_->setWorkspaceUrl(dialog.selectedFiles().first());
   }
 }
 
 void DefineApplicationWidget::workspaceUrlChanged(const QString& url)
 {
-  if (metapackage_config_)
+  if (package_config_)
   {
-    metapackage_config_->setWorkspaceUrl(url);
+    package_config_->setWorkspaceUrl(url);
   }
 }
 
@@ -317,50 +317,50 @@ void DefineApplicationWidget::packageChanged(const QString& package)
   {
     application_config_->setApplicationPackage(package);
   }
-  if (metapackage_config_)
+  if (package_config_)
   {
-    metapackage_config_->setName(package);
+    package_config_->setName(package);
   }
 }
 
 void DefineApplicationWidget::versionChanged(const QString& version)
 {
-  if (metapackage_config_)
+  if (package_config_)
   {
-    metapackage_config_->setVersion(version);
+    package_config_->setVersion(version);
   }
 }
 
 void DefineApplicationWidget::descriptionChanged()
 {
-  if (metapackage_config_)
+  if (package_config_)
   {
-    metapackage_config_->setDescription(
+    package_config_->setDescription(
         ui_->description_plain_text_edit->toPlainText());
   }
 }
 
 void DefineApplicationWidget::maintainerChanged(const QString& name)
 {
-  if (metapackage_config_)
+  if (package_config_)
   {
-    metapackage_config_->setMaintainer(name);
+    package_config_->setMaintainer(name);
   }
 }
 
 void DefineApplicationWidget::maintainerEmailChanged(const QString& email)
 {
-  if (metapackage_config_)
+  if (package_config_)
   {
-    metapackage_config_->setMaintainerEmail(email);
+    package_config_->setMaintainerEmail(email);
   }
 }
 
 void DefineApplicationWidget::licenseChanged(const QString& license)
 {
-  if (metapackage_config_)
+  if (package_config_)
   {
-    metapackage_config_->setLicense(license);
+    package_config_->setLicense(license);
   }
 }
 
@@ -368,16 +368,16 @@ void DefineApplicationWidget::runDependsChanged()
 {
   QString depends(ui_->run_depends_plain_text_edit->toPlainText());
   depends.replace('\n', ' ');
-  if (metapackage_config_)
+  if (package_config_)
   {
-    metapackage_config_->clearRunDepends();
+    package_config_->clearRunDepends();
     QStringList run_depends(depends.split(' '));
     run_depends.removeAll("");
     for (size_t i(0); i < run_depends.count(); i++)
     {
-      metapackage_config_->addRunDepend(run_depends[i]);
+      package_config_->addRunDepend(run_depends[i]);
     }
-    if (run_depends.count() == metapackage_config_->countRunDepends())
+    if (run_depends.count() == package_config_->countRunDepends())
     {
       ui_->run_depends_status_widget->setCurrentRole(StatusWidget::Okay);
     }

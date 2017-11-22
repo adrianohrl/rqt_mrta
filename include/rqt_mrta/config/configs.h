@@ -1,5 +1,5 @@
-#ifndef _RQT_MRTA_ARCHITECTURE_CONFIG_CONFIGS_H_
-#define _RQT_MRTA_ARCHITECTURE_CONFIG_CONFIGS_H_
+#ifndef _RQT_MRTA_CONFIG_CONFIGS_H_
+#define _RQT_MRTA_CONFIG_CONFIGS_H_
 
 #include <QVector>
 #include "utilities/abstract_config.h"
@@ -9,6 +9,10 @@ namespace rqt_mrta
 {
 namespace config
 {
+namespace application
+{
+class Robots;
+}
 class Configs : public utilities::AbstractConfig
 {
   Q_OBJECT
@@ -24,13 +28,17 @@ public:
   bool contains(const QString& id) const;
   size_t count() const;
   bool isEmpty() const;
+  QString validate() const;
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
   void write(QDataStream& stream) const;
   void read(QDataStream& stream);
   Configs& operator=(const Configs& config);
-  QString validate() const;
+  void setConfigs(const Configs& configs, const application::Robots& robots,
+                  const QString& robots_config_id);
+  QStringList willBeGenerated() const;
+  void saveAsYaml(const QString& package_url) const;
 
 signals:
   void added(size_t index);
@@ -41,11 +49,16 @@ signals:
   void configAdded(size_t index, const QString& full_name);
   void configRemoved(size_t index, const QString& full_name);
   void configCleared(size_t index, const QString& full_name);
-  void configNameChanged(size_t index, const QString& previous_name, const QString& name);
-  void configTypeChanged(size_t index, const QString& name, const QMetaType::Type& type);
-  void configValueChanged(size_t index, const QString& name, const QVariant& value);
-  void configDefaultValueChanged(size_t index, const QString& name, const QVariant& default_value);
-  void configToolTipChanged(size_t index, const QString& name, const QString& tool_tip);
+  void configNameChanged(size_t index, const QString& previous_name,
+                         const QString& name);
+  void configTypeChanged(size_t index, const QString& name,
+                         const QMetaType::Type& type);
+  void configValueChanged(size_t index, const QString& name,
+                          const QVariant& value);
+  void configDefaultValueChanged(size_t index, const QString& name,
+                                 const QVariant& default_value);
+  void configToolTipChanged(size_t index, const QString& name,
+                            const QString& tool_tip);
 
 private:
   QVector<Config*> configs_;
@@ -59,11 +72,12 @@ private slots:
   void configNameChanged(const QString& previous_name, const QString& name);
   void configTypeChanged(const QString& name, const QMetaType::Type& type);
   void configValueChanged(const QString& name, const QVariant& value);
-  void configDefaultValueChanged(const QString& name, const QVariant& default_value);
+  void configDefaultValueChanged(const QString& name,
+                                 const QVariant& default_value);
   void configToolTipChanged(const QString& name, const QString& tool_tip);
   void configDestroyed();
 };
 }
 }
 
-#endif // _RQT_MRTA_ARCHITECTURE_CONFIG_CONFIGS_H_
+#endif // _RQT_MRTA_CONFIG_CONFIGS_H_

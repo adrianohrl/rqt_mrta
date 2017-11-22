@@ -44,8 +44,6 @@ RqtMrtaWidget::RqtMrtaWidget(QWidget* parent,
           SLOT(newArchitecturePushButtonClicked()));
   connect(ui_->open_architecture_push_button, SIGNAL(clicked()), this,
           SLOT(openArchitecturePushButtonClicked()));
-
-  // loadApplication("/home/adrianohrl/ros_ws/mrta_ws/src/alliance_test/rqt_mrta.xml");
 }
 
 RqtMrtaWidget::~RqtMrtaWidget()

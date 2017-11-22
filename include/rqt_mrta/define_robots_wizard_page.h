@@ -13,9 +13,7 @@ class DefineRobotsWizardPage : public NewApplicationWizardPage
 public:
   DefineRobotsWizardPage(NewApplicationWizard* parent);
   virtual ~DefineRobotsWizardPage();
-  void initializePage();
   void cleanupPage();
-  bool validatePage();
   bool isComplete() const;
 };
 }

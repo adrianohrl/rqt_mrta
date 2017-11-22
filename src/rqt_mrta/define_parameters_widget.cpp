@@ -97,20 +97,21 @@ void DefineParametersWidget::setApplicationConfig(
 void DefineParametersWidget::loadTabs()
 {
   ui_->parameters_tab_widget->clear();
+  config::Configs* application_configs = application_config_->getConfigs();
+  config::Launches* application_launches = application_config_->getLaunches();
+  config::Configs* architecture_configs = architecture_config_->getConfigs();
+  config::Launches* architecture_launches = architecture_config_->getLaunches();
   RobotsConfig* robots = application_config_->getApplication()->getRobots();
-  config::Config* template_config = architecture_config_->getConfigs()->getConfig(
-      architecture_config_->getArchitecture()->getRobots()->getConfigId());
-  config::Configs* configs = application_config_->getConfigs();
-  for (size_t index(0); index < robots->count(); index++)
+  QString robots_config_id(architecture_config_->getArchitecture()->getRobots()->getConfigId());
+  QString robots_launch_id(architecture_config_->getArchitecture()->getRobots()->getLaunchId());
+  application_configs->setConfigs(*architecture_configs, *robots, robots_config_id);
+  application_launches->setLaunches(*architecture_launches, *robots, robots_launch_id);
+  for (size_t index(0); index < application_configs->count(); index++)
   {
-    config::Config* config = configs->addConfig();
-    *config = *template_config;
-    config->hideArrays();
-    RobotConfig* robot = robots->getRobot(index);
-    config->setId(robot->getId() + "_" + config->getId());
+    config::Config* config = application_configs->getConfig(index);
     ParamTreeWidget* tree = new ParamTreeWidget(ui_->parameters_tab_widget);
     tree->setConfig(config);
-    ui_->parameters_tab_widget->addTab(tree, robot->getId());
+    ui_->parameters_tab_widget->addTab(tree, config->getId());
   }
 }
 }

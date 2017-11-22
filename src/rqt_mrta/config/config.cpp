@@ -1,3 +1,4 @@
+#include <QFile>
 #include <QStringList>
 #include "rqt_mrta/config/config.h"
 #include "rqt_mrta/config/param_factory.h"
@@ -88,7 +89,6 @@ void Config::addParam(ParamInterface* param)
 
 void Config::removeParam(const QString& full_name)
 {
-  ROS_WARN_STREAM("[Config::removeParam] removing: " << full_name.toStdString());
   ParamInterface* param = getParam(full_name);
   if (param)
   {
@@ -104,9 +104,6 @@ void Config::removeParam(const QString& full_name)
       {
         return;
       }
-      ROS_INFO_STREAM("[Config] removing param "
-                      << (params_[index] ? params_[index]->getFullName() : "-")
-                             .toStdString() << " at " << index);
       /*if (params_[index])
       {
         delete params_[index];
@@ -125,11 +122,11 @@ void Config::clearParams()
   {
     for (size_t index(0); index < params_.count(); index++)
     {
-      if (params_[index])
+      /*if (params_[index])
       {
         delete params_[index];
         params_[index] = NULL;
-      }
+      }*/
     }
     params_.clear();
     emit cleared("");
@@ -282,6 +279,19 @@ QString Config::validate() const
     }
   }
   return validation;
+}
+
+void Config::saveAsYaml(const QString &url) const
+{
+  QFile file(url + ".yaml");
+  if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    ROS_ERROR_STREAM("Unable to open the " << url.toStdString() << ".yaml file.");
+    return;
+  }
+  file.write(toYaml().toStdString().c_str());
+  file.close();
+  ROS_INFO_STREAM("Created the " << url.toStdString() << ".yaml file.");
 }
 
 QString Config::toYaml() const

@@ -67,12 +67,12 @@ void Robots::clearRobots()
 {
   if (!robots_.isEmpty())
   {
-    for (size_t i(0); i < robots_.count(); ++i)
+    for (size_t index(0); index < robots_.count(); index++)
     {
-      if (robots_[i])
+      if (robots_[index])
       {
-        delete robots_[i];
-        robots_[i] = NULL;
+        delete robots_[index];
+        robots_[index] = NULL;
       }
     }
     robots_.clear();
@@ -83,9 +83,9 @@ void Robots::clearRobots()
 
 bool Robots::contains(const QString& id) const
 {
-  for (size_t i(0); i < robots_.count(); i++)
+  for (size_t index(0); index < robots_.count(); index++)
   {
-    if (robots_[i]->getId() == id)
+    if (robots_[index]->getId() == id)
     {
       return true;
     }
@@ -112,7 +112,7 @@ void Robots::load(QSettings& settings)
   settings.beginGroup("robots");
   QStringList groups(settings.childGroups());
   size_t index(0);
-  for (QStringList::iterator it(groups.begin()); it != groups.end(); ++it)
+  for (QStringList::iterator it(groups.begin()); it != groups.end(); it++)
   {
     Robot* robot =
         index < robots_.count() ? robot = robots_[index] : addRobot();
@@ -140,7 +140,7 @@ void Robots::write(QDataStream& stream) const
 
 void Robots::read(QDataStream& stream)
 {
-  for (size_t index(0); index < robots_.count(); ++index)
+  for (size_t index(0); index < robots_.count(); index++)
   {
     robots_[index]->read(stream);
   }

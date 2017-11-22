@@ -10,7 +10,7 @@ namespace config
 namespace application
 {
 RqtMrtaApplicationPackage::RqtMrtaApplicationPackage(QObject* parent)
-    : RosMetapackage(parent)
+    : RosPackage(parent)
 {
   reset();
 }
@@ -27,6 +27,15 @@ bool RqtMrtaApplicationPackage::createPackage()
     package_dir.mkdir("config");
     package_dir.mkdir("launch");
   }
+}
+
+QStringList RqtMrtaApplicationPackage::willBeGenerated() const
+{
+  QStringList list;
+  list.append("CMakeLists.txt");
+  list.append("package.xml");
+  list.append("rqt_mrta.xml");
+  return list;
 }
 }
 }

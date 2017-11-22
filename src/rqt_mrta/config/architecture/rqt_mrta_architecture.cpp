@@ -12,11 +12,12 @@ namespace architecture
 {
 RqtMrtaArchitecture::RqtMrtaArchitecture(QObject* parent)
     : AbstractConfig(parent), architecture_(new Architecture(this)),
-      configs_(new Configs(this)), widgets_(new Widgets(this))
+      configs_(new Configs(this)), launches_(new Launches(this)), widgets_(new Widgets(this))
 {
   reset();
   connect(architecture_, SIGNAL(changed()), this, SIGNAL(changed()));
   connect(configs_, SIGNAL(changed()), this, SIGNAL(changed()));
+  connect(launches_, SIGNAL(changed()), this, SIGNAL(changed()));
   connect(widgets_, SIGNAL(changed()), this, SIGNAL(changed()));
 }
 
@@ -32,6 +33,11 @@ RqtMrtaArchitecture::~RqtMrtaArchitecture()
   {
     delete configs_;
     configs_ = NULL;
+  }
+  if (launches_)
+  {
+    delete launches_;
+    launches_ = NULL;
   }
   if (widgets_)
   {
@@ -58,6 +64,11 @@ Architecture* RqtMrtaArchitecture::getArchitecture() const
 }
 
 Configs* RqtMrtaArchitecture::getConfigs() const { return configs_; }
+
+Launches *RqtMrtaArchitecture::getLaunches() const
+{
+  return launches_;
+}
 
 Widgets* RqtMrtaArchitecture::getWidgets() const { return widgets_; }
 
@@ -93,11 +104,13 @@ void RqtMrtaArchitecture::save(const QString& url) const
     settings.clear();
     save(settings);
     settings.sync();
-    if (settings.status() == QSettings::NoError)
+    if (settings.status() != QSettings::NoError)
     {
-      ROS_INFO_STREAM("Saved architecture configuration file ["
-                      << url.toStdString() << "].");
+      ROS_ERROR("This architecture configuration file cannot be saved.");
+      return;
     }
+    ROS_INFO_STREAM("Saved architecture configuration file ["
+                    << url.toStdString() << "].");
   }
 }
 
@@ -107,6 +120,7 @@ void RqtMrtaArchitecture::save(QSettings& settings) const
   //settings.setValue("@format", "architecture");
   architecture_->save(settings);
   configs_->save(settings);
+  launches_->save(settings);
   widgets_->save(settings);
   settings.endGroup();
 }
@@ -148,6 +162,7 @@ void RqtMrtaArchitecture::load(QSettings& settings)
   }*/
   architecture_->load(settings);
   configs_->load(settings);
+  launches_->load(settings);
   widgets_->load(settings);
   settings.endGroup();
 }
@@ -158,6 +173,7 @@ void RqtMrtaArchitecture::reset()
   setArchitecturePackageUrl("");
   architecture_->reset();
   configs_->reset();
+  launches_->reset();
   widgets_->reset();
 }
 
@@ -165,6 +181,7 @@ void RqtMrtaArchitecture::write(QDataStream& stream) const
 {
   architecture_->write(stream);
   configs_->write(stream);
+  launches_->write(stream);
   widgets_->write(stream);
 }
 
@@ -172,6 +189,7 @@ void RqtMrtaArchitecture::read(QDataStream& stream)
 {
   architecture_->read(stream);
   configs_->read(stream);
+  launches_->read(stream);
   widgets_->read(stream);
 }
 
@@ -182,6 +200,7 @@ operator=(const RqtMrtaArchitecture& config)
   setArchitecturePackageUrl(config.url_);
   *architecture_ = *config.architecture_;
   *configs_ = *config.configs_;
+  *launches_ = *config.launches_;
   *widgets_ = *config.widgets_;
   return *this;
 }

@@ -23,12 +23,6 @@ void DefineParametersWizardPage::initializePage()
   static_cast<DefineParametersWidget*>(widget_)->loadTabs();
 }
 
-void DefineParametersWizardPage::cleanupPage() {}
-
-bool DefineParametersWizardPage::validatePage()
-{
-}
-
 bool DefineParametersWizardPage::isComplete() const
 {
   return static_cast<DefineParametersWidget*>(widget_)->validate().isEmpty();

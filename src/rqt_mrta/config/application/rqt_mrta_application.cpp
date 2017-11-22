@@ -12,11 +12,12 @@ namespace application
 {
 RqtMrtaApplication::RqtMrtaApplication(QObject* parent)
     : AbstractConfig(parent), application_(new Application(this)),
-      configs_(new Configs(this))
+      configs_(new Configs(this)), launches_(new Launches(this))
 {
   reset();
   connect(application_, SIGNAL(changed()), this, SIGNAL(changed()));
   connect(configs_, SIGNAL(changed()), this, SIGNAL(changed()));
+  connect(launches_, SIGNAL(changed()), this, SIGNAL(changed()));
 }
 
 RqtMrtaApplication::~RqtMrtaApplication()
@@ -32,6 +33,11 @@ RqtMrtaApplication::~RqtMrtaApplication()
     delete configs_;
     configs_ = NULL;
   }
+  if (launches_)
+  {
+    delete launches_;
+    launches_ = NULL;
+  }
   ROS_INFO_STREAM("[~RqtMrtaApplication] after ...");
 }
 
@@ -42,6 +48,11 @@ QString RqtMrtaApplication::getApplicationPackageUrl() const { return url_; }
 Application* RqtMrtaApplication::getApplication() const { return application_; }
 
 Configs* RqtMrtaApplication::getConfigs() const { return configs_; }
+
+Launches *RqtMrtaApplication::getLaunches() const
+{
+  return launches_;
+}
 
 void RqtMrtaApplication::setApplicationPackage(const QString& package)
 {
@@ -81,11 +92,13 @@ void RqtMrtaApplication::save(const QString& filename) const
     settings.clear();
     save(settings);
     settings.sync();
-    if (settings.status() == QSettings::NoError)
+    if (settings.status() != QSettings::NoError)
     {
-      ROS_INFO_STREAM("Saved application configuration file ["
-                      << url.toStdString() << "].");
+      ROS_ERROR("This application configuration file cannot be saved.");
+      return;
     }
+    ROS_INFO_STREAM("Saved application configuration file ["
+                    << url.toStdString() << "].");
   }
 }
 
@@ -95,6 +108,7 @@ void RqtMrtaApplication::save(QSettings& settings) const
   //settings.setValue("@format", "application");
   application_->save(settings);
   configs_->save(settings);
+  launches_->save(settings);
   settings.endGroup();
 }
 
@@ -106,12 +120,14 @@ void RqtMrtaApplication::load(const QString& url)
     return;
   }
   QSettings settings(url, utilities::SimpleXmlSettings::format);
-  if (settings.status() == QSettings::NoError)
+  if (settings.status() != QSettings::NoError)
   {
-    load(settings);
-    ROS_INFO_STREAM("Loaded application configuration file ["
-                    << url.toStdString() << "].");
+    ROS_ERROR("This application configuration file cannot be loaded.");
+    return;
   }
+  load(settings);
+  ROS_INFO_STREAM("Loaded application configuration file ["
+                  << url.toStdString() << "].");
 }
 
 void RqtMrtaApplication::load(QSettings& settings)
@@ -133,6 +149,7 @@ void RqtMrtaApplication::load(QSettings& settings)
   }*/
   application_->load(settings);
   configs_->load(settings);
+  launches_->load(settings);
   settings.endGroup();
 }
 
@@ -142,18 +159,21 @@ void RqtMrtaApplication::reset()
   setApplicationPackageUrl("");
   application_->reset();
   configs_->reset();
+  launches_->reset();
 }
 
 void RqtMrtaApplication::write(QDataStream& stream) const
 {
   application_->write(stream);
   configs_->write(stream);
+  launches_->write(stream);
 }
 
 void RqtMrtaApplication::read(QDataStream& stream)
 {
   application_->read(stream);
   configs_->read(stream);
+  launches_->read(stream);
 }
 
 RqtMrtaApplication& RqtMrtaApplication::
@@ -163,6 +183,7 @@ operator=(const RqtMrtaApplication& config)
   setApplicationPackageUrl(config.url_);
   *application_ = *config.application_;
   *configs_ = *config.configs_;
+  *launches_ = *config.launches_;
   return *this;
 }
 }

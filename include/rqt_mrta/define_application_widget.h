@@ -44,7 +44,7 @@ signals:
 private:
   Ui::DefineApplicationWidget* ui_;
   RqtMrtaApplicationConfig* application_config_;
-  RqtMrtaApplicationPackageConfig* metapackage_config_;
+  RqtMrtaApplicationPackageConfig* package_config_;
   rospack::Rospack rp_;
 
 private slots:

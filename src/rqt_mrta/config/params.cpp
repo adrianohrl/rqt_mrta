@@ -80,28 +80,22 @@ void Params::addParam(ParamInterface* param)
 
 void Params::removeParam(const QString& relative_name)
 {
-  ROS_WARN_STREAM("[Params::removeParam] removing: " << relative_name.toStdString());
   ParamInterface* param = getParam(relative_name);
   if (param)
   {
     ParamInterface* parent = param->getParentParam();
     if (parent && parent != this)
     {
-      ROS_WARN_STREAM("[Params::removeParam] removing 2: " << parent->getName().toStdString());
       parent->removeParam(param->getName());
     }
     else
     {
-      ROS_WARN_STREAM("[Params::removeParam] removing 3: " << relative_name.toStdString());
       size_t index(params_.indexOf(param));
       if (index == -1)
       {
         return;
       }
       QString full_name(params_[index]->getFullName());
-      ROS_INFO_STREAM("[Params] removing param "
-                      << (params_[index] ? params_[index]->getFullName() : "-")
-                             .toStdString() << " at " << index);
       /*if (params_[index])
       {
         delete params_[index];
@@ -227,7 +221,6 @@ ParamInterface* Params::clone() const
 
 QString Params::validate() const
 {
-  ROS_WARN_STREAM("[Params] validating ...");
   if (params_.isEmpty())
   {
     return "Enter the params parameters.";
@@ -245,7 +238,6 @@ QString Params::validate() const
       break;
     }
   }
-  ROS_WARN_STREAM("[Params] validated: " << validation.toStdString());
   return validation;
 }
 
@@ -285,7 +277,7 @@ QString Params::toYaml(const QString &prefix) const
   QString yaml(ParamInterface::toYaml(prefix));
   for (size_t index(0); index < params_.count(); index++)
   {
-    yaml += params_[index]->toYaml(prefix + "\t") + "\n";
+    yaml += "\n" + params_[index]->toYaml(prefix + "\t");
   }
   return yaml;
 }

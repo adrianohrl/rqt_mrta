@@ -3,6 +3,7 @@
 
 #include "rqt_mrta/config/application/application.h"
 #include "rqt_mrta/config/configs.h"
+#include "rqt_mrta/config/launches.h"
 
 namespace rqt_mrta
 {
@@ -20,6 +21,7 @@ public:
   QString getApplicationPackageUrl() const;
   Application* getApplication() const;
   Configs* getConfigs() const;
+  Launches* getLaunches() const;
   void setApplicationPackage(const QString& package);
   void setApplicationPackageUrl(const QString &url);
   void save() const;
@@ -39,6 +41,7 @@ private:
   QString url_;
   Application* application_;
   Configs* configs_;
+  Launches* launches_;
   void save(QSettings& settings) const;
   void load(QSettings& settings);
 };

@@ -10,9 +10,8 @@ DefineApplicationWizardPage::DefineApplicationWizardPage(
     NewApplicationWizard* parent)
     : NewApplicationWizardPage(parent, "Define the Application")
 {
-  DefineApplicationWidget* widget =
-      new DefineApplicationWidget(this, parent->getApplicationConfig(),
-                                  parent->getMetapackageConfig());
+  DefineApplicationWidget* widget = new DefineApplicationWidget(
+      this, parent->getApplicationConfig(), parent->getPackageConfig());
   registerField("name*", widget->ui_->name_line_edit);
   registerField("package*", widget->ui_->package_line_edit);
   registerField("workspace_url*", widget->ui_->workspace_package_line_edit);
@@ -22,7 +21,7 @@ DefineApplicationWizardPage::DefineApplicationWizardPage(
   registerField("maintainer_email*", widget->ui_->maintainer_email_line_edit);
   registerField("license*", widget->ui_->license_line_edit);
   registerField("run_depends", widget->ui_->run_depends_plain_text_edit);
-  connect(widget, SIGNAL(changed()), this, SIGNAL(completeChanged()));
+  connect(package_config_, SIGNAL(changed()), this, SIGNAL(completeChanged()));
   setWidget(widget);
 }
 
@@ -31,13 +30,12 @@ DefineApplicationWizardPage::~DefineApplicationWizardPage() {}
 void DefineApplicationWizardPage::initializePage()
 {
   application_config_->reset();
-  metapackage_config_->reset();
+  package_config_->reset();
   architecture_config_->reset();
 }
 
 bool DefineApplicationWizardPage::isComplete() const
 {
-  return static_cast<DefineApplicationWidget*>(widget_)
-             ->metapackage_config_->isValid();
+  return package_config_->validate().isEmpty();
 }
 }

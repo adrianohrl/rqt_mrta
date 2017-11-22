@@ -16,7 +16,6 @@ class Params : public ParamInterface
 {
   Q_OBJECT
 public:
-  friend class application::Robot;
   Params(Params* parent = NULL);
   virtual ~Params();
   QVector<ParamInterface*> getChildren() const;

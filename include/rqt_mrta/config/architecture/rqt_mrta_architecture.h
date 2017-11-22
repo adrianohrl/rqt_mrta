@@ -3,8 +3,9 @@
 
 #include "utilities/abstract_config.h"
 #include "rqt_mrta/config/architecture/architecture.h"
-#include "rqt_mrta/config/configs.h"
 #include "rqt_mrta/config/architecture/widgets.h"
+#include "rqt_mrta/config/configs.h"
+#include "rqt_mrta/config/launches.h"
 
 namespace rqt_mrta
 {
@@ -22,6 +23,7 @@ public:
   QString getArchitecturePackageUrl() const;
   Architecture* getArchitecture() const;
   Configs* getConfigs() const;
+  Launches* getLaunches() const;
   Widgets* getWidgets() const;
   void setArchitecturePackage(const QString& package);
   void setArchitecturePackageUrl(const QString &url);
@@ -41,6 +43,7 @@ private:
   QString url_;
   Architecture* architecture_;
   Configs* configs_;
+  Launches* launches_;
   Widgets* widgets_;
   void save(QSettings& settings) const;
   void load(QSettings& settings);

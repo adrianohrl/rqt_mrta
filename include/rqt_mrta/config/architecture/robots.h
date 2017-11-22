@@ -4,7 +4,6 @@
 #include "utilities/abstract_config.h"
 #include "rqt_mrta/config/architecture/busy_robots.h"
 #include "rqt_mrta/config/architecture/idle_robots.h"
-#include "rqt_mrta/config/architecture/robot_launch.h"
 
 namespace rqt_mrta
 {
@@ -20,11 +19,12 @@ public:
   virtual ~Robots();
   QString getType() const;
   QString getConfigId() const;
+  QString getLaunchId() const;
   BusyRobots* getBusyRobots() const;
   IdleRobots* getIdleRobots() const;
-  RobotLaunch* getLaunch() const;
   void setType(const QString& type);
   void setConfigId(const QString& config_id);
+  void setLaunchId(const QString& launch_id);
   void save(QSettings& settings) const;
   void load(QSettings& settings);
   void reset();
@@ -33,16 +33,16 @@ public:
   Robots& operator=(const Robots& config);
 
 signals:
-  void changed();
   void typeChanged(const QString& type);
   void configIdChanged(const QString& config_id);
+  void launchIdChanged(const QString& launch_id);
 
 private:
   QString type_;
   QString config_id_;
+  QString launch_id_;
   BusyRobots* busy_robots_;
   IdleRobots* idle_robots_;
-  RobotLaunch* launch_;
 };
 }
 }

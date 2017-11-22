@@ -11,16 +11,16 @@ class NewApplicationWizardPage : public QWizardPage
 public:
   NewApplicationWizardPage(NewApplicationWizard* parent, const QString &title);
   virtual ~NewApplicationWizardPage();
+  void setWidget(QWidget* widget);
 
 signals:
   void completeChanged();
 
 protected:
   RqtMrtaApplicationConfig* application_config_;
-  RqtMrtaApplicationPackageConfig* metapackage_config_;
+  RqtMrtaApplicationPackageConfig* package_config_;
   RqtMrtaArchitectureConfig* architecture_config_;
   QWidget* widget_;
-  void setWidget(QWidget* widget);
 
 private:
   bool setted_;

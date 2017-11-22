@@ -112,7 +112,7 @@ ParamInterface& ParamInterface::operator=(const ParamInterface& config)
   return *this;
 }
 
-QString ParamInterface::toYaml(const QString &prefix) const
+QString ParamInterface::toYaml(const QString& prefix) const
 {
   return prefix + name_ + ": ";
 }

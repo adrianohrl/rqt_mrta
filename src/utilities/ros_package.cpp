@@ -13,7 +13,7 @@ RosPackage::RosPackage(QObject* parent)
 {
   reset();
   updateRp();
-  connect(export_, SIGNAL(changed()), this, SLOT(exportChanged()));
+  connect(export_, SIGNAL(changed()), this, SIGNAL(changed()));
 }
 
 RosPackage::~RosPackage() {}
@@ -53,6 +53,7 @@ void RosPackage::setWorkspaceUrl(const QString& url)
     workspace_url_ = url;
     emit workspaceUrlChanged(url);
     emit changed();
+    setUrl();
   }
 }
 
@@ -71,7 +72,14 @@ void RosPackage::setUrl()
 {
   std::string url;
   rp_.find(name_.toStdString(), url);
-  setUrl(QString::fromStdString(url));
+  if (url.empty() && !workspace_url_.isEmpty() && !name_.isEmpty())
+  {
+    setUrl(workspace_url_ + "/src/" + name_);
+  }
+  else
+  {
+    setUrl(QString::fromStdString(url));
+  }
 }
 
 void RosPackage::setUrl(const QString& url)
@@ -285,40 +293,31 @@ QString RosPackage::validate() const
   {
     return "The package name must not be empty.";
   }
-  else if (name_.contains(' '))
+  if (name_.contains(' '))
   {
     return "The package name must not contain space characters.";
   }
-  else if (version_.isEmpty())
+  if (version_.isEmpty())
   {
     return "The package version must be defined.";
   }
-  else if (description_.isEmpty())
+  if (description_.isEmpty())
   {
     return "The package description must be given.";
   }
-  else if (maintainer_.isEmpty())
+  if (maintainer_.isEmpty())
   {
     return "The package maintainer must be given.";
   }
-  else if (maintainer_email_.isEmpty())
+  if (maintainer_email_.isEmpty() || !maintainer_email_.contains('@'))
   {
     return "The e-mail of the package maintainer must be given.";
   }
-  else if (license_.isEmpty())
+  if (license_.isEmpty())
   {
     return "The package license must be defined.";
   }
   return "";
-}
-
-bool RosPackage::isValid() const
-{
-  return !name_.isEmpty() && !name_.contains(' ') && url_.isEmpty() &&
-         !version_.isEmpty() && !description_.isEmpty() &&
-         !maintainer_.isEmpty() && !maintainer_email_.isEmpty() &&
-         maintainer_email_.contains('@') && !license_.isEmpty() &&
-         !workspace_url_.isEmpty();
 }
 
 bool RosPackage::isValidPackageName() const
@@ -328,7 +327,8 @@ bool RosPackage::isValidPackageName() const
 
 bool RosPackage::createPackage()
 {
-  if (!url_.isEmpty())
+  QDir dir(url_);
+  if (dir.exists())
   {
     ROS_WARN_STREAM("The given package [" << name_.toStdString()
                                           << "] already exists.");
@@ -398,8 +398,50 @@ bool RosPackage::createManifest()
 
 bool RosPackage::createCMakeLists()
 {
-  ROS_FATAL("The RosPackage::createCMakeLists() has not been implemented yet.");
-  return false;
+  if (!isValidPackageName())
+  {
+    ROS_ERROR_STREAM("The given package name [" << name_.toStdString()
+                                                << "] is not valid.");
+    return false;
+  }
+  if (!workspaceExists())
+  {
+    ROS_ERROR_STREAM("The given url [" << workspace_url_.toStdString()
+                                       << "] is not a ROS workspace.");
+    return false;
+  }
+  QString package_url(workspace_url_ + "/src/" + name_);
+  QDir package_dir(package_url);
+  if (!package_dir.exists())
+  {
+    ROS_ERROR_STREAM("The given package location [" << package_url.toStdString()
+                                                    << "] does not exist.");
+    return false;
+  }
+  QFile file(package_url + "/CMakeLists.txt");
+  if (file.exists())
+  {
+    ROS_ERROR_STREAM("The given package ["
+                     << name_.toStdString()
+                     << "] already has its CMakeLists.txt file.");
+    return false;
+  }
+  QString cmake_lists_text;
+  cmake_lists_text += "cmake_minimum_required(VERSION 2.8.3)\n";
+  cmake_lists_text += "project(" + name_ + ")\n";
+  cmake_lists_text += "find_package(catkin REQUIRED)\n";
+  cmake_lists_text += "catkin_package()";
+  if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    ROS_ERROR_STREAM("Unable to open the " << package_url.toStdString()
+                                           << "/CMakeLists.txt file.");
+    return false;
+  }
+  file.write(cmake_lists_text.toStdString().c_str());
+  file.close();
+  ROS_INFO_STREAM("Created the " << name_.toStdString()
+                                 << " CMakeLists.txt file.");
+  return true;
 }
 
 bool RosPackage::updateManifest()
@@ -758,8 +800,6 @@ RosPackage& RosPackage::operator=(const RosPackage& config)
   *export_ = *config.export_;
   return *this;
 }
-
-void RosPackage::exportChanged() { emit changed(); }
 
 RosMetapackage::RosMetapackage(QObject* parent) : RosPackage(parent) {}
 
