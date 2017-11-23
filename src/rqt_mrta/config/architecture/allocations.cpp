@@ -14,13 +14,11 @@ Allocations::Allocations(QObject* parent)
 
 Allocations::~Allocations()
 {
-  ROS_INFO_STREAM("[~Allocations] before ...");
   if (allocated_tasks_)
   {
     delete allocated_tasks_;
     allocated_tasks_ = NULL;
   }
-  ROS_INFO_STREAM("[~Allocations] after ...");
 }
 
 QString Allocations::getType() const

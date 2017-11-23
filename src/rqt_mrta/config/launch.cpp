@@ -27,6 +27,8 @@ QString Launch::getId() const { return id_; }
 
 Includes* Launch::getIncludes() const { return includes_; }
 
+QMap<QString, QString> Launch::getMap() const { return map_; }
+
 void Launch::setId(const QString& id)
 {
   if (id != id_)
@@ -35,6 +37,11 @@ void Launch::setId(const QString& id)
     emit idChanged(id);
     emit changed();
   }
+}
+
+void Launch::add(const QString& key, const QString& value)
+{
+  map_[(!key.startsWith('@') ? "@" : "") + key + (!key.endsWith('@') ? "@" : "")] = value;
 }
 
 QString Launch::validate() const
@@ -106,6 +113,10 @@ QString Launch::toLaunch() const
   launch += "<launch>\n";
   launch += includes_->toLaunch();
   launch += "</launch>\n";
+  for (const_iterator it(map_.constBegin()); it != map_.constEnd(); it++)
+  {
+    launch.replace(it.key(), it.value());
+  }
   return launch;
 }
 }

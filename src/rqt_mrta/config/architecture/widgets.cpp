@@ -11,7 +11,6 @@ Widgets::Widgets(QObject* parent) : AbstractConfig(parent) {}
 
 Widgets::~Widgets()
 {
-  ROS_INFO_STREAM("[~Widgets] before ...");
   for (size_t index(0); index < widgets_.count(); index++)
   {
     if (widgets_[index])
@@ -21,7 +20,6 @@ Widgets::~Widgets()
     }
   }
   widgets_.clear();
-  ROS_INFO_STREAM("[~Widgets] after ...");
 }
 
 size_t Widgets::count() const { return widgets_.count(); }

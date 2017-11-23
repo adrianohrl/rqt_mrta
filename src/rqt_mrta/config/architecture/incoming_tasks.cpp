@@ -15,13 +15,11 @@ IncomingTasks::IncomingTasks(QObject* parent)
 
 IncomingTasks::~IncomingTasks()
 {
-  ROS_INFO_STREAM("[~IncomingTasks] before ...");
   if (topic_)
   {
     delete topic_;
     topic_ = NULL;
   }
-  ROS_INFO_STREAM("[~IncomingTasks] after ...");
 }
 
 Topic* IncomingTasks::getTopic() const

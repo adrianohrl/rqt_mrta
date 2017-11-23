@@ -130,29 +130,29 @@ QStringList Launches::willBeGenerated() const
 
 void Launches::saveAsLaunch(const QString& package_url) const
 {
-  QDir folder(package_url + "/launch");
-  if (!folder.exists())
+  QDir package(package_url);
+  if (!package.exists())
   {
-    folder.cd("..");
-    if (!folder.exists())
-    {
-      throw utilities::Exception("Inexistent package.");
-    }
-    if (!folder.mkdir("launch"))
-    {
-      throw utilities::Exception("Unable to create the launch folder.");
-    }
-    folder.cd("launch");
+    throw utilities::Exception("Inexistent package.");
+  }
+  if (package.cd("launch"))
+  {
+    package.cd("..");
+  }
+  else if (!package.mkdir("launch"))
+  {
+    throw utilities::Exception("Unable to create the launch folder.");
   }
   for (size_t index(0); index < launches_.count(); index++)
   {
-    QString validation(launches_[index]->validate());
+    /*QString validation(launches_[index]->validate());
     if (!validation.isEmpty())
     {
       ROS_ERROR("%s", validation.toStdString().c_str());
       continue;
-    }
-    launches_[index]->saveAsLaunch(folder.path() + "/" +
+    }*/
+    launches_[index]->add("package", package.dirName());
+    launches_[index]->saveAsLaunch(package.path() + "/launch/" +
                                    launches_[index]->getId());
   }
 }
@@ -242,6 +242,7 @@ void Launches::setLaunches(const Launches& launches,
       *launch = *template_launch;
       if (is_robot_template)
       {
+        launch->add("robot_id", robots.getRobot(j)->getId());
         launch->setId(robots.getRobot(j)->getId() + "_" + launch->getId());
       }
     }

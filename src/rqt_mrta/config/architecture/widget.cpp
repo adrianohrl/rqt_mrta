@@ -8,22 +8,13 @@ namespace config
 {
 namespace architecture
 {
-Widget::Widget(QObject *parent)
-  : AbstractConfig(parent)
-{
-}
+Widget::Widget(QObject* parent) : AbstractConfig(parent) {}
 
-Widget::~Widget()
-{
-  ROS_INFO("[~Widget]");
-}
+Widget::~Widget() {}
 
-QString Widget::getPluginName() const
-{
-  return plugin_name_;
-}
+QString Widget::getPluginName() const { return plugin_name_; }
 
-void Widget::setPluginName(const QString &plugin_name)
+void Widget::setPluginName(const QString& plugin_name)
 {
   if (plugin_name != plugin_name_)
   {
@@ -33,34 +24,28 @@ void Widget::setPluginName(const QString &plugin_name)
   }
 }
 
-void Widget::save(QSettings &settings) const
+void Widget::save(QSettings& settings) const
 {
   settings.setValue("plugin_name", plugin_name_);
 }
 
-void Widget::load(QSettings &settings)
+void Widget::load(QSettings& settings)
 {
   setPluginName(settings.value("plugin_name").toString());
 }
 
-void Widget::reset()
-{
-  setPluginName("");
-}
+void Widget::reset() { setPluginName(""); }
 
-void Widget::write(QDataStream &stream) const
-{
-  stream << plugin_name_;
-}
+void Widget::write(QDataStream& stream) const { stream << plugin_name_; }
 
-void Widget::read(QDataStream &stream)
+void Widget::read(QDataStream& stream)
 {
   QString plugin_name;
   stream >> plugin_name;
   setPluginName(plugin_name);
 }
 
-Widget &Widget::operator=(const Widget &config)
+Widget& Widget::operator=(const Widget& config)
 {
   setPluginName(config.plugin_name_);
   return *this;

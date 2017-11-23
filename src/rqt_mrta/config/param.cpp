@@ -7,7 +7,7 @@ namespace config
 {
 Param::Param(Params* parent) : ParamInterface("param", parent) {}
 
-Param::~Param() { ROS_INFO("[~Param]"); }
+Param::~Param() {}
 
 QMetaType::Type Param::getType() const { return type_; }
 

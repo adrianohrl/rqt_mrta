@@ -17,7 +17,6 @@ Architecture::Architecture(QObject* parent)
 
 Architecture::~Architecture()
 {
-  ROS_INFO_STREAM("[~Architecture] before ...");
   if (allocations_)
   {
     delete allocations_;
@@ -33,7 +32,6 @@ Architecture::~Architecture()
     delete tasks_;
     tasks_ = NULL;
   }
-  ROS_INFO_STREAM("[~Architecture] after ...");
 }
 
 Allocations* Architecture::getAllocations() const { return allocations_; }

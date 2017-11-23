@@ -23,7 +23,6 @@ RqtMrtaArchitecture::RqtMrtaArchitecture(QObject* parent)
 
 RqtMrtaArchitecture::~RqtMrtaArchitecture()
 {
-  ROS_INFO_STREAM("[~RqtMrtaArchitecture] before ...");
   if (architecture_)
   {
     delete architecture_;
@@ -44,12 +43,10 @@ RqtMrtaArchitecture::~RqtMrtaArchitecture()
     delete widgets_;
     widgets_ = NULL;
   }
-  ROS_INFO_STREAM("[~RqtMrtaArchitecture] after ...");
 }
 
 QString RqtMrtaArchitecture::getArchitecturePackage() const
 {
-  ROS_INFO_STREAM("[RqtMrtaArchitecture] getArchitecturePackage ...");
   return package_;
 }
 

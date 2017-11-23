@@ -40,7 +40,7 @@ void Arg::setDefaultValue(const QString& value)
 {
   if (value != value_)
   {
-    value_ = value;
+    default_value_ = value;
     emit defaultValueChanged(value);
     emit changed();
   }

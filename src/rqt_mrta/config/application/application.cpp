@@ -14,13 +14,11 @@ Application::Application(QObject *parent)
 
 Application::~Application()
 {
-  ROS_INFO_STREAM("[~Application] before ...");
   if (robots_)
   {
     delete robots_;
     robots_ = NULL;
   }
-  ROS_INFO_STREAM("[~Application] after ...");
 }
 
 QString Application::getName() const

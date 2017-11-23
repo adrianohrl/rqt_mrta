@@ -16,7 +16,6 @@ Robots::Robots(QObject* parent)
 
 Robots::~Robots()
 {
-  ROS_INFO_STREAM("[~Robots] before ...");
   if (busy_robots_)
   {
     delete busy_robots_;
@@ -27,7 +26,6 @@ Robots::~Robots()
     delete idle_robots_;
     idle_robots_ = NULL;
   }
-  ROS_INFO_STREAM("[~Robots] after ...");
 }
 
 QString Robots::getType() const { return type_; }

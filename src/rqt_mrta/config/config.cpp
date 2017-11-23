@@ -12,7 +12,7 @@ Config::Config(QObject* parent) : AbstractConfig(parent) {}
 
 Config::~Config()
 {
-  ROS_INFO_STREAM("[~Config] before ...");
+  clearArrays();
   /*for (size_t index(0); index < params_.count(); index++)
   {
     if (params_[index])
@@ -22,8 +22,6 @@ Config::~Config()
     }
   }*/
   params_.clear();
-  clearArrays();
-  ROS_INFO_STREAM("[~Config] after ...");
 }
 
 QString Config::getId() const { return id_; }

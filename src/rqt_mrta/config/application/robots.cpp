@@ -11,7 +11,6 @@ Robots::Robots(QObject* parent) : AbstractConfig(parent) {}
 
 Robots::~Robots()
 {
-  ROS_INFO_STREAM("[~Robots] before ...");
   for (size_t index(0); index < robots_.count(); index++)
   {
     if (robots_[index])
@@ -21,7 +20,6 @@ Robots::~Robots()
     }
   }
   robots_.clear();
-  ROS_INFO_STREAM("[~Robots] after ...");
 }
 
 size_t Robots::count() const { return robots_.count(); }

@@ -14,13 +14,11 @@ Tasks::Tasks(QObject* parent)
 
 Tasks::~Tasks()
 {
-  ROS_INFO_STREAM("[~Tasks] before ...");
   if (incoming_tasks_)
   {
     delete incoming_tasks_;
     incoming_tasks_ = NULL;
   }
-  ROS_INFO_STREAM("[~Tasks] after ...");
 }
 
 QString Tasks::getType() const { return type_; }

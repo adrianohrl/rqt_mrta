@@ -33,11 +33,6 @@ Include* Includes::addInclude()
   connect(include, SIGNAL(changed()), this, SIGNAL(changed()));
   connect(include, SIGNAL(fileChanged(const QString)), this,
           SLOT(includeFileChanged(const QString&)));
-  connect(include, SIGNAL(added(size_t index)), this,
-          SLOT(includeAdded(size_t)));
-  connect(include, SIGNAL(removed(const QString& file)), this,
-          SLOT(includeRemoved(const QString&)));
-  connect(include, SIGNAL(cleared()), this, SLOT(includeCleared()));
   connect(include, SIGNAL(destroyed()), this, SLOT(includeDestroyed()));
   emit added(includes_.count() - 1);
   emit changed();
@@ -192,36 +187,6 @@ void Includes::includeFileChanged(const QString& file)
   if (index != -1)
   {
     emit includeFileChanged(index, file);
-    emit changed();
-  }
-}
-
-void Includes::includeAdded(size_t config_index)
-{
-  int index(includes_.indexOf(static_cast<Include*>(sender())));
-  if (index != -1)
-  {
-    emit includeAdded(index, config_index);
-    emit changed();
-  }
-}
-
-void Includes::includeRemoved(const QString& file)
-{
-  int index(includes_.indexOf(static_cast<Include*>(sender())));
-  if (index != -1)
-  {
-    emit includeRemoved(index, file);
-    emit changed();
-  }
-}
-
-void Includes::includeCleared()
-{
-  int index(includes_.indexOf(static_cast<Include*>(sender())));
-  if (index != -1)
-  {
-    emit includeCleared(index);
     emit changed();
   }
 }

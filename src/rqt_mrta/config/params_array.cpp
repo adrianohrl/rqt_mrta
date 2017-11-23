@@ -6,7 +6,7 @@ namespace config
 {
 ParamsArray::ParamsArray(Params* parent) : Params("array", parent) {}
 
-ParamsArray::~ParamsArray() { ROS_INFO("[~ParamsArray]"); }
+ParamsArray::~ParamsArray() {}
 
 Params* ParamsArray::getParentParam() const
 {

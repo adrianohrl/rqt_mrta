@@ -12,7 +12,6 @@ Configs::Configs(QObject* parent) : AbstractConfig(parent) {}
 
 Configs::~Configs()
 {
-  ROS_INFO_STREAM("[~Configs] before ...");
   for (size_t index(0); index < configs_.count(); index++)
   {
     if (configs_[index])
@@ -22,7 +21,6 @@ Configs::~Configs()
     }
   }
   configs_.clear();
-  ROS_INFO_STREAM("[~Configs] after ...");
 }
 
 Config* Configs::getConfig(size_t index) const
@@ -243,19 +241,18 @@ QStringList Configs::willBeGenerated() const
 
 void Configs::saveAsYaml(const QString& package_url) const
 {
-  QDir folder(package_url + "/config");
-  if (!folder.exists())
+  QDir package(package_url);
+  if (!package.exists())
   {
-    folder.cd("..");
-    if (!folder.exists())
-    {
-      throw utilities::Exception("Inexistent package.");
-    }
-    if (!folder.mkdir("config"))
-    {
-      throw utilities::Exception("Unable to create the config folder.");
-    }
-    folder.cd("config");
+    throw utilities::Exception("Inexistent package.");
+  }
+  if (package.cd("config"))
+  {
+    package.cd("..");
+  }
+  else if (!package.mkdir("config"))
+  {
+    throw utilities::Exception("Unable to create the config folder.");
   }
   for (size_t index(0); index < configs_.count(); index++)
   {
@@ -265,7 +262,8 @@ void Configs::saveAsYaml(const QString& package_url) const
       ROS_ERROR("%s", validation.toStdString().c_str());
       continue;
     }
-    configs_[index]->saveAsYaml(folder.path() + "/" + configs_[index]->getId());
+    configs_[index]->saveAsYaml(package.path() + "/config/" +
+                                configs_[index]->getId());
   }
 }
 

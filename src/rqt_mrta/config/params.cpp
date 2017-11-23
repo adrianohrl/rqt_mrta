@@ -15,7 +15,6 @@ Params::Params(const QString& group_name, Params* parent)
 
 Params::~Params()
 {
-  ROS_INFO_STREAM("[~Params] before ...");
   for (size_t index(0); index < params_.count(); index++)
   {
     /*if (params_[index])
@@ -25,7 +24,6 @@ Params::~Params()
     }*/
   }
   params_.clear();
-  ROS_INFO_STREAM("[~Params] after ...");
 }
 
 QVector<ParamInterface*> Params::getChildren() const { return params_; }

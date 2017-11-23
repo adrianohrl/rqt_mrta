@@ -15,13 +15,11 @@ AllocatedTasks::AllocatedTasks(QObject* parent)
 
 AllocatedTasks::~AllocatedTasks()
 {
-  ROS_INFO_STREAM("[~AllocatedTasks] before ...");
   if (topic_)
   {
     delete topic_;
     topic_ = NULL;
   }
-  ROS_INFO_STREAM("[~AllocatedTasks] after ...");
 }
 
 Topic* AllocatedTasks::getTopic() const

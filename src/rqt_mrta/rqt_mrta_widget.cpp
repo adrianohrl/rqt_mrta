@@ -48,7 +48,6 @@ RqtMrtaWidget::RqtMrtaWidget(QWidget* parent,
 
 RqtMrtaWidget::~RqtMrtaWidget()
 {
-  ROS_INFO("[~RqtMrtaWidget] before ...");
   clear();
   if (ui_)
   {
@@ -75,7 +74,6 @@ RqtMrtaWidget::~RqtMrtaWidget()
     delete registry_;
     registry_ = NULL;
   }
-  ROS_INFO("[~RqtMrtaWidget] after ...");
 }
 
 void RqtMrtaWidget::newApplicationPushButtonClicked()

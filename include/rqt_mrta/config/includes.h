@@ -37,18 +37,12 @@ signals:
   void removed(const QString& id);
   void cleared();
   void includeFileChanged(size_t index, const QString& file);
-  void includeAdded(size_t index, size_t config_index);
-  void includeRemoved(size_t index, const QString& file);
-  void includeCleared(size_t index);
 
 private:
   QVector<Include*> includes_;
 
 private slots:
   void includeFileChanged(const QString& file);
-  void includeAdded(size_t config_index);
-  void includeRemoved(const QString& file);
-  void includeCleared();
   void includeDestroyed();
 };
 }

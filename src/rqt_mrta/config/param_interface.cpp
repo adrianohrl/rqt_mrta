@@ -14,7 +14,6 @@ ParamInterface::ParamInterface(const QString& group_name, Params* parent)
 ParamInterface::~ParamInterface()
 {
   setParent(NULL);
-  ROS_INFO_STREAM("[~ParamInterface]" << children().count());
 }
 
 QString ParamInterface::getGroupName() const { return group_name_; }

@@ -22,7 +22,6 @@ RqtMrtaApplication::RqtMrtaApplication(QObject* parent)
 
 RqtMrtaApplication::~RqtMrtaApplication()
 {
-  ROS_INFO_STREAM("[~RqtMrtaApplication] before ...");
   if (application_)
   {
     delete application_;
@@ -38,7 +37,6 @@ RqtMrtaApplication::~RqtMrtaApplication()
     delete launches_;
     launches_ = NULL;
   }
-  ROS_INFO_STREAM("[~RqtMrtaApplication] after ...");
 }
 
 QString RqtMrtaApplication::getApplicationPackage() const { return package_; }
