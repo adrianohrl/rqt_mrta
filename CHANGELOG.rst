@@ -2,7 +2,9 @@
 Changelog for package rqt_mrta
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.2.2 (2017-11-22)
+0.2.5 (2017-12-11)
 ------------------
-* generating launch files
-* Contributors: adrianohrl
+
+0.2.4 (2017-12-11)
+-------------------
+* first public release for Indigo
